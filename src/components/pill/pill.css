@@ -1,0 +1,11 @@
+.pill {
+  border-radius: 5px;
+  font-weight: 600;
+  padding: 5px;
+}
+.pill.low{
+  background-color: orange;
+}
+.pill.high{
+  background-color: red;
+}
