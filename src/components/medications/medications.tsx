@@ -1,3 +1,3 @@
-export const Medications = ()=>{
-  return <>Medications component</>
-}
+export const Medications = () => {
+  return <>Medications component</>;
+};

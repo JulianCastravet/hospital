@@ -13,7 +13,9 @@ export const Reports = () => {
       key: "signed",
       title: "Signed",
       dataIndex: "signed",
-      render: (value: boolean) => <input type="checkbox" defaultChecked={value} />,
+      render: (value: boolean) => (
+        <input type="checkbox" defaultChecked={value} />
+      ),
     },
     {
       key: "result",
@@ -44,7 +46,9 @@ export const Reports = () => {
       key: "priority",
       title: "Priority",
       dataIndex: "priority",
-      render: (value:string)=> <Pill className={value.toLowerCase()}>{value}</Pill>
+      render: (value: string) => (
+        <Pill className={value.toLowerCase()}>{value}</Pill>
+      ),
     },
     {
       key: "lab",
@@ -60,7 +64,11 @@ export const Reports = () => {
 
   return (
     <>
-      <Table columns={columns} dataSource={reports} rowKey={record=>record.number} ></Table>
+      <Table
+        columns={columns}
+        dataSource={reports}
+        rowKey={(record) => record.number}
+      ></Table>
     </>
   );
 };

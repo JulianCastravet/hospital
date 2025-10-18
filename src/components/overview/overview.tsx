@@ -27,39 +27,39 @@ export const Overview = () => {
     <>
       <Flex gap={12}>
         <Card
-        hoverable
-        style={{ width: 620 }}
-        styles={{ body: { padding: 20, overflow: "hidden" } }}
-      >
-        <Title>Total users</Title>
-        <BarChart width={500} height={250} data={userData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="Patients" fill="#8884d8" />
-          <Bar dataKey="Doctors" fill="#82ca9d" />
-        </BarChart>
-      </Card>
+          hoverable
+          style={{ width: 620 }}
+          styles={{ body: { padding: 20, overflow: "hidden" } }}
+        >
+          <Title>Total users</Title>
+          <BarChart width={500} height={250} data={userData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="Patients" fill="#8884d8" />
+            <Bar dataKey="Doctors" fill="#82ca9d" />
+          </BarChart>
+        </Card>
 
-      <Card
-        hoverable
-        style={{ width: 620 }}
-        styles={{ body: { padding: 20, overflow: "hidden" } }}
-      >
-        <Title>Total Reports</Title>
-        <BarChart width={500} height={250} data={reportData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="Total" fill="#171586ff" />
-          <Bar dataKey="LowPr." fill="#8884d8" />
-          <Bar dataKey="HighPr." fill="#82ca9d" />
-        </BarChart>
-      </Card>
+        <Card
+          hoverable
+          style={{ width: 620 }}
+          styles={{ body: { padding: 20, overflow: "hidden" } }}
+        >
+          <Title>Total Reports</Title>
+          <BarChart width={500} height={250} data={reportData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="Total" fill="#171586ff" />
+            <Bar dataKey="LowPr." fill="#8884d8" />
+            <Bar dataKey="HighPr." fill="#82ca9d" />
+          </BarChart>
+        </Card>
       </Flex>
     </>
   );

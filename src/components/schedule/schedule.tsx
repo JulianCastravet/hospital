@@ -1,3 +1,3 @@
-export const Schedule = ()=>{
-  return <>Schedule component</>
-}
+export const Schedule = () => {
+  return <>Schedule component</>;
+};

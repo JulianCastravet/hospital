@@ -1,3 +1,3 @@
-export const Messages = ()=>{
-  return <>Messages component</>
-}
+export const Messages = () => {
+  return <>Messages component</>;
+};
