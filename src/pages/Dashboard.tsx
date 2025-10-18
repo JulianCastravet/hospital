@@ -1,5 +1,14 @@
-import { Layout, Menu, Breadcrumb, MenuProps, theme, Button } from "antd";
-import { Header, Content } from "antd/es/layout/layout";
+import {
+  Layout,
+  Menu,
+  Breadcrumb,
+  MenuProps,
+  theme,
+  Button,
+  Image,
+  Flex,
+} from "antd";
+import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import { useEffect, useState } from "react";
 import {
@@ -98,7 +107,11 @@ export const Dashboard = () => {
         onCollapse={(value) => setCollapsed(value)}
       >
         <div className="demo-logo-vertical" style={{ color: "white" }}>
-          some logo here
+          <Flex justify="center" align="center">
+            <div style={{ width: "50%" }}>
+              <Image src="https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png" />
+            </div>
+          </Flex>
         </div>
         <Menu
           theme="dark"
@@ -107,9 +120,11 @@ export const Dashboard = () => {
           items={items}
           onClick={handleMenuItemClick}
         />
-        <Button type="primary" onClick={userLogout}>
-          Log Out
-        </Button>
+        <Flex justify="center" style={{ marginTop: "20px" }}>
+          <Button type="primary" onClick={userLogout}>
+            Log Out
+          </Button>
+        </Flex>
       </Sider>
       <Layout>
         <Content style={{ margin: "0 16px" }}>

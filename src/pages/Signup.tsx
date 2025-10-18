@@ -31,8 +31,8 @@ export const SignUp = () => {
 
   const { user, setUser } = useUser();
 
-  const onDateChange = (date_: any, dateString: any) => {
-    setDate(new Date(dateString));
+  const onDateChange = (date_: any, dateString: string | string[]) => {
+    setDate(new Date(dateString === "string" ? dateString : dateString[0]));
   };
 
   const onSubmit = (values: any) => {
