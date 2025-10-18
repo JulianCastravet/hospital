@@ -1,7 +1,10 @@
 import { Table } from "antd";
 import { useUser } from "../../hooks/useUser";
+import { useTitle } from "../../hooks/useTitle";
 
 export const Patients = () => {
+  useTitle('Patients');
+  
   const { users } = useUser();
 
   const dataSource = [

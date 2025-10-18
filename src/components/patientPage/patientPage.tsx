@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { User } from "../../context/authContext";
 import { Descriptions } from "antd";
+import { useTitle } from "../../hooks/useTitle";
 
 const PatientPage = () => {
   const [user, setUser] = useState<User | undefined>(undefined);
-
   const params = useParams();
+  useTitle("User Page")
 
   useEffect(() => {
     const ls = window.localStorage;

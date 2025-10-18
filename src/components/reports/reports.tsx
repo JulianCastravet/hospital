@@ -1,8 +1,11 @@
 import { Table } from "antd";
 import { reports } from "../../data";
 import { Pill } from "../pill/pill";
+import { useTitle } from "../../hooks/useTitle";
 
 export const Reports = () => {
+
+  useTitle('Reports')
   const columns = [
     {
       key: "number",

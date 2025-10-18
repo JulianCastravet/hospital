@@ -3,9 +3,11 @@ import Title from "antd/es/typography/Title";
 import { BarChart, CartesianGrid, XAxis, YAxis, Legend, Bar } from "recharts";
 import { useUser } from "../../hooks/useUser";
 import { reports } from "../../data";
+import { useTitle } from "../../hooks/useTitle";
 
 export const Overview = () => {
   const { users } = useUser();
+  useTitle('Overview')
 
   const userData = [
     {

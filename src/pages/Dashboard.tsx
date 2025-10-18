@@ -24,7 +24,6 @@ import {
 } from "@ant-design/icons";
 import { useAuth } from "../context/authContext";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useTitle } from "../hooks/useTitle";
 
 export const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -32,7 +31,6 @@ export const Dashboard = () => {
   const { setUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  useTitle("Dashboard - Hospital");
 
   type MenuItem = Required<MenuProps>["items"][number];
 
