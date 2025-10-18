@@ -24,14 +24,12 @@ const doctorSpecialities = [
 ];
 
 export const SignUp = () => {
-
   useTitle("Sign Up - Hospital");
 
   const [date, setDate] = useState<Date>(new Date());
-  const [form]  = Form.useForm();
-  
-  const { user, setUser } = useUser();
+  const [form] = Form.useForm();
 
+  const { user, setUser } = useUser();
 
   const onDateChange = (date_: any, dateString: any) => {
     setDate(new Date(dateString));
@@ -40,11 +38,11 @@ export const SignUp = () => {
   const onSubmit = (values: any) => {
     //modify from dayjs to date obj
     values.dateOfBirth = new Date(date).toLocaleDateString();
-    values.id = Date.now()
+    values.id = Date.now();
 
     addToStorage(values);
 
-    resetForm()
+    resetForm();
   };
 
   const addToStorage = (user: User) => {
@@ -59,10 +57,9 @@ export const SignUp = () => {
     ls.setItem("users", stringUsers);
   };
 
-
-  const resetForm = ()=>{
-    form.resetFields()
-  }
+  const resetForm = () => {
+    form.resetFields();
+  };
 
   return (
     <>

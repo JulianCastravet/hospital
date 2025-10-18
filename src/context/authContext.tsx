@@ -8,7 +8,7 @@ export type User = {
   phone: string;
   email: string;
   password: string;
-  id: number
+  id: number;
 };
 
 type AuthContextType = {

@@ -26,7 +26,9 @@ const PatientPage = () => {
           {user?.dateOfBirth}
         </Descriptions.Item>
         <Descriptions.Item label="Phone"> {user?.phone}</Descriptions.Item>
-        <Descriptions.Item label="Email"><a href={`mailto:${user?.email}`}>{user?.email}</a> </Descriptions.Item>
+        <Descriptions.Item label="Email">
+          <a href={`mailto:${user?.email}`}>{user?.email}</a>{" "}
+        </Descriptions.Item>
         {user?.specialization && (
           <Descriptions.Item label="Specialization">
             {user?.specialization}

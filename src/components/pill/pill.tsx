@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import './pill.css'
+import "./pill.css";
 
 interface PillProps {
   className: string;

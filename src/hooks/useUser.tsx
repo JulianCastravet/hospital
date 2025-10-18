@@ -9,7 +9,7 @@ export const useUser = () => {
     phone: "",
     email: "",
     password: "",
-    id:0
+    id: 0,
   };
 
   const [user, _setUser] = useState<User>(emptyUser);
@@ -22,7 +22,7 @@ export const useUser = () => {
     localStorage.getItem("isAuthenticated") ?? "false"
   );
 
-  const users: User [] = JSON.parse(localStorage.getItem('users')?? '[]')
+  const users: User[] = JSON.parse(localStorage.getItem("users") ?? "[]");
 
   return { user, users, isAuthenticated, setUser };
 };

@@ -1,4 +1,3 @@
-
-export const Help = ()=>{
-  return <>Help component</>
-}
+export const Help = () => {
+  return <>Help component</>;
+};

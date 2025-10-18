@@ -3,9 +3,9 @@
   font-weight: 600;
   padding: 5px;
 }
-.pill.low{
+.pill.low {
   background-color: orange;
 }
-.pill.high{
+.pill.high {
   background-color: red;
 }

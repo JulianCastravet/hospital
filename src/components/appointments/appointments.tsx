@@ -1,3 +1,3 @@
-export const Appointments = ()=>{
-  return <>Appointments component</>
-}
+export const Appointments = () => {
+  return <>Appointments component</>;
+};

@@ -22,7 +22,7 @@ export const Dashboard = () => {
   const [subtitle, setSubtitle] = useState<string>("Overview");
   const { setUser } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation()
+  const location = useLocation();
   useTitle("Dashboard - Hospital");
 
   type MenuItem = Required<MenuProps>["items"][number];
@@ -67,16 +67,16 @@ export const Dashboard = () => {
     navigate("/");
   };
 
-  useEffect(()=>{
-    getDefaultLink()
-  },[])
+  useEffect(() => {
+    getDefaultLink();
+  }, []);
 
-  const getDefaultLink = ():string[] =>{
-    if(location.pathname.includes('patients')) {
-      return ['3']
+  const getDefaultLink = (): string[] => {
+    if (location.pathname.includes("patients")) {
+      return ["3"];
     }
-    return ['1']
-  }
+    return ["1"];
+  };
 
   const items = [
     getItem("Overview", "1", <WindowsOutlined />),
@@ -112,7 +112,6 @@ export const Dashboard = () => {
         </Button>
       </Sider>
       <Layout>
-      
         <Content style={{ margin: "0 16px" }}>
           <Breadcrumb
             style={{ margin: "16px 0" }}
@@ -127,7 +126,7 @@ export const Dashboard = () => {
                 borderRadius: borderRadiusLG,
               }}
             >
-              <Outlet/>
+              <Outlet />
             </Content>
           </Layout>
         </Content>

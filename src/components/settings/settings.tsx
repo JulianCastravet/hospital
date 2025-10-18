@@ -1,3 +1,3 @@
-export const Settings = ()=>{
-  return <> Settings component</>
-}
+export const Settings = () => {
+  return <> Settings component</>;
+};
