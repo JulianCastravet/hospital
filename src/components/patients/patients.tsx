@@ -1,6 +1,5 @@
 import { Table } from "antd";
 import { useUser } from "../../hooks/useUser";
-import { User } from "../../context/authContext";
 
 export const Patients = () => {
   const { users } = useUser();
