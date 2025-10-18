@@ -40,6 +40,7 @@ export const SignUp = () => {
   const onSubmit = (values: any) => {
     //modify from dayjs to date obj
     values.dateOfBirth = new Date(date).toLocaleDateString();
+    values.id = Date.now()
 
     addToStorage(values);
 

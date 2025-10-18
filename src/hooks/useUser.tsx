@@ -9,6 +9,7 @@ export const useUser = () => {
     phone: "",
     email: "",
     password: "",
+    id:0
   };
 
   const [user, _setUser] = useState<User>(emptyUser);

@@ -1,7 +1,7 @@
 import { Layout, Menu, Breadcrumb, MenuProps, theme, Button } from "antd";
 import { Header, Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   WindowsOutlined,
   CalendarOutlined,
@@ -13,17 +13,8 @@ import {
   QuestionCircleOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
-import { Overview } from "../components/overview/overview";
-import { Appointments } from "../components/appointments/appointments";
-import { Patients } from "../components/patients/patients";
-import { Schedule } from "../components/schedule/schedule";
-import { Reports } from "../components/reports/reports";
-import { Messages } from "../components/messages/messages";
-import { Medications } from "../components/medications/medications";
-import { Help } from "../components/help/help";
-import { Settings } from "../components/settings/settings";
 import { useAuth } from "../context/authContext";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTitle } from "../hooks/useTitle";
 
 export const Dashboard = () => {
@@ -31,7 +22,8 @@ export const Dashboard = () => {
   const [subtitle, setSubtitle] = useState<string>("Overview");
   const { setUser } = useAuth();
   const navigate = useNavigate();
-  useTitle('Dashboard - Hospital')
+  const location = useLocation()
+  useTitle("Dashboard - Hospital");
 
   type MenuItem = Required<MenuProps>["items"][number];
 
@@ -65,14 +57,26 @@ export const Dashboard = () => {
     "9": "Settings",
   };
 
-  const handleMenuItemClick = (i: any) => {
+  const handleMenuItemClick = (i: { key: string; value?: string }) => {
     setSubtitle(dictionary[i.key]);
+    navigate(`/dashboard/${dictionary[i.key].toLowerCase()}`);
   };
 
   const userLogout = () => {
     setUser(undefined);
     navigate("/");
   };
+
+  useEffect(()=>{
+    getDefaultLink()
+  },[])
+
+  const getDefaultLink = ():string[] =>{
+    if(location.pathname.includes('patients')) {
+      return ['3']
+    }
+    return ['1']
+  }
 
   const items = [
     getItem("Overview", "1", <WindowsOutlined />),
@@ -86,29 +90,6 @@ export const Dashboard = () => {
     getItem("Settings", "9", <SettingOutlined />),
   ];
 
-  const getComponent = () => {
-    switch (subtitle) {
-      case "Overview":
-        return <Overview />;
-      case "Appointments":
-        return <Appointments />;
-      case "Patients":
-        return <Patients />;
-      case "Schedule":
-        return <Schedule />;
-      case "Reports":
-        return <Reports />;
-      case "Messages":
-        return <Messages />;
-      case "Medications":
-        return <Medications />;
-      case "Help":
-        return <Help />;
-      case "Settings":
-        return <Settings />;
-    }
-  };
-
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
@@ -121,7 +102,7 @@ export const Dashboard = () => {
         </div>
         <Menu
           theme="dark"
-          defaultSelectedKeys={["1"]}
+          defaultSelectedKeys={getDefaultLink()}
           mode="inline"
           items={items}
           onClick={handleMenuItemClick}
@@ -131,9 +112,7 @@ export const Dashboard = () => {
         </Button>
       </Sider>
       <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }}>
-          <span>Dashboard - {subtitle} </span>
-        </Header>
+      
         <Content style={{ margin: "0 16px" }}>
           <Breadcrumb
             style={{ margin: "16px 0" }}
@@ -148,7 +127,7 @@ export const Dashboard = () => {
                 borderRadius: borderRadiusLG,
               }}
             >
-              {getComponent()}
+              <Outlet/>
             </Content>
           </Layout>
         </Content>
