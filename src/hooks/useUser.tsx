@@ -22,7 +22,12 @@ export const useUser = () => {
     localStorage.getItem("isAuthenticated") ?? "false"
   );
 
+  const addUser = (u: User) => {
+    users.push(u);
+    localStorage.setItem("users", JSON.stringify(users));
+  };
+
   const users: User[] = JSON.parse(localStorage.getItem("users") ?? "[]");
 
-  return { user, users, isAuthenticated, setUser };
+  return { user, users, isAuthenticated, setUser, addUser };
 };

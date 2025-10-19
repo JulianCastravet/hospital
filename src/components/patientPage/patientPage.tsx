@@ -17,7 +17,7 @@ const PatientPage = () => {
       const currUser = users.find((user) => user.id === Number(params.id));
       setUser(currUser);
     }
-  }, []);
+  }, [params.id]);
 
   return (
     <>

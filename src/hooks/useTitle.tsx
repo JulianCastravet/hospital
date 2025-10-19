@@ -3,12 +3,12 @@ import { useUser } from "./useUser";
 
 export const useTitle = (title: string) => {
   const { isAuthenticated } = useUser();
-  console.log(title)
+
   useEffect(() => {
     if (isAuthenticated) {
       document.title = `Hospital Dashboard - ${title}`;
     } else {
       document.title = `Hospital`;
     }
-  }, [title]);
+  }, [title,isAuthenticated]);
 };

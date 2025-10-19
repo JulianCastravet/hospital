@@ -79,12 +79,13 @@ export const Dashboard = () => {
   }, []);
 
   const getDefaultLink = (): string[] => {
-    if (location.pathname.includes("patients")) {
-      return ["3"];
+    for (let i in dictionary) {
+      if (location.pathname.includes(dictionary[i].toLowerCase())) {
+        return [i];
+      }
     }
-    return ["1"];
+    return [""];
   };
-
   const items = [
     getItem("Overview", "1", <WindowsOutlined />),
     getItem("Appointments", "2", <CalendarOutlined />),
