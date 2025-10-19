@@ -10,6 +10,14 @@ export interface Report {
   test: string;
   number: number;
 }
+export type Appointment = {
+  appointmentId: number;
+  name: string;
+  email: string;
+  phone: string;
+  diagnosis: string | string[];
+  key: number;
+};
 
 export const reports: Report[] = [
   {
