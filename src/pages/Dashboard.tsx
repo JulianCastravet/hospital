@@ -70,6 +70,7 @@ export const Dashboard = () => {
   };
 
   const userLogout = () => {
+    localStorage.removeItem("token");
     setUser(undefined);
     navigate("/");
   };

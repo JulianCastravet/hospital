@@ -40,7 +40,7 @@ root.render(
     </ProtectedRoute>
   }
 >
-  <Route index element={<Navigate to="overview" replace />} />
+  {/* <Route index element={<Navigate to="overview" replace />} /> */}
   <Route path="overview" Component={Overview} />
   <Route path="appointments" Component={Appointments} />
   <Route path="patients" Component={Patients} />

@@ -8,6 +8,7 @@ import Input from "antd/es/input/Input";
 import { LockOutlined, UserOutlined, MailOutlined } from "@ant-design/icons";
 import { useUser } from "../hooks/useUser";
 import { User } from "../context/authContext";
+import { addUser } from "../api/user";
 
 const doctorSpecialities = [
   { label: "ORL", value: "orl" },
@@ -25,7 +26,7 @@ const doctorSpecialities = [
 
 export const SignUp = () => {
   useTitle("Sign Up - Hospital");
-  const { user, setUser, users } = useUser();
+  const { user, setUser } = useUser();
 
   const [date, setDate] = useState<Date>(new Date());
   const [form] = Form.useForm();
@@ -36,8 +37,7 @@ export const SignUp = () => {
 
   const onSubmit = (user: User) => {
     user.dateOfBirth = new Date(date).toLocaleDateString();
-    user.id = Date.now();
-    users.push(user);
+    addUser(user);
 
     resetForm();
   };

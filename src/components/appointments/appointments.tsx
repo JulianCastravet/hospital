@@ -1,18 +1,27 @@
 import { Button, Flex, Form, Input, Modal, Table } from "antd";
 import { useTitle } from "../../hooks/useTitle";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "antd/es/form/Form";
+import { Appointment } from "../../data";
+import { addAppointment, getAllAppointments } from "../../api/appointments";
 
 export const Appointments = () => {
   useTitle("Appointments");
   const [open, setOpen] = useState<boolean>(false);
+  const [appointments, setAppointments] = useState<Appointment[]>();
+
+  useEffect(() => {
+    getAllAppointments().then((apps) => {
+      setAppointments(apps);
+    });
+  }, []);
 
   const [form] = useForm();
 
   const columns = [
     {
       title: "Appointment ID",
-      dataIndex: "appointmentId",
+      dataIndex: "_id",
       key: "appointmentId",
     },
     {
@@ -37,27 +46,20 @@ export const Appointments = () => {
     },
   ];
 
-  const dataSource = [
-    {
-      appointmentId: Date.now(),
-      name: "user name",
-      email: "user@test.com",
-      phone: "123456677",
-      diagnosis: "Blood checkup",
-      key: 1,
-    },
-  ];
-  const submitAppoinment = () => {
-    const appointment = form.getFieldsValue();
+  const submitAppoinment = async () => {
+    const appointment = form.getFieldsValue() as Appointment;
+    addAppointment(appointment);
 
-    //send to backend
+    const apps = await getAllAppointments();
+    setAppointments(apps);
+
     form.resetFields();
     setOpen(!open);
   };
 
   return (
     <>
-      <Table columns={columns} dataSource={dataSource}></Table>
+      <Table columns={columns} dataSource={appointments} rowKey={"_id"}></Table>
       <Button type="primary" onClick={() => setOpen(!open)}>
         Add Appointment
       </Button>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { User } from "../context/authContext";
+import { addUser as _addUser} from "../api/user";
 
 export const useUser = () => {
   const emptyUser: User = {
@@ -13,6 +14,7 @@ export const useUser = () => {
   };
 
   const [user, _setUser] = useState<User>(emptyUser);
+  const [users, setUsers] = useState<User[]>([]);
 
   const setUser = (u: User) => {
     _setUser(u);
@@ -23,11 +25,10 @@ export const useUser = () => {
   );
 
   const addUser = (u: User) => {
-    users.push(u);
-    localStorage.setItem("users", JSON.stringify(users));
+    _addUser(u);
   };
 
-  const users: User[] = JSON.parse(localStorage.getItem("users") ?? "[]");
+  // getAllUsers().then((users) => setUsers(users));
 
   return { user, users, isAuthenticated, setUser, addUser };
 };

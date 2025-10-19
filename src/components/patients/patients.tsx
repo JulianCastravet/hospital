@@ -1,36 +1,30 @@
 import { Button, DatePicker, Flex, Form, Input, Modal, Table } from "antd";
 import { useUser } from "../../hooks/useUser";
 import { useTitle } from "../../hooks/useTitle";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "antd/es/form/Form";
 import { UserOutlined, MailOutlined } from "@ant-design/icons";
 import { User } from "../../context/authContext";
+import { getPatients } from "../../api/user";
 
 export const Patients = () => {
   useTitle("Patients");
 
-  const { users, addUser } = useUser();
+  const { addUser } = useUser();
 
   const [form] = useForm();
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [date, setDate] = useState<Date>(new Date());
+  const [patients, setPatients] = useState<User[]>();
+
+  useEffect(() => {
+    getPatients().then((pat) => setPatients(pat));
+  }, []);
 
   const onDateChange = (date_: any, dateString: string | string[]) => {
     setDate(new Date(dateString === "string" ? dateString : dateString[0]));
   };
-
-  const dataSource = [
-    ...users
-      .filter((user) => user.type === "guest")
-      .map((i, key) => ({
-        key,
-        id: i.id,
-        name: i.name,
-        mail: i.email,
-        phone: i.phone,
-      })),
-  ];
 
   const columns = [
     {
@@ -43,7 +37,7 @@ export const Patients = () => {
     },
     {
       title: "Mail",
-      dataIndex: "mail",
+      dataIndex: "email",
       key: "mail",
     },
     {
@@ -65,9 +59,10 @@ export const Patients = () => {
   return (
     <>
       <Table
-        dataSource={dataSource}
+        dataSource={patients}
         columns={columns}
         sortDirections={["ascend", "descend"]}
+        rowKey={'_id'}
       />
       <Flex>
         <Button type="primary" onClick={() => setModalOpen(!modalOpen)}>

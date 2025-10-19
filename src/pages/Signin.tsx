@@ -4,44 +4,23 @@ import { HeaderComponent } from "../components/header/headerComponent";
 import { useTitle } from "../hooks/useTitle";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Content } from "antd/es/layout/layout";
+import { userLoginRequest } from "../api/user";
+import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
-import { useAuth, User } from "../context/authContext";
 
 export const SignIn = () => {
   useTitle("Sign In - Hospital");
   const navigate = useNavigate();
 
-  const { setUser } = useAuth();
-
-  const onSubmit = (values: any) => {
-    const { password, mail } = values;
-
-    const usersLS: User[] = JSON.parse(
-      window.localStorage.getItem("users") ?? "[]"
-    );
-
-    if (usersLS.length) {
-      const user = usersLS.find((user) => user.email === mail);
-      if (!user) {
-        alert("user not found");
-      }
-      if (user?.email === mail && user?.password !== password) {
-        alert("Wrong password! :(");
-      }
-      if (user?.email === mail && user?.password === password) {
-        setUser(user);
-        userLoggedIn();
-        navigate("/dashboard");
-      }
+  const onSubmit = async (values: any) => {
+    const data = await userLoginRequest(values);
+    if (data.success) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      navigate('/dashboard/overview');
     }
   };
 
-  const userLoggedIn = () => {
-    const ls = window.localStorage;
-    if (!ls.getItem("isAuthenticated")) {
-      ls.setItem("isAuthenticated", JSON.stringify(true));
-    }
-  };
   return (
     <>
       <HeaderComponent />

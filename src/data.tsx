@@ -15,7 +15,7 @@ export type Appointment = {
   name: string;
   email: string;
   phone: string;
-  diagnosis: string | string[];
+  diagnosis: string[];
   key: number;
 };
 
