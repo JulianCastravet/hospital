@@ -5,7 +5,6 @@ import { useTitle } from "../hooks/useTitle";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Content } from "antd/es/layout/layout";
 import { userLoginRequest } from "../api/user";
-import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 
 export const SignIn = () => {
@@ -17,7 +16,7 @@ export const SignIn = () => {
     if (data.success) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
-      navigate('/dashboard/overview');
+      navigate("/dashboard/overview");
     }
   };
 

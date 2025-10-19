@@ -7,17 +7,11 @@ import { useTitle } from "../../hooks/useTitle";
 const PatientPage = () => {
   const [user, setUser] = useState<User | undefined>(undefined);
   const params = useParams();
-  useTitle("User Page")
+  useTitle("User Page");
 
   useEffect(() => {
-    const ls = window.localStorage;
-    if (ls.getItem("users")) {
-      const users: User[] = JSON.parse(ls.getItem("users")!) as User[];
-
-      const currUser = users.find((user) => user.id === Number(params.id));
-      setUser(currUser);
-    }
-  }, [params.id]);
+    alert("needs to be fixed");
+  }, []);
 
   return (
     <>

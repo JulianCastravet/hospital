@@ -68,15 +68,12 @@ export const authenticateUser = async (req: Request, res: Response) => {
   try {
     const { mail, password } = req.body;
 
-    // 1. Check if user exists
     const user = await User.findOne({ email: mail });
     if (!user) {
       return res
         .status(401)
         .json({ success: false, message: "User not found" });
     }
-
-    // 2. Compare password
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
@@ -85,14 +82,12 @@ export const authenticateUser = async (req: Request, res: Response) => {
         .json({ success: false, message: "Invalid credentials" });
     }
 
-    // 3. Generate JWT token
     const token = jwt.sign(
       { userId: user._id },
-      process.env.JWT_SECRET || "secret", // use .env secret
+      process.env.JWT_SECRET || "secret",
       { expiresIn: "1h" }
     );
 
-    // 4. Return user info and token
     res.status(200).json({
       success: true,
       token,

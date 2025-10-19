@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { User } from "../context/authContext";
-import { addUser as _addUser} from "../api/user";
+import { addUser as _addUser, getAllUsers } from "../api/user";
 
 export const useUser = () => {
+  useEffect(() => {
+    getAllUsers().then((u) => setUsers(u));
+  }, []);
+
   const emptyUser: User = {
     type: "",
     name: "",
@@ -10,7 +14,6 @@ export const useUser = () => {
     phone: "",
     email: "",
     password: "",
-    id: 0,
   };
 
   const [user, _setUser] = useState<User>(emptyUser);
@@ -27,8 +30,6 @@ export const useUser = () => {
   const addUser = (u: User) => {
     _addUser(u);
   };
-
-  // getAllUsers().then((users) => setUsers(users));
 
   return { user, users, isAuthenticated, setUser, addUser };
 };

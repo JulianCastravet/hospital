@@ -48,7 +48,6 @@ export const Patients = () => {
   ];
 
   const submitAddPatient = (user: User) => {
-    user.id = Date.now();
     user.type = "guest";
     user.dateOfBirth = date.toLocaleString();
     addUser(user);
