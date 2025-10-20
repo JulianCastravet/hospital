@@ -11,12 +11,17 @@ import {
 import { Report } from "../../data";
 import ReportForm from "../reportForm/reportForm";
 import { useForm } from "antd/es/form/Form";
-import { EditFilled, DeleteFilled } from "@ant-design/icons";
+import {
+  EditFilled,
+  DeleteFilled,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
 import dayjs from "dayjs";
 
 export const Reports = () => {
   useTitle("Reports");
   const [form] = useForm();
+  const { confirm } = Modal;
 
   useEffect(() => {
     getAllReports().then((reports) => setReports(reports));
@@ -115,7 +120,7 @@ export const Reports = () => {
           setOpenModal(false);
           form.resetFields();
         })
-        .catch((error) => console.error(error));
+        .catch((error) => {});
     } else {
       updateReport(reportId, formObj).then((reports) => setReports(reports));
       setOpenModal(false);
@@ -138,8 +143,20 @@ export const Reports = () => {
     setReportId(v._id);
     form.setFieldsValue(v);
   };
+
   const handleDeleteRow = (v: any) => {
-    deleteReport(v._id).then((reports) => setReports(reports));
+    confirm({
+      title: "Are you sure?",
+      icon: <ExclamationCircleOutlined />,
+      content: "This operation will delete the report from database.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk() {
+        deleteReport(v._id).then((reports) => setReports(reports));
+      },
+      onCancel() {},
+    });
   };
 
   return (

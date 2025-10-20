@@ -8,6 +8,7 @@ import {
   MailOutlined,
   EditFilled,
   DeleteFilled,
+  ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { User } from "../../context/authContext";
 import { deleteUser, getPatients } from "../../api/user";
@@ -18,6 +19,7 @@ export const Patients = () => {
   const { addUser } = useUser();
 
   const [form] = useForm();
+  const { confirm } = Modal;
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [date, setDate] = useState<Date>(new Date());
@@ -89,9 +91,15 @@ export const Patients = () => {
   }
 
   function handleDeleteRow(data: any) {
-    console.log(data);
-    // create modal=> are you sure?
-    deleteUser(data._id).then((patients) => setPatients(patients));
+    confirm({
+      title: "Are you sure?",
+      icon: <ExclamationCircleOutlined />,
+      content: " This action is irreversible.",
+      onOk() {
+        deleteUser(data._id).then((patients) => setPatients(patients));
+      },
+      onCancel() {},
+    });
   }
 
   return (

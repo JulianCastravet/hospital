@@ -24,6 +24,7 @@ import {
 } from "@ant-design/icons";
 import { useAuth } from "../context/authContext";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import userSettings from "../store/userSettings.store";
 
 export const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -31,6 +32,8 @@ export const Dashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { setIsAuthenticated } = useAuth();
+
+  const { userOptions } = userSettings();
 
   type MenuItem = Required<MenuProps>["items"][number];
 
@@ -91,7 +94,7 @@ export const Dashboard = () => {
   const items = [
     getItem("Overview", "1", <WindowsOutlined />),
     getItem("Appointments", "2", <CalendarOutlined />),
-    getItem("Patients", "3", <UserOutlined />),
+  (  userOptions.includes('Patients') ? getItem("Patients", "3", <UserOutlined />): null) ,
     getItem("Schedule", "4", <ScheduleOutlined />),
     getItem("Reports", "5", <RiseOutlined />),
     getItem("Messages", "6", <MailOutlined />),
@@ -106,6 +109,7 @@ export const Dashboard = () => {
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
+        theme={userOptions.includes("Dark Mode") ? "dark" : "light"}
       >
         <div className="demo-logo-vertical" style={{ color: "white" }}>
           <Flex justify="center" align="center">
@@ -115,7 +119,7 @@ export const Dashboard = () => {
           </Flex>
         </div>
         <Menu
-          theme="dark"
+          theme={userOptions.includes("Dark Mode") ? "dark" : "light"}
           defaultSelectedKeys={getDefaultLink()}
           mode="inline"
           items={items}

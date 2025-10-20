@@ -1,4 +1,4 @@
-import { Checkbox, GetProp } from "antd";
+import { Checkbox } from "antd";
 import { useTitle } from "../../hooks/useTitle";
 import userSettings from "../../store/userSettings.store";
 
@@ -7,10 +7,8 @@ export const Settings = () => {
 
   const { userOptions, setOption } = userSettings();
 
-  const plainOptions = ["Apple", "Pear", "Orange"];
-  const onChange: GetProp<typeof Checkbox.Group, "onChange"> = (
-    checkedValues: unknown[]
-  ) => {
+  const plainOptions = ["Dark Mode", "Patients", "Has Phone"];
+  const onChange = (checkedValues: unknown[]) => {
     setOption(checkedValues as string[]);
   };
 
