@@ -12,8 +12,8 @@ export type User = {
 
 type AuthContextType = {
   user: User | undefined;
-  setUser: (u: User | undefined) => void;
   isAuthenticated: boolean;
+  setIsAuthenticated: (v: boolean) => void;
 };
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -24,21 +24,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return savedUser ? JSON.parse(savedUser) : undefined;
   });
 
-  const isAuthenticated = !!user;
-
-  const setUser = (u: User | undefined) => {
-    setUserState(u);
-    if (u) {
-      localStorage.setItem("user", JSON.stringify(u));
-      localStorage.setItem("isAuthenticated", "true");
-    } else {
-      localStorage.removeItem("user");
-      localStorage.removeItem("isAuthenticated");
-    }
-  };
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!user);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, setIsAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

@@ -6,16 +6,19 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Content } from "antd/es/layout/layout";
 import { userLoginRequest } from "../api/user";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/authContext";
 
 export const SignIn = () => {
   useTitle("Sign In - Hospital");
   const navigate = useNavigate();
+  const { setIsAuthenticated } = useAuth();
 
   const onSubmit = async (values: any) => {
     const data = await userLoginRequest(values);
     if (data.success) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      setIsAuthenticated(true);
       navigate("/dashboard/overview");
     }
   };

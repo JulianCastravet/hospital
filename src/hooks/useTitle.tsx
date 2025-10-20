@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { useUser } from "./useUser";
+import { useAuth } from "../context/authContext";
 
 export const useTitle = (title: string) => {
-  const { isAuthenticated } = useUser();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (isAuthenticated) {

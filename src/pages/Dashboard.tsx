@@ -28,9 +28,9 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 export const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [subtitle, setSubtitle] = useState<string>("Overview");
-  const { setUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { setIsAuthenticated } = useAuth();
 
   type MenuItem = Required<MenuProps>["items"][number];
 
@@ -71,7 +71,8 @@ export const Dashboard = () => {
 
   const userLogout = () => {
     localStorage.removeItem("token");
-    setUser(undefined);
+    localStorage.removeItem("user");
+    setIsAuthenticated(false);
     navigate("/");
   };
 

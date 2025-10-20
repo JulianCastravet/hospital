@@ -23,13 +23,9 @@ export const useUser = () => {
     _setUser(u);
   };
 
-  const isAuthenticated: boolean = JSON.parse(
-    localStorage.getItem("isAuthenticated") ?? "false"
-  );
-
   const addUser = (u: User) => {
     _addUser(u);
   };
 
-  return { user, users, isAuthenticated, setUser, addUser };
+  return { user, users, setUser, addUser };
 };
