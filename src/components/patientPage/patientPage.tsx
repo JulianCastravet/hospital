@@ -13,7 +13,7 @@ const PatientPage = () => {
   useEffect(() => {
     const { id } = params;
     getSingleUser(id ?? "").then((user) => setUser(user));
-  }, []);
+  }, [params]);
 
   return (
     <>

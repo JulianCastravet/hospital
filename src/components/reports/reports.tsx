@@ -1,23 +1,44 @@
-import { Table } from "antd";
-import { reports } from "../../data";
+import { Button, Flex, Modal, Table } from "antd";
 import { Pill } from "../pill/pill";
 import { useTitle } from "../../hooks/useTitle";
+import { useEffect, useState } from "react";
+import {
+  addReport,
+  updateReport,
+  getAllReports,
+  deleteReport,
+} from "../../api/reports";
+import { Report } from "../../data";
+import ReportForm from "../reportForm/reportForm";
+import { useForm } from "antd/es/form/Form";
+import { EditFilled, DeleteFilled } from "@ant-design/icons";
+import dayjs from "dayjs";
 
 export const Reports = () => {
+  useTitle("Reports");
+  const [form] = useForm();
 
-  useTitle('Reports')
+  useEffect(() => {
+    getAllReports().then((reports) => setReports(reports));
+  }, []);
+
+  const [reports, setReports] = useState<Report[]>([]);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [reportId, setReportId] = useState<string>("");
+
   const columns = [
     {
-      key: "number",
-      title: "Number",
-      dataIndex: "number",
+      key: "id",
+      title: "Id",
+      dataIndex: "_id",
     },
     {
       key: "signed",
       title: "Signed",
       dataIndex: "signed",
       render: (value: boolean) => (
-        <input type="checkbox" defaultChecked={value} />
+        <input type="checkbox" disabled defaultChecked={value} />
       ),
     },
     {
@@ -63,15 +84,84 @@ export const Reports = () => {
       title: "Test",
       dataIndex: "test",
     },
+    {
+      key: "actions",
+      title: "Actions",
+      dataIndex: "",
+      render: (v: any) => (
+        <Flex gap={12}>
+          <EditFilled
+            style={{ color: "orange" }}
+            onClick={() => handleEditRow(v)}
+          />
+          <DeleteFilled
+            style={{ color: "red" }}
+            onClick={() => handleDeleteRow(v)}
+          />
+        </Flex>
+      ),
+    },
   ];
+
+  const submitForm = () => {
+    const formObj = form.getFieldsValue();
+    if (!isEditMode) {
+      form
+        .validateFields()
+        .then(() => {
+          formObj.signed = formObj.signed ?? false;
+          formObj.collBy = formObj.collBy?.format("HH.mm MM/DD");
+          addReport(formObj).then((reports) => setReports(reports));
+          setOpenModal(false);
+          form.resetFields();
+        })
+        .catch((error) => console.error(error));
+    } else {
+      updateReport(reportId, formObj).then((reports) => setReports(reports));
+      setOpenModal(false);
+      form.resetFields();
+      setIsEditMode(false);
+    }
+  };
+
+  const handleModal = () => {
+    form.resetFields();
+    setOpenModal(false);
+    setIsEditMode(false);
+  };
+
+  const handleEditRow = (v: any) => {
+    v.collBy = dayjs(v.collBy);
+
+    setOpenModal(true);
+    setIsEditMode(true);
+    setReportId(v._id);
+    form.setFieldsValue(v);
+  };
+  const handleDeleteRow = (v: any) => {
+    deleteReport(v._id).then((reports) => setReports(reports));
+  };
 
   return (
     <>
       <Table
         columns={columns}
         dataSource={reports}
-        rowKey={(record) => record.number}
+        rowKey={"_id"}
+        rowHoverable
       ></Table>
+
+      <Button type="primary" onClick={() => setOpenModal(true)}>
+        Add Report
+      </Button>
+      <Modal
+        open={openModal}
+        onCancel={handleModal}
+        onOk={submitForm}
+        style={{ padding: "30px" }}
+      >
+        <ReportForm handleSubmit={submitForm} form={form} />
+      </Modal>
     </>
   );
 };

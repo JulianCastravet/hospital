@@ -17,7 +17,7 @@ export const getPatients = async (): Promise<User[]> => {
   return res.json();
 };
 
-export const getSingleUser = async (id: string):Promise<User> => {
+export const getSingleUser = async (id: string): Promise<User> => {
   const res = await fetch(`http://localhost:4000/users/${id}`);
   if (!res.ok) throw new Error(errorMsg);
   return res.json();
@@ -50,4 +50,28 @@ export const userLoginRequest = async (v: {
   return res.json();
 };
 
-// next to come: update user
+export const updateUser = async (id: string, body: Partial<User>) => {
+  const res = await fetch(`http://localhost:4000/users/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(body),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!res.ok) throw new Error(errorMsg);
+  return res.json();
+};
+
+export const deleteUser = async (id: string) => {
+  const res = await fetch(`http://localhost:4000/users/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "text",
+    },
+  });
+
+  if (!res.ok) throw Error(errorMsg);
+  return res.json();
+};
+

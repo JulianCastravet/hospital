@@ -5,6 +5,8 @@ import {
   addUser,
   authenticateUser,
   getPatients,
+  deleteUser,
+  updateUser,
 } from "../controllers/userController";
 
 const router = express.Router();
@@ -13,5 +15,7 @@ router.get("/getAllUsers", getAllUsers);
 router.get("/getPatients", getPatients);
 router.get("/:id", getSingleUser);
 router.post("/", addUser);
+router.delete("/:id", deleteUser);
+router.put("/:id", updateUser);
 
 export default router;

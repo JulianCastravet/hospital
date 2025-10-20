@@ -56,8 +56,11 @@ export const addUser = async (req: Request, res: Response) => {
       specialization,
     });
 
-    const savedUser = await newUser.save();
-    res.status(201).json(savedUser);
+    await newUser.save();
+
+    const users = await User.find();
+
+    return res.status(200).json(users);
   } catch (error) {
     console.error("Add user error:", error);
     res.status(500).json({ message: "Error adding user" });
@@ -104,5 +107,36 @@ export const getPatients = async (req: Request, res: Response) => {
     res.status(200).json(patients);
   } catch (error) {
     res.status(500).json({ message: "something went wrong" });
+  }
+};
+
+export const updateUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const data = req.body;
+
+    await User.findByIdAndUpdate(id, data, {
+      new: true,
+      runValidators: true,
+    });
+
+    const users = await User.find();
+
+    return res.status(200).json(users);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+
+export const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    await User.findByIdAndDelete(id);
+
+    const users = await User.find();
+
+    return res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: error });
   }
 };

@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import userRoutes from "./routes/userRoutes";
 import appointmentsRoutes from "./routes/appointmentsRoutes";
+import reportRoutes from "./routes/reportsRoutes";
 
 dotenv.config();
 const app = express();
@@ -22,5 +23,6 @@ mongoose
 app.get("/", (_req, res) => res.send("Backend running 🚀"));
 app.use("/users", userRoutes);
 app.use("/appointments", appointmentsRoutes);
+app.use("/reports", reportRoutes);
 
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

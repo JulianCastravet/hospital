@@ -3,9 +3,14 @@ import { useUser } from "../../hooks/useUser";
 import { useTitle } from "../../hooks/useTitle";
 import { useEffect, useState } from "react";
 import { useForm } from "antd/es/form/Form";
-import { UserOutlined, MailOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  MailOutlined,
+  EditFilled,
+  DeleteFilled,
+} from "@ant-design/icons";
 import { User } from "../../context/authContext";
-import { getPatients } from "../../api/user";
+import { deleteUser, getPatients } from "../../api/user";
 
 export const Patients = () => {
   useTitle("Patients");
@@ -45,9 +50,26 @@ export const Patients = () => {
       dataIndex: "phone",
       key: "phone",
     },
+    {
+      key: "actions",
+      title: "Actions",
+      dataIndex: "",
+      render: (v: any) => (
+        <Flex gap={12}>
+          <EditFilled
+            style={{ color: "orange" }}
+            onClick={() => handleEditRow(v)}
+          />
+          <DeleteFilled
+            style={{ color: "red" }}
+            onClick={() => handleDeleteRow(v)}
+          />
+        </Flex>
+      ),
+    },
   ];
 
-  const submitAddPatient = (user: User) => {
+  const submitAddPatient = async (user: User) => {
     user.type = "guest";
     user.dateOfBirth = date.toLocaleString();
     user.password = "guest";
@@ -58,6 +80,16 @@ export const Patients = () => {
     getPatients().then((patients) => setPatients(patients));
     setModalOpen(!modalOpen);
   };
+
+  function handleEditRow(v: any): void {
+    throw new Error("Function not implemented.");
+  }
+
+  function handleDeleteRow(data: any) {
+    console.log(data)
+    // create modal=> are you sure?
+    deleteUser(data._id).then((patients) => setPatients(patients));
+  }
 
   return (
     <>

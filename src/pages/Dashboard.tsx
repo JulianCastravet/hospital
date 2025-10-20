@@ -78,7 +78,7 @@ export const Dashboard = () => {
 
   useEffect(() => {
     getDefaultLink();
-  }, []);
+  });
 
   const getDefaultLink = (): string[] => {
     for (let i in dictionary) {
