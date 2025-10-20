@@ -37,7 +37,9 @@ export const Patients = () => {
       dataIndex: "name",
       key: "name",
       render: (name: string, record: any) => (
-        <a href={`/dashboard/patients/${record._id}`}>{name}</a>
+        <a className="text-gray-500" href={`/dashboard/patients/${record._id}`}>
+          {name}
+        </a>
       ),
     },
     {
@@ -49,6 +51,7 @@ export const Patients = () => {
       title: "Phone",
       dataIndex: "phone",
       key: "phone",
+      render: (v: any) => <span>{v}</span>,
     },
     {
       key: "actions",
@@ -57,11 +60,11 @@ export const Patients = () => {
       render: (v: any) => (
         <Flex gap={12}>
           <EditFilled
-            style={{ color: "orange" }}
+            className="!text-gray-400 hover:text-orange-400! text-xl"
             onClick={() => handleEditRow(v)}
           />
           <DeleteFilled
-            style={{ color: "red" }}
+            className="!text-gray-400 text-xl hover:text-red-600!"
             onClick={() => handleDeleteRow(v)}
           />
         </Flex>
@@ -86,7 +89,7 @@ export const Patients = () => {
   }
 
   function handleDeleteRow(data: any) {
-    console.log(data)
+    console.log(data);
     // create modal=> are you sure?
     deleteUser(data._id).then((patients) => setPatients(patients));
   }

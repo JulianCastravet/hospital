@@ -91,11 +91,11 @@ export const Reports = () => {
       render: (v: any) => (
         <Flex gap={12}>
           <EditFilled
-            style={{ color: "orange" }}
+            className="!text-gray-400 hover:text-orange-400! text-xl"
             onClick={() => handleEditRow(v)}
           />
           <DeleteFilled
-            style={{ color: "red" }}
+            className="!text-gray-400 text-xl hover:text-red-600!"
             onClick={() => handleDeleteRow(v)}
           />
         </Flex>
