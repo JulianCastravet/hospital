@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { User } from "../../context/authContext";
 import { Descriptions } from "antd";
 import { useTitle } from "../../hooks/useTitle";
+import { getSingleUser } from "../../api/user";
 
 const PatientPage = () => {
   const [user, setUser] = useState<User | undefined>(undefined);
@@ -10,7 +11,8 @@ const PatientPage = () => {
   useTitle("User Page");
 
   useEffect(() => {
-    alert("needs to be fixed");
+    const { id } = params;
+    getSingleUser(id ?? "").then((user) => setUser(user));
   }, []);
 
   return (
@@ -22,7 +24,7 @@ const PatientPage = () => {
         </Descriptions.Item>
         <Descriptions.Item label="Phone"> {user?.phone}</Descriptions.Item>
         <Descriptions.Item label="Email">
-          <a href={`mailto:${user?.email}`}>{user?.email}</a>{" "}
+          <a href={`mailto:${user?.email}`}>{user?.email}</a>
         </Descriptions.Item>
         {user?.specialization && (
           <Descriptions.Item label="Specialization">

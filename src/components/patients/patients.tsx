@@ -32,7 +32,7 @@ export const Patients = () => {
       dataIndex: "name",
       key: "name",
       render: (name: string, record: any) => (
-        <a href={`/dashboard/patients/${record.id}`}>{name}</a>
+        <a href={`/dashboard/patients/${record._id}`}>{name}</a>
       ),
     },
     {
@@ -50,8 +50,12 @@ export const Patients = () => {
   const submitAddPatient = (user: User) => {
     user.type = "guest";
     user.dateOfBirth = date.toLocaleString();
+    user.password = "guest";
     addUser(user);
     form.resetFields();
+
+    // need to update the list with the last record added
+    getPatients().then((patients) => setPatients(patients));
     setModalOpen(!modalOpen);
   };
 
@@ -61,7 +65,7 @@ export const Patients = () => {
         dataSource={patients}
         columns={columns}
         sortDirections={["ascend", "descend"]}
-        rowKey={'_id'}
+        rowKey={"_id"}
       />
       <Flex>
         <Button type="primary" onClick={() => setModalOpen(!modalOpen)}>

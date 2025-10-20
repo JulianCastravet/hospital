@@ -1,12 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { User } from "../context/authContext";
-import { addUser as _addUser, getAllUsers } from "../api/user";
+import { addUser as _addUser } from "../api/user";
 
 export const useUser = () => {
-  useEffect(() => {
-    getAllUsers().then((u) => setUsers(u));
-  }, []);
-
   const emptyUser: User = {
     type: "",
     name: "",

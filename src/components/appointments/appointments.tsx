@@ -48,10 +48,7 @@ export const Appointments = () => {
 
   const submitAppoinment = async () => {
     const appointment = form.getFieldsValue() as Appointment;
-    addAppointment(appointment);
-
-    const apps = await getAllAppointments();
-    setAppointments(apps);
+    addAppointment(appointment).then((res) => setAppointments(res));
 
     form.resetFields();
     setOpen(!open);

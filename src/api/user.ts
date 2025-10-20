@@ -17,7 +17,7 @@ export const getPatients = async (): Promise<User[]> => {
   return res.json();
 };
 
-export const getSingleUser = async (id: string) => {
+export const getSingleUser = async (id: string):Promise<User> => {
   const res = await fetch(`http://localhost:4000/users/${id}`);
   if (!res.ok) throw new Error(errorMsg);
   return res.json();

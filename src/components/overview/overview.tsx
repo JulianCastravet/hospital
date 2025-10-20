@@ -1,13 +1,19 @@
 import { Card, Flex, Tooltip } from "antd";
 import Title from "antd/es/typography/Title";
 import { BarChart, CartesianGrid, XAxis, YAxis, Legend, Bar } from "recharts";
-import { useUser } from "../../hooks/useUser";
 import { reports } from "../../data";
 import { useTitle } from "../../hooks/useTitle";
+import { useEffect, useState } from "react";
+import { User } from "../../context/authContext";
+import { getAllUsers } from "../../api/user";
 
 export const Overview = () => {
-  const { users } = useUser();
-  useTitle('Overview')
+  useTitle("Overview");
+
+  const [users, setUsers] = useState<User[]>([]);
+  useEffect(() => {
+    getAllUsers().then((data) => setUsers(data));
+  }, []);
 
   const userData = [
     {
