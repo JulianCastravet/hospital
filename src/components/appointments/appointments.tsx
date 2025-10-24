@@ -3,12 +3,20 @@ import { useTitle } from "../../hooks/useTitle";
 import { useEffect, useState } from "react";
 import { useForm } from "antd/es/form/Form";
 import { Appointment } from "../../data";
-import { addAppointment, getAllAppointments } from "../../api/appointments";
+import {
+  addAppointment,
+  deleteAppointment,
+  getAllAppointments,
+  updateAppointment,
+} from "../../api/appointments";
+import { DeleteFilled, EditFilled } from "@ant-design/icons";
 
 export const Appointments = () => {
   useTitle("Appointments");
   const [open, setOpen] = useState<boolean>(false);
   const [appointments, setAppointments] = useState<Appointment[]>();
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [appointmentId, setAppointmentId] = useState<string>("");
 
   useEffect(() => {
     getAllAppointments().then((apps) => {
@@ -17,6 +25,7 @@ export const Appointments = () => {
   }, []);
 
   const [form] = useForm();
+  const { confirm } = Modal;
 
   const columns = [
     {
@@ -44,11 +53,58 @@ export const Appointments = () => {
       dataIndex: "diagnosis",
       key: "diagnosis",
     },
+    {
+      title: "Actions",
+      dataIndex: "",
+      key: "actions",
+      render: (v: any) => (
+        <Flex gap={12}>
+          <EditFilled
+            className="!text-gray-400 hover:text-orange-400! text-xl"
+            onClick={() => handleEditRow(v)}
+          />
+          <DeleteFilled
+            className="!text-gray-400 text-xl hover:text-red-600!"
+            onClick={() => handleDeleteRow(v)}
+          />
+        </Flex>
+      ),
+    },
   ];
 
-  const submitAppoinment = async () => {
+  const handleDeleteRow = (v: any) => {
+    confirm({
+      title: "Are you sure?",
+      content: "This action is irreversible",
+      icon: <DeleteFilled />,
+      onOk: () =>
+        deleteAppointment(v._id).then((apps: Appointment[]) =>
+          setAppointments(apps)
+        ),
+    });
+  };
+
+  const handleEditRow = (v: any) => {
+    setOpen(true);
+    setIsEditMode(true);
+    form.setFieldsValue(v);
+    setAppointmentId(v._id);
+  };
+
+  const submitAppointment = async () => {
     const appointment = form.getFieldsValue() as Appointment;
-    addAppointment(appointment).then((res) => setAppointments(res));
+    form
+      .validateFields()
+      .then(() => {
+        if (!isEditMode) {
+          addAppointment(appointment).then((res) => setAppointments(res));
+        } else {
+          updateAppointment(appointmentId, appointment).then((appt) =>
+            setAppointments(appt)
+          );
+        }
+      })
+      .catch((error) => {console.error(error)});
 
     form.resetFields();
     setOpen(!open);
@@ -67,13 +123,13 @@ export const Appointments = () => {
           setOpen(!open);
           form.resetFields();
         }}
-        onOk={submitAppoinment}
+        onOk={submitAppointment}
       >
         <Flex>
           <Form
             form={form}
             style={{ padding: "20px" }}
-            onFinish={submitAppoinment}
+            onFinish={submitAppointment}
           >
             <Form.Item
               name="name"

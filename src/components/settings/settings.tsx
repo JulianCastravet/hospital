@@ -7,7 +7,7 @@ export const Settings = () => {
 
   const { userOptions, setOption } = userSettings();
 
-  const plainOptions = ["Dark Mode", "Patients", "Has Phone"];
+  const plainOptions = ["Dark Mode", "Patients", "Has Schedule", 'Has Messages', "Has Medications", "Has Help"];
   const onChange = (checkedValues: unknown[]) => {
     setOption(checkedValues as string[]);
   };

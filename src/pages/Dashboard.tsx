@@ -94,12 +94,22 @@ export const Dashboard = () => {
   const items = [
     getItem("Overview", "1", <WindowsOutlined />),
     getItem("Appointments", "2", <CalendarOutlined />),
-  (  userOptions.includes('Patients') ? getItem("Patients", "3", <UserOutlined />): null) ,
-    getItem("Schedule", "4", <ScheduleOutlined />),
+    userOptions.includes("Patients")
+      ? getItem("Patients", "3", <UserOutlined />)
+      : null,
+    userOptions.includes("Has Schedule")
+      ? getItem("Schedule", "4", <ScheduleOutlined />)
+      : null,
     getItem("Reports", "5", <RiseOutlined />),
-    getItem("Messages", "6", <MailOutlined />),
-    getItem("Medications", "7", <LinkOutlined />),
-    getItem("Help", "8", <QuestionCircleOutlined />),
+    userOptions.includes("Has Messages")
+      ? getItem("Messages", "6", <MailOutlined />)
+      : null,
+    userOptions.includes("Has Medications")
+      ? getItem("Medications", "7", <LinkOutlined />)
+      : null,
+    userOptions.includes("Has Help")
+      ? getItem("Help", "8", <QuestionCircleOutlined />)
+      : null,
     getItem("Settings", "9", <SettingOutlined />),
   ];
 

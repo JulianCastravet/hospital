@@ -1,9 +1,7 @@
 import { Appointment } from "../data";
 
 export const getAllAppointments = async (): Promise<Appointment[]> => {
-  const res = await fetch(
-    `http://localhost:4000/appointments/getAllAppointments`
-  );
+  const res = await fetch(`http://localhost:4000/appointments`);
   if (!res.ok) throw new Error("error fetching appointments");
   return res.json();
 };
@@ -28,10 +26,9 @@ export const addAppointment = async (
   return res.json();
 };
 
-export const deleteAppointment = async (id: number): Promise<Appointment[]> => {
+export const deleteAppointment = async (id: string): Promise<Appointment[]> => {
   const res = await fetch(`http://localhost:4000/appointments/${id}`, {
     method: "DELETE",
-    body: JSON.stringify(id),
   });
   if (!res.ok) throw new Error("error deleting appointment");
 
@@ -39,11 +36,14 @@ export const deleteAppointment = async (id: number): Promise<Appointment[]> => {
 };
 
 export const updateAppointment = async (
-  id: number,
+  id: string,
   body: Appointment
-): Promise<Appointment> => {
+): Promise<Appointment[]> => {
   const res = await fetch(`http://localhost:4000/appointments/${id}`, {
     method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(body),
   });
 

@@ -53,7 +53,7 @@ export const Patients = () => {
       title: "Phone",
       dataIndex: "phone",
       key: "phone",
-      render: (v: any) => <span>{v}</span>,
+      render: (v: string) => <a href={`tel:${v}`}>{v}</a>,
     },
     {
       key: "actions",
@@ -98,7 +98,6 @@ export const Patients = () => {
       onOk() {
         deleteUser(data._id).then((patients) => setPatients(patients));
       },
-      onCancel() {},
     });
   }
 
