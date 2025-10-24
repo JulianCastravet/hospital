@@ -1,16 +1,17 @@
 import { Report } from "../data";
+import environment from "../environment";
 
 const ERROR_MSG = "Something wrong :(!";
 
 export const getAllReports = async (): Promise<Report[]> => {
-  const res = await fetch("http://localhost:4000/reports");
+  const res = await fetch(`${environment.localApi}reports`);
 
   if (!res.ok) throw new Error(ERROR_MSG);
   return res.json();
 };
 
 export const addReport = async (report: Report): Promise<Report[]> => {
-  const res = await fetch("http://localhost:4000/reports", {
+  const res = await fetch(`${environment.localApi}reports`, {
     method: "POST",
     body: JSON.stringify(report),
     headers: {
@@ -24,7 +25,7 @@ export const addReport = async (report: Report): Promise<Report[]> => {
 };
 
 export const updateReport = async (id: string, body: Partial<Report>) => {
-  const res = await fetch(`http://localhost:4000/reports/${id}`, {
+  const res = await fetch(`${environment.localApi}reports/${id}`, {
     method: "PUT",
     body: JSON.stringify(body),
     headers: {
@@ -36,7 +37,7 @@ export const updateReport = async (id: string, body: Partial<Report>) => {
 };
 
 export const deleteReport = async (id: string): Promise<Report[]> => {
-  const res = await fetch(`http://localhost:4000/reports/${id}`, {
+  const res = await fetch(`${environment.localApi}reports/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "text",

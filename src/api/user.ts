@@ -1,9 +1,10 @@
 import { User } from "../context/authContext";
+import environment from "../environment";
 
 const errorMsg = "Ups! Something went wrong :(";
 
 export const getAllUsers = async () => {
-  const res = await fetch(`http://localhost:4000/users/getAllUsers`);
+  const res = await fetch(`${environment.localApi}users/getAllUsers`);
 
   if (!res.ok) {
     throw new Error(errorMsg);
@@ -12,19 +13,19 @@ export const getAllUsers = async () => {
 };
 
 export const getPatients = async (): Promise<User[]> => {
-  const res = await fetch(`http://localhost:4000/users/getPatients`);
+  const res = await fetch(`${environment.localApi}users/getPatients`);
   if (!res.ok) throw new Error(errorMsg);
   return res.json();
 };
 
 export const getSingleUser = async (id: string): Promise<User> => {
-  const res = await fetch(`http://localhost:4000/users/${id}`);
+  const res = await fetch(`${environment.localApi}users/${id}`);
   if (!res.ok) throw new Error(errorMsg);
   return res.json();
 };
 
 export const addUser = async (user: User) => {
-  const res = await fetch(`http://localhost:4000/users/`, {
+  const res = await fetch(`${environment.localApi}users/`, {
     method: "POST",
     body: JSON.stringify(user),
     headers: {
@@ -39,7 +40,7 @@ export const userLoginRequest = async (v: {
   mail: string;
   password: string;
 }): Promise<any> => {
-  const res = await fetch(`http://localhost:4000/users/login`, {
+  const res = await fetch(`${environment.localApi}users/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(v),
@@ -51,7 +52,7 @@ export const userLoginRequest = async (v: {
 };
 
 export const updateUser = async (id: string, body: Partial<User>) => {
-  const res = await fetch(`http://localhost:4000/users/${id}`, {
+  const res = await fetch(`${environment.localApi}users/${id}`, {
     method: "PUT",
     body: JSON.stringify(body),
     headers: {
@@ -64,7 +65,7 @@ export const updateUser = async (id: string, body: Partial<User>) => {
 };
 
 export const deleteUser = async (id: string) => {
-  const res = await fetch(`http://localhost:4000/users/${id}`, {
+  const res = await fetch(`${environment.localApi}users/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "text",
@@ -74,4 +75,3 @@ export const deleteUser = async (id: string) => {
   if (!res.ok) throw Error(errorMsg);
   return res.json();
 };
-

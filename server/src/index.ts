@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import userRoutes from "./routes/userRoutes";
 import appointmentsRoutes from "./routes/appointmentsRoutes";
 import reportRoutes from "./routes/reportsRoutes";
+import { environment } from "./environment";
 
 dotenv.config();
 const app = express();
@@ -12,8 +13,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const PORT = process.env.PORT || 4000;
-const MONGO_URI = process.env.MONGO_URI as string;
+const PORT = environment.PORT || 4000;
+const MONGO_URI = environment.MONGO_URI as string;
 
 mongoose
   .connect(MONGO_URI)
