@@ -14,20 +14,23 @@ type AuthContextType = {
   user: User | undefined;
   isAuthenticated: boolean;
   setIsAuthenticated: (v: boolean) => void;
+  setUserState: (u: User | undefined) => void;
 };
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUserState] = useState<User | undefined>(() => {
-    // read from localStorage on first load
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : undefined;
   });
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!user);
+  console.log(user);
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, setIsAuthenticated }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated, setIsAuthenticated, setUserState }}
+    >
       {children}
     </AuthContext.Provider>
   );

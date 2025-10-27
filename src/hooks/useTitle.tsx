@@ -8,7 +8,7 @@ export const useTitle = (title: string) => {
     if (isAuthenticated) {
       document.title = `Hospital Dashboard - ${title}`;
     } else {
-      document.title = `Hospital`;
+      document.title = title;
     }
-  }, [title,isAuthenticated]);
+  }, [title, isAuthenticated]);
 };

@@ -7,11 +7,12 @@ import { Content } from "antd/es/layout/layout";
 import { userLoginRequest } from "../api/user";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
+import { CSSProperties } from "react";
 
 export const SignIn = () => {
-  useTitle("Sign In - Hospital");
+  useTitle("Hospital - Sign In");
   const navigate = useNavigate();
-  const { setIsAuthenticated } = useAuth();
+  const { setIsAuthenticated, setUserState } = useAuth();
 
   const onSubmit = async (values: any) => {
     const data = await userLoginRequest(values);
@@ -19,17 +20,42 @@ export const SignIn = () => {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       setIsAuthenticated(true);
+      setUserState(data.user);
       navigate("/dashboard/overview");
     }
+  };
+
+  const style: CSSProperties = {
+    width: "50%",
+    height: "calc(100vh - 130px)",
+    padding: "20px",
+    display: "flex",
+    justifyContent: "center",
+    alignContent: "center",
+    alignItems: "center",
+    fontSize: "30px",
+    textAlign: "center",
+  };
+
+  const contentStyle: CSSProperties = {
+    width: "100vw",
+    backgroundImage:
+      'url("https://i.pinimg.com/736x/ca/5f/ae/ca5faec29743ad86b0b67ae03243187f.jpg")',
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
   };
 
   return (
     <>
       <HeaderComponent />
-      <Content>
-        <Flex>
-          <div>some content</div>
-          <div>
+      <Content style={contentStyle}>
+        <Flex className="columns-2">
+          <div style={style}>
+            Please sign in to see the full potential of the nextGen Hospital
+            Dashboard
+          </div>
+          <div style={style}>
             <Form
               name="login"
               initialValues={{ remember: true }}
