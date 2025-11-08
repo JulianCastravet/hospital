@@ -13,7 +13,7 @@ export const useUser = () => {
   };
 
   const [user, _setUser] = useState<User>(emptyUser);
-  const [users, setUsers] = useState<User[]>([]);
+  const [users] = useState<User[]>([]);
 
   const setUser = (u: User) => {
     _setUser(u);
@@ -23,5 +23,5 @@ export const useUser = () => {
     _addUser(u);
   };
 
-  return { user, users, setUser, addUser, setUsers };
+  return { user, users, setUser, addUser };
 };
