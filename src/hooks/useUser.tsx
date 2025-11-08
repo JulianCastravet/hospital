@@ -23,5 +23,5 @@ export const useUser = () => {
     _addUser(u);
   };
 
-  return { user, users, setUser, addUser };
+  return { user, users, setUser, addUser, setUsers };
 };
