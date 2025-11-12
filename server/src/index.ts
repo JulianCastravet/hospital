@@ -41,8 +41,4 @@ app.use((req, res) => {
 // ===== ROOT TEST ROUTE (optional) =====
 app.get("/health", (_req, res) => res.send("Backend running 🚀"));
 
-// ===== START SERVER =====
-app.listen(Number(PORT), "0.0.0.0", () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`Serving React build from: ${buildPath}`);
-});
+
