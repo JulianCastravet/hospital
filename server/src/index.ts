@@ -6,6 +6,8 @@ import userRoutes from "./routes/userRoutes";
 import appointmentsRoutes from "./routes/appointmentsRoutes";
 import reportRoutes from "./routes/reportsRoutes";
 
+import path = require("path");
+
 dotenv.config();
 const app = express();
 
@@ -20,9 +22,17 @@ mongoose
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-app.get("/", (_req, res) => res.send("Backend running 🚀"));
-app.use("/users", userRoutes);
-app.use("/appointments", appointmentsRoutes);
-app.use("/reports", reportRoutes);
+// const __dirnamePath = path.resolve();
+// const buildPath = path.join(__dirnamePath, "../build");
 
+// app.use((_, res) => {
+//   res.sendFile(path.join(buildPath, "index.html"));
+// });
+
+app.get("/", (_req, res) => res.send("Backend running 🚀"));
+app.use("/api/users", userRoutes);
+app.use("/api/appointments", appointmentsRoutes);
+app.use("/api/reports", reportRoutes);
+
+// app.use(express.static(buildPath));
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

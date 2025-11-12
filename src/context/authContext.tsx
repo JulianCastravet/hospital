@@ -25,7 +25,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   });
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!user);
-  console.log(user);
 
   return (
     <AuthContext.Provider
