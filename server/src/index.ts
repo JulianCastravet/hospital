@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import path from "path"; // ✅ use ES import syntax
 
 import userRoutes from "./routes/userRoutes";
 import appointmentsRoutes from "./routes/appointmentsRoutes";
@@ -14,31 +13,20 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 const MONGO_URI = process.env.MONGO_URI || "";
 
-// ===== MIDDLEWARES =====
 app.use(cors());
 app.use(express.json());
 
-// ===== DATABASE CONNECTION =====
 mongoose
   .connect(MONGO_URI)
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// ===== API ROUTES =====
 app.use("/api/users", userRoutes);
 app.use("/api/appointments", appointmentsRoutes);
 app.use("/api/reports", reportRoutes);
 
-// ===== SERVE REACT BUILD (for local build) =====
-const buildPath = path.resolve(__dirname, "../../build"); // ✅ correct relative path
-app.use(express.static(buildPath));
+app.get("/", (_req, res) => res.send("Backend running 🚀"));
 
-// ===== REACT ROUTER FALLBACK =====
-app.use((req, res) => {
-  res.sendFile(path.join(buildPath, "index.html"));
+app.listen(PORT, () => {
+  console.log(`Server running on port: ${PORT}`);
 });
-
-// ===== ROOT TEST ROUTE (optional) =====
-app.get("/health", (_req, res) => res.send("Backend running 🚀"));
-
-
