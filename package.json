@@ -36,7 +36,8 @@
     "deploy": "gh-pages -d build",
     "build:server": "cd server && npm i && npm run build",
     "build:full": "npm run build && npm run build:server",
-    "start:prod": "cd server && npm run start"
+    "start:prod": "cd server && npm run start",
+    "vercel-build": "npm run build:full"
   },
   "eslintConfig": {
     "extends": [
