@@ -29,7 +29,7 @@ export const Patients = () => {
 
   useEffect(() => {
     getPatients(message).then((pat) => setPatients(pat));
-  }, []);
+  }, [message]);
 
   const columns = [
     {

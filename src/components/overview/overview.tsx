@@ -17,7 +17,7 @@ export const Overview = () => {
   useEffect(() => {
     getAllUsers(message).then((data) => setUsers(data));
     getAllReports(message).then((data) => setReports(data));
-  }, []);
+  }, [message]);
 
   const userData = [
     {

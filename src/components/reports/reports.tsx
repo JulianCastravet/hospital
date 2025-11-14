@@ -27,7 +27,7 @@ export const Reports = () => {
 
   useEffect(() => {
     getAllReports(message).then((reports) => setReports(reports));
-  }, []);
+  }, [message]);
 
   const [reports, setReports] = useState<Report[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);

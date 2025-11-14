@@ -28,6 +28,12 @@ export const getSingleUser = async (
   }
 };
 
+const calculateUserAge = (date: string): number => {
+  const today = new Date().getFullYear();
+  const yearofB = new Date(date).getFullYear();
+  return today - yearofB;
+};
+
 export const addUser = async (req: Request, res: Response) => {
   try {
     const {
@@ -59,6 +65,7 @@ export const addUser = async (req: Request, res: Response) => {
       dateOfBirth,
       type,
       specialization,
+      age: calculateUserAge(dateOfBirth),
     });
 
     await newUser.save();
@@ -168,7 +175,7 @@ export const updateUserAvatar = async (req: Request, res: Response) => {
 
     console.log("user", user);
 
-    res.json({ success: true, user: user });
+    res.json(user);
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Upload failed" });

@@ -1,8 +1,6 @@
 import { MessageInstance } from "antd/es/message/interface";
 import { Report } from "../data";
 
-const ERROR_MSG = "Something wrong :(!";
-
 export const getAllReports = async (
   message: MessageInstance
 ): Promise<Report[]> => {

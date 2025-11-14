@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { User } from "../../context/authContext";
 import { Row, Col, Card, Image, Typography, Timeline, App } from "antd";
 import { useTitle } from "../../hooks/useTitle";
-import { getSingleUser } from "../../api/user";
 import { formatTime } from "../../utils/formatTime";
 import DescriptionCard from "../descriptionCard/descriptionCard";
 import {
@@ -18,8 +16,8 @@ import {
 } from "@ant-design/icons";
 import TimelineItem from "../timelineItem/timelineItem";
 import { ImageWithUpload } from "../imageWithUpload/imageWithUpload";
-import { useUser } from "../../hooks/useUser";
 import { useUserStore } from "../../store/user.store";
+import { DASH } from "../../utils/dash";
 
 const PatientPage = () => {
   const params = useParams();
@@ -31,7 +29,7 @@ const PatientPage = () => {
   useEffect(() => {
     if (!params.id) return;
     getUser(params.id, message);
-  }, [params.id]);
+  }, [params.id, message, getUser]);
 
   const timelineItems = [
     {
@@ -68,6 +66,7 @@ const PatientPage = () => {
       ),
     },
   ];
+  console.log(user);
 
   const removeUserImage = (id: string) => {
     if (user) {
@@ -107,7 +106,7 @@ const PatientPage = () => {
                 <DescriptionCard
                   title="Age"
                   titleDisabled
-                  description={user.age + "y.0"}
+                  description={user.age ?? DASH}
                   icon={
                     <HourglassOutlined
                       style={{ fontSize: "20px", color: "turquoise" }}

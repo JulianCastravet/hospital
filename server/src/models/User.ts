@@ -8,6 +8,7 @@ export interface IUser extends Document {
   email: string;
   password: string;
   specialization?: string;
+  age: number;
   avatarUrl?: {
     data: Buffer;
     contentType: string;
@@ -23,6 +24,7 @@ const userSchema = new Schema<IUser>(
     email: { type: String, required: true, unique: true },
     password: { type: String },
     specialization: { type: String, required: false },
+    age: { type: Number, required: false },
     avatarUrl: {
       data: Buffer,
       contentType: String,

@@ -1,8 +1,7 @@
 import React from "react";
 
 import { Image, message } from "antd";
-import { useEffect, useRef, useState } from "react";
-import { useUser } from "../../hooks/useUser";
+import { useRef } from "react";
 import { CloseCircleFilled } from "@ant-design/icons";
 import { useUserStore } from "../../store/user.store";
 
@@ -52,7 +51,15 @@ export const ImageWithUpload = ({
       />
 
       {avatarUrl && (
-        <CloseCircleFilled style={{ color: "red" }} onClick={removeImage} />
+        <CloseCircleFilled
+          style={{
+            color: "red",
+            position: "absolute",
+            right: "20px",
+            top: "10px",
+          }}
+          onClick={removeImage}
+        />
       )}
 
       <input

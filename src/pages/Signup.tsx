@@ -1,4 +1,4 @@
-import React, { CSSProperties, useState } from "react";
+import { CSSProperties, useState } from "react";
 import { Content } from "antd/es/layout/layout";
 import { FooterComponent } from "../components/footer/footerComponent";
 import { HeaderComponent } from "../components/header/headerComponent";
@@ -6,7 +6,6 @@ import { useTitle } from "../hooks/useTitle";
 import { App, Button, DatePicker, Form, Radio, Select } from "antd";
 import Input from "antd/es/input/Input";
 import { LockOutlined, UserOutlined, MailOutlined } from "@ant-design/icons";
-import { useUser } from "../hooks/useUser";
 import { User } from "../context/authContext";
 import { addUser } from "../api/user";
 

@@ -1,12 +1,10 @@
 import { create } from "zustand";
 import { User } from "../context/authContext";
 import {
-  addUser as _addUser,
   updateUser as _updateUser,
   getSingleUser,
   updateUserAvatar as _updateUserAvatar,
 } from "../api/user";
-import { App } from "antd";
 import { MessageInstance } from "antd/es/message/interface";
 
 type UserState = {

@@ -10,7 +10,6 @@ import {
   updateAppointment,
 } from "../../api/appointments";
 import { DeleteFilled, EditFilled } from "@ant-design/icons";
-import { error } from "console";
 
 export const Appointments = () => {
   useTitle("Appointments");
@@ -24,7 +23,7 @@ export const Appointments = () => {
     getAllAppointments(message).then((apps) => {
       setAppointments(apps);
     });
-  }, []);
+  }, [message]);
 
   const [form] = useForm();
   const { confirm } = Modal;
@@ -113,8 +112,7 @@ export const Appointments = () => {
 
       // Update list
       setAppointments(result);
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   return (
