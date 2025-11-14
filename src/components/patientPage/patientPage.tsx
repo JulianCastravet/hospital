@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { User } from "../../context/authContext";
-import { Row, Col, Card, Image, Typography, Timeline } from "antd";
+import { Row, Col, Card, Image, Typography, Timeline, App } from "antd";
 import { useTitle } from "../../hooks/useTitle";
 import { getSingleUser } from "../../api/user";
 import { formatTime } from "../../utils/formatTime";
@@ -22,13 +22,14 @@ import { ImageWithUpload } from "../imageWithUpload/imageWithUpload";
 const PatientPage = () => {
   const params = useParams();
   useTitle("User Page");
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<User | null>(null);
+  const { message } = App.useApp();
 
   useEffect(() => {
     const { id } = params;
     if (!id) return;
 
-    getSingleUser(id || "").then((user) => setUser(user));
+    getSingleUser(id || "", message).then((user) => setUser(user));
   }, [params]);
 
   const timelineItems = [
@@ -80,9 +81,7 @@ const PatientPage = () => {
                   avatarUrl={user.avatarUrl ?? ""}
                   userId={user._id}
                 />
-                <Typography.Title className="text-center" level={4}>
-                  {user.name}
-                </Typography.Title>
+                <Typography.Title level={4}>{user.name}</Typography.Title>
               </Col>
               <Col span={10}>
                 <DescriptionCard

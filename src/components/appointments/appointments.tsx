@@ -17,9 +17,10 @@ export const Appointments = () => {
   const [appointments, setAppointments] = useState<Appointment[]>();
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [appointmentId, setAppointmentId] = useState<string>("");
+  const { message } = App.useApp();
 
   useEffect(() => {
-    getAllAppointments().then((apps) => {
+    getAllAppointments(message).then((apps) => {
       setAppointments(apps);
     });
   }, []);
@@ -78,7 +79,7 @@ export const Appointments = () => {
       content: "This action is irreversible",
       icon: <DeleteFilled />,
       onOk: () =>
-        deleteAppointment(v._id).then((apps: Appointment[]) =>
+        deleteAppointment(v._id, message).then((apps: Appointment[]) =>
           setAppointments(apps)
         ),
     });
@@ -97,9 +98,11 @@ export const Appointments = () => {
       .validateFields()
       .then(() => {
         if (!isEditMode) {
-          addAppointment(appointment).then((res) => setAppointments(res));
+          addAppointment(appointment, message).then((res) =>
+            setAppointments(res)
+          );
         } else {
-          updateAppointment(appointmentId, appointment).then((appt) =>
+          updateAppointment(appointmentId, appointment, message).then((appt) =>
             setAppointments(appt)
           );
         }

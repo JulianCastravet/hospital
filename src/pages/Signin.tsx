@@ -1,4 +1,4 @@
-import { Button, Checkbox, Flex, Form, Input } from "antd";
+import { App, Button, Checkbox, Flex, Form, Input } from "antd";
 import { FooterComponent } from "../components/footer/footerComponent";
 import { HeaderComponent } from "../components/header/headerComponent";
 import { useTitle } from "../hooks/useTitle";
@@ -13,9 +13,10 @@ export const SignIn = () => {
   useTitle("Hospital - Sign In");
   const navigate = useNavigate();
   const { setUserState } = useAuth();
+  const { message } = App.useApp();
 
   const onSubmit = async (values: any) => {
-    const data = await userLoginRequest(values);
+    const data = await userLoginRequest(values, message);
     if (data.success) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));

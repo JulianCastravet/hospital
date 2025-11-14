@@ -1,19 +1,28 @@
+import { MessageInstance } from "antd/es/message/interface";
 import { Appointment } from "../data";
 
-export const getAllAppointments = async (): Promise<Appointment[]> => {
+export const getAllAppointments = async (
+  message: MessageInstance
+): Promise<Appointment[]> => {
   const res = await fetch(`/api/appointments`);
-  if (!res.ok) throw new Error("error fetching appointments");
+  if (!res.ok) {
+    message.error("Failed fetching appointments.");
+  }
   return res.json();
 };
 
-export const getAppointmentById = async (id: number): Promise<Appointment> => {
+export const getAppointmentById = async (
+  id: number,
+  message: MessageInstance
+): Promise<Appointment> => {
   const res = await fetch(`/api/appointments/${id}`);
-  if (!res.ok) throw new Error("sometthing wrong with this appointment");
+  if (!res.ok) message.error(`Failed fetching appointment with ID: ${id}`);
   return res.json();
 };
 
 export const addAppointment = async (
-  app: Appointment
+  app: Appointment,
+  message: MessageInstance
 ): Promise<Appointment[]> => {
   const res = await fetch(`/api/appointments`, {
     method: "POST",
@@ -22,22 +31,26 @@ export const addAppointment = async (
       "Content-Type": "application/json",
     },
   });
-  if (!res.ok) throw new Error("error adding appointment");
+  if (!res.ok) message.error("Error adding appointment.");
   return res.json();
 };
 
-export const deleteAppointment = async (id: string): Promise<Appointment[]> => {
+export const deleteAppointment = async (
+  id: string,
+  message: MessageInstance
+): Promise<Appointment[]> => {
   const res = await fetch(`/api/appointments/${id}`, {
     method: "DELETE",
   });
-  if (!res.ok) throw new Error("error deleting appointment");
+  if (!res.ok) message.error(`Failed deleting appointment with ID: ${id}`);
 
   return res.json();
 };
 
 export const updateAppointment = async (
   id: string,
-  body: Appointment
+  body: Appointment,
+  message: MessageInstance
 ): Promise<Appointment[]> => {
   const res = await fetch(`/api/appointments/${id}`, {
     method: "PUT",
@@ -47,6 +60,6 @@ export const updateAppointment = async (
     body: JSON.stringify(body),
   });
 
-  if (!res.ok) throw new Error("error updating appointment");
+  if (!res.ok) message.error("Error updating appointment");
   return res.json();
 };

@@ -1,4 +1,4 @@
-import { Button, DatePicker, Flex, Form, Input, Modal, Table } from "antd";
+import { App, Button, DatePicker, Flex, Form, Input, Modal, Table } from "antd";
 import { useUser } from "../../hooks/useUser";
 import { useTitle } from "../../hooks/useTitle";
 import { useEffect, useState } from "react";
@@ -21,13 +21,14 @@ export const Patients = () => {
 
   const [form] = useForm();
   const { confirm } = Modal;
+  const { message } = App.useApp();
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [patients, setPatients] = useState<User[]>();
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
   useEffect(() => {
-    getPatients().then((pat) => setPatients(pat));
+    getPatients(message).then((pat) => setPatients(pat));
   }, []);
 
   const columns = [
@@ -77,13 +78,13 @@ export const Patients = () => {
       user.password = "guest";
       addUser(user);
       form.resetFields();
-      getPatients().then((patients) => setPatients(patients));
+      getPatients(message).then((patients) => setPatients(patients));
       setModalOpen(!modalOpen);
     } else {
       const id = form.getFieldValue("_id");
 
       updateUser(id, user);
-      getPatients().then((patients) => setPatients(patients));
+      getPatients(message).then((patients) => setPatients(patients));
 
       setModalOpen(!modalOpen);
       setIsEditMode(false);
@@ -105,7 +106,7 @@ export const Patients = () => {
       icon: <ExclamationCircleOutlined />,
       content: " This action is irreversible.",
       onOk() {
-        deleteUser(data._id).then((patients) => setPatients(patients));
+        deleteUser(data._id, message).then((patients) => setPatients(patients));
       },
     });
   }

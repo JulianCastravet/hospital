@@ -1,4 +1,4 @@
-import { Card, Flex, Tooltip } from "antd";
+import { App, Card, Flex, Tooltip } from "antd";
 import Title from "antd/es/typography/Title";
 import { BarChart, CartesianGrid, XAxis, YAxis, Legend, Bar } from "recharts";
 import { Report } from "../../data";
@@ -10,12 +10,13 @@ import { getAllReports } from "../../api/reports";
 
 export const Overview = () => {
   useTitle("Overview");
+  const { message } = App.useApp();
 
   const [users, setUsers] = useState<User[]>([]);
   const [reports, setReports] = useState<Report[]>([]);
   useEffect(() => {
-    getAllUsers().then((data) => setUsers(data));
-    getAllReports().then((data) => setReports(data));
+    getAllUsers(message).then((data) => setUsers(data));
+    getAllReports(message).then((data) => setReports(data));
   }, []);
 
   const userData = [

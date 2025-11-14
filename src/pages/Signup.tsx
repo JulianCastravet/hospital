@@ -3,7 +3,7 @@ import { Content } from "antd/es/layout/layout";
 import { FooterComponent } from "../components/footer/footerComponent";
 import { HeaderComponent } from "../components/header/headerComponent";
 import { useTitle } from "../hooks/useTitle";
-import { Button, DatePicker, Form, Radio, Select } from "antd";
+import { App, Button, DatePicker, Form, Radio, Select } from "antd";
 import Input from "antd/es/input/Input";
 import { LockOutlined, UserOutlined, MailOutlined } from "@ant-design/icons";
 import { useUser } from "../hooks/useUser";
@@ -27,7 +27,7 @@ const doctorSpecialities = [
 export const SignUp = () => {
   useTitle("Hospital - Sign Up");
   const { user, setUser } = useUser();
-
+  const { message } = App.useApp();
   const [date, setDate] = useState<Date>(new Date());
   const [form] = Form.useForm();
 
@@ -37,7 +37,7 @@ export const SignUp = () => {
 
   const onSubmit = (user: User) => {
     user.dateOfBirth = new Date(date).toLocaleDateString();
-    addUser(user);
+    addUser(user, message);
 
     resetForm();
   };

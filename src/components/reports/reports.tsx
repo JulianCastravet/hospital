@@ -1,4 +1,4 @@
-import { Button, Checkbox, Flex, Modal, Table } from "antd";
+import { App, Button, Checkbox, Flex, Modal, Table } from "antd";
 import { Pill } from "../pill/pill";
 import { useTitle } from "../../hooks/useTitle";
 import { useEffect, useState } from "react";
@@ -23,9 +23,10 @@ export const Reports = () => {
   useTitle("Reports");
   const [form] = useForm();
   const { confirm } = Modal;
+  const { message } = App.useApp();
 
   useEffect(() => {
-    getAllReports().then((reports) => setReports(reports));
+    getAllReports(message).then((reports) => setReports(reports));
   }, []);
 
   const [reports, setReports] = useState<Report[]>([]);
@@ -116,13 +117,15 @@ export const Reports = () => {
         .then(() => {
           formObj.signed = formObj.signed ?? false;
           formObj.collBy = formObj.collBy?.format("HH.mm MM/DD");
-          addReport(formObj).then((reports) => setReports(reports));
+          addReport(formObj, message).then((reports) => setReports(reports));
           setOpenModal(false);
           form.resetFields();
         })
         .catch((error) => {});
     } else {
-      updateReport(reportId, formObj).then((reports) => setReports(reports));
+      updateReport(reportId, formObj, message).then((reports) =>
+        setReports(reports)
+      );
       setOpenModal(false);
       form.resetFields();
       setIsEditMode(false);
@@ -153,7 +156,7 @@ export const Reports = () => {
       okType: "danger",
       cancelText: "No",
       onOk() {
-        deleteReport(v._id).then((reports) => setReports(reports));
+        deleteReport(v._id, message).then((reports) => setReports(reports));
       },
       onCancel() {},
     });

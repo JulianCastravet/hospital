@@ -6,8 +6,10 @@ import {
   getUserAvatar,
   updateUserAvatar,
 } from "../api/user";
+import { App } from "antd";
 
 export const useUser = () => {
+  const { message } = App.useApp();
   const emptyUser: User = {
     type: "",
     name: "",
@@ -28,17 +30,16 @@ export const useUser = () => {
   };
 
   const addUser = (u: User) => {
-    _addUser(u);
+    _addUser(u, message);
   };
 
   const updateUser = (id: string, u: User) => {
-    _updateUser(id, u);
+    _updateUser(id, u, message);
   };
 
   const updateAvatar = (id: string, blob: FormData) => {
-    updateUserAvatar(id, blob);
+    updateUserAvatar(id, blob, message);
   };
-
 
   return { user, users, setUser, addUser, updateUser, updateAvatar };
 };

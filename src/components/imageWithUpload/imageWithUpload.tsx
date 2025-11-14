@@ -1,4 +1,4 @@
-import { Image } from "antd";
+import { App, Image } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { useUser } from "../../hooks/useUser";
 import { getUserAvatar } from "../../api/user";
@@ -12,6 +12,7 @@ export const ImageWithUpload = ({
 }) => {
   const inputRef = useRef(null);
   const { updateAvatar } = useUser();
+  const { message } = App.useApp();
 
   const [image, setImage] = useState<string>(avatarUrl);
 
@@ -35,15 +36,20 @@ export const ImageWithUpload = ({
     updateAvatar(userId, formData);
   };
   useEffect(() => {
-    getUserAvatar(userId).then((data) => console.log(data));
+    getUserAvatar(userId, message).then((data) => console.log(data));
   }, []);
 
   return (
     <>
       <Image
-        width={160}
-        height={160}
-        style={{ objectFit: "cover", borderRadius: "10px" }}
+        style={{
+          objectFit: "cover",
+          borderRadius: "10px",
+          width: "100%",
+          maxWidth: "160px",
+          height: "100%",
+          maxHeight: "160px",
+        }}
         preview={false}
         src={image || "https://placehold.co/600x400"}
         onClick={handleImageClick}

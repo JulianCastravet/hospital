@@ -24,7 +24,7 @@ export const getSingleUser = async (
     }
     return res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching user" });
+    res.status(500).json({ message: error });
   }
 };
 
@@ -180,7 +180,7 @@ export const getUserAvatar = async (req: Request, res: Response) => {
   const user = await User.findById(req.params.id);
 
   if (!user || !user.avatarUrl?.data) {
-    return res.status(404).send("No avatar found");
+    return res.status(404).json({ message: "No avatar found" });
   }
 
   res.set("Content-Type", user.avatarUrl.contentType);
