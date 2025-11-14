@@ -12,14 +12,13 @@ import { CSSProperties } from "react";
 export const SignIn = () => {
   useTitle("Hospital - Sign In");
   const navigate = useNavigate();
-  const { setIsAuthenticated, setUserState } = useAuth();
+  const { setUserState } = useAuth();
 
   const onSubmit = async (values: any) => {
     const data = await userLoginRequest(values);
     if (data.success) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
-      setIsAuthenticated(true);
       setUserState(data.user);
       navigate("/dashboard/overview");
     }

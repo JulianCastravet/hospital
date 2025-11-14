@@ -1,4 +1,4 @@
-import { Button, Flex, Form, Input, Modal, Table } from "antd";
+import { App, Button, Flex, Form, Input, Modal, Table } from "antd";
 import { useTitle } from "../../hooks/useTitle";
 import { useEffect, useState } from "react";
 import { useForm } from "antd/es/form/Form";
@@ -104,7 +104,9 @@ export const Appointments = () => {
           );
         }
       })
-      .catch((error) => {console.error(error)});
+      .catch((error) => {
+        console.error(error);
+      });
 
     form.resetFields();
     setOpen(!open);

@@ -31,7 +31,7 @@ export const Dashboard = () => {
   const [subtitle, setSubtitle] = useState<string>("Overview");
   const navigate = useNavigate();
   const location = useLocation();
-  const { setIsAuthenticated, setUserState } = useAuth();
+  const { setUserState } = useAuth();
 
   const { userOptions } = userSettings();
 
@@ -75,7 +75,6 @@ export const Dashboard = () => {
   const userLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    setIsAuthenticated(false);
     setUserState(undefined);
     navigate("/");
   };

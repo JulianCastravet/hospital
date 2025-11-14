@@ -74,3 +74,23 @@ export const deleteUser = async (id: string) => {
   if (!res.ok) throw Error(errorMsg);
   return res.json();
 };
+
+export const updateUserAvatar = async (id: string, formData: FormData) => {
+  try {
+    const res = await fetch(`/api/users/${id}/avatar`, {
+      method: "POST",
+      body: formData,
+    });
+
+    return res.json();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getUserAvatar = async (id: string) => {
+  const res = await fetch(`http://localhost:4001/api/users/${id}/avatar`);
+
+  if (!res.ok) throw Error("something went very bad");
+  return res.json();
+};

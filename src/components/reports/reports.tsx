@@ -1,4 +1,4 @@
-import { Button, Flex, Modal, Table } from "antd";
+import { Button, Checkbox, Flex, Modal, Table } from "antd";
 import { Pill } from "../pill/pill";
 import { useTitle } from "../../hooks/useTitle";
 import { useEffect, useState } from "react";
@@ -17,6 +17,7 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
+import { formatTime } from "../../utils/formatTime";
 
 export const Reports = () => {
   useTitle("Reports");
@@ -42,9 +43,7 @@ export const Reports = () => {
       key: "signed",
       title: "Signed",
       dataIndex: "signed",
-      render: (value: boolean) => (
-        <input type="checkbox" disabled defaultChecked={value} />
-      ),
+      render: (value: boolean) => <Checkbox disabled checked={value} />,
     },
     {
       key: "result",
@@ -60,6 +59,7 @@ export const Reports = () => {
       key: "collBy",
       title: "Coll. By",
       dataIndex: "collBy",
+      render: (value: any) => <span>{formatTime(value)}</span>,
     },
     {
       key: "handling",

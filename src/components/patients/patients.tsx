@@ -12,26 +12,23 @@ import {
 } from "@ant-design/icons";
 import { User } from "../../context/authContext";
 import { deleteUser, getPatients } from "../../api/user";
+import dayjs from "dayjs";
 
 export const Patients = () => {
   useTitle("Patients");
 
-  const { addUser } = useUser();
+  const { addUser, updateUser } = useUser();
 
   const [form] = useForm();
   const { confirm } = Modal;
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [date, setDate] = useState<Date>(new Date());
   const [patients, setPatients] = useState<User[]>();
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
   useEffect(() => {
     getPatients().then((pat) => setPatients(pat));
   }, []);
-
-  const onDateChange = (date_: any, dateString: string | string[]) => {
-    setDate(new Date(dateString === "string" ? dateString : dateString[0]));
-  };
 
   const columns = [
     {
@@ -74,20 +71,32 @@ export const Patients = () => {
     },
   ];
 
-  const submitAddPatient = async (user: User) => {
-    user.type = "guest";
-    user.dateOfBirth = date.toLocaleString();
-    user.password = "guest";
-    addUser(user);
-    form.resetFields();
+  const submitAddPatient = async (editMode: boolean, user: User) => {
+    if (!editMode) {
+      user.type = "guest";
+      user.password = "guest";
+      addUser(user);
+      form.resetFields();
+      getPatients().then((patients) => setPatients(patients));
+      setModalOpen(!modalOpen);
+    } else {
+      const id = form.getFieldValue("_id");
 
-    // need to update the list with the last record added
-    getPatients().then((patients) => setPatients(patients));
-    setModalOpen(!modalOpen);
+      updateUser(id, user);
+      getPatients().then((patients) => setPatients(patients));
+
+      setModalOpen(!modalOpen);
+      setIsEditMode(false);
+    }
   };
 
   function handleEditRow(v: any): void {
-    throw new Error("Function not implemented.");
+    setModalOpen(true);
+    setIsEditMode(true);
+    form.setFieldsValue({
+      ...v,
+      dateOfBirth: dayjs(v.dateOfBirth),
+    });
   }
 
   function handleDeleteRow(data: any) {
@@ -100,6 +109,12 @@ export const Patients = () => {
       },
     });
   }
+
+  const handleModalClose = () => {
+    setModalOpen(!modalOpen);
+    setIsEditMode(false);
+    form.resetFields();
+  };
 
   return (
     <>
@@ -115,11 +130,11 @@ export const Patients = () => {
         </Button>
         <Modal
           open={modalOpen}
-          onCancel={() => setModalOpen(!modalOpen)}
-          onOk={() => submitAddPatient(form.getFieldsValue())}
+          onCancel={handleModalClose}
+          onOk={() => submitAddPatient(isEditMode, form.getFieldsValue())}
         >
           <Form
-            onFinish={submitAddPatient}
+            onFinish={() => submitAddPatient(isEditMode, form.getFieldsValue())}
             form={form}
             style={{ padding: "20px" }}
           >
@@ -135,7 +150,7 @@ export const Patients = () => {
               />
             </Form.Item>
             <Form.Item name="dateOfBirth" label="Date of Birth">
-              <DatePicker onChange={onDateChange} />
+              <DatePicker format={"DD/MM/YYYY HH:mm"} showTime />
             </Form.Item>
 
             <Form.Item label="Phone" required name="phone">

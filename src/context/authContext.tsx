@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from "react";
 
 export type User = {
+  _id: string;
   type: string;
   name: string;
   specialization?: string | null;
@@ -8,12 +9,13 @@ export type User = {
   phone: string;
   email: string;
   password: string;
+  age?: number;
+  avatarUrl?: string;
 };
 
 type AuthContextType = {
   user: User | undefined;
   isAuthenticated: boolean;
-  setIsAuthenticated: (v: boolean) => void;
   setUserState: (u: User | undefined) => void;
 };
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,11 +26,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return savedUser ? JSON.parse(savedUser) : undefined;
   });
 
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!user);
-
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, setIsAuthenticated, setUserState }}
+      value={{ user, isAuthenticated: !!user, setUserState }}
     >
       {children}
     </AuthContext.Provider>

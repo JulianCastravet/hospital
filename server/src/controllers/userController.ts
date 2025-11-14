@@ -12,12 +12,17 @@ export const getAllUsers = async (_req: Request, res: Response) => {
   }
 };
 
-export const getSingleUser = async (req: Request, res: Response) => {
+export const getSingleUser = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
   try {
     const { id } = req.params;
     const user = await User.findById(id);
-    if (!user) return res.status(404).json({ message: "User not found" });
-    res.status(200).json(user);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ message: "Error fetching user" });
   }
@@ -139,4 +144,45 @@ export const deleteUser = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({ message: error });
   }
+};
+
+export const updateUserAvatar = async (req: Request, res: Response) => {
+  try {
+    const userId = req.params.id;
+
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No file uploaded" });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        avatarUrl: {
+          data: req.file.buffer,
+          contentType: req.file.mimetype,
+        },
+      },
+      { new: true }
+    );
+
+    console.log("user", user);
+
+    res.json({ success: true, user: user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Upload failed" });
+  }
+};
+
+export const getUserAvatar = async (req: Request, res: Response) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user || !user.avatarUrl?.data) {
+    return res.status(404).send("No avatar found");
+  }
+
+  res.set("Content-Type", user.avatarUrl.contentType);
+  res.send(user.avatarUrl.data);
 };
