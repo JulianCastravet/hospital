@@ -103,10 +103,3 @@ export const updateUserAvatar = async (
     message.error("Failed to update avatar.");
   }
 };
-
-export const getUserAvatar = async (id: string, message: MessageInstance) => {
-  const res = await fetch(`http://localhost:4001/api/users/${id}/avatar`);
-
-  if (!res.ok) message.error("Failed to fetch user avatar.");
-  return res.json();
-};

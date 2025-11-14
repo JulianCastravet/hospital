@@ -94,10 +94,12 @@ export const Patients = () => {
   function handleEditRow(v: any): void {
     setModalOpen(true);
     setIsEditMode(true);
-    form.setFieldsValue({
-      ...v,
-      dateOfBirth: dayjs(v.dateOfBirth),
-    });
+    setTimeout(() => {
+      form.setFieldsValue({
+        ...v,
+        dateOfBirth: dayjs(v.dateOfBirth),
+      });
+    }, 0);
   }
 
   function handleDeleteRow(data: any) {
@@ -112,7 +114,7 @@ export const Patients = () => {
   }
 
   const handleModalClose = () => {
-    setModalOpen(!modalOpen);
+    setModalOpen(false);
     setIsEditMode(false);
     form.resetFields();
   };
@@ -133,6 +135,7 @@ export const Patients = () => {
           open={modalOpen}
           onCancel={handleModalClose}
           onOk={() => submitAddPatient(isEditMode, form.getFieldsValue())}
+          destroyOnHidden
         >
           <Form
             onFinish={() => submitAddPatient(isEditMode, form.getFieldsValue())}

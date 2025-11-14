@@ -25,6 +25,9 @@ app.use("/api/users", userRoutes);
 app.use("/api/appointments", appointmentsRoutes);
 app.use("/api/reports", reportRoutes);
 
+//images
+app.use("/uploads", express.static("uploads"));
+
 app.get("/", (_req, res) => res.send("Backend running 🚀"));
 
 app.listen(PORT, () => {

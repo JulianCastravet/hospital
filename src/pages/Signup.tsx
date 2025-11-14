@@ -26,10 +26,19 @@ const doctorSpecialities = [
 
 export const SignUp = () => {
   useTitle("Hospital - Sign Up");
-  const { user, setUser } = useUser();
   const { message } = App.useApp();
   const [date, setDate] = useState<Date>(new Date());
   const [form] = Form.useForm();
+  const [user, setUser] = useState<User>({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    specialization: "",
+    type: "",
+    _id: "",
+    dateOfBirth: "",
+  });
 
   const onDateChange = (date_: any, dateString: string | string[]) => {
     setDate(new Date(dateString === "string" ? dateString : dateString[0]));
@@ -72,7 +81,7 @@ export const SignUp = () => {
             rules={[{ required: true, message: "Please select type of user!" }]}
           >
             <Radio.Group
-              value={user.type}
+              value={user?.type}
               onChange={(e) => setUser({ ...user, type: e.target.value })}
             >
               <Radio value="guest">Guest</Radio>

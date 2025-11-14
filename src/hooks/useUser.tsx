@@ -3,43 +3,33 @@ import { User } from "../context/authContext";
 import {
   addUser as _addUser,
   updateUser as _updateUser,
-  getUserAvatar,
+  getSingleUser,
   updateUserAvatar,
 } from "../api/user";
 import { App } from "antd";
 
 export const useUser = () => {
   const { message } = App.useApp();
-  const emptyUser: User = {
-    type: "",
-    name: "",
-    dateOfBirth: "",
-    phone: "",
-    email: "",
-    password: "",
-    age: 0,
-    avatarUrl: "",
-    _id: "",
-  };
 
-  const [user, _setUser] = useState<User>(emptyUser);
-  const [users] = useState<User[]>([]);
-
-  const setUser = (u: User) => {
-    _setUser(u);
-  };
+  const [user, setUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
 
   const addUser = (u: User) => {
-    _addUser(u, message);
+    _addUser(u, message).then((users) => setUsers({ ...users }));
   };
 
   const updateUser = (id: string, u: User) => {
-    _updateUser(id, u, message);
+    _updateUser(id, u, message).then((user) => setUser({ ...user }));
   };
 
   const updateAvatar = (id: string, blob: FormData) => {
-    updateUserAvatar(id, blob, message);
+    updateUserAvatar(id, blob, message).then((user) => setUser({ ...user }));
   };
 
-  return { user, users, setUser, addUser, updateUser, updateAvatar };
+  const getUser = (id: string) => {
+    getSingleUser(id || "", message).then((user) => {
+      setUser(user ? { ...user } : null);
+    });
+  };
+  return { user, users, getUser, setUser, addUser, updateUser, updateAvatar };
 };

@@ -14,17 +14,15 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <React.StrictMode>
-    <Antapp>
-      <ConfigProvider theme={themeToken}>
-        <AuthProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </AuthProvider>
-      </ConfigProvider>
-    </Antapp>
-  </React.StrictMode>
+  <Antapp>
+    <ConfigProvider theme={themeToken}>
+      <AuthProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </AuthProvider>
+    </ConfigProvider>
+  </Antapp>
 );
 
 // If you want to start measuring performance in your app, pass a function

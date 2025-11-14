@@ -8,12 +8,9 @@ import {
   deleteUser,
   updateUser,
   updateUserAvatar,
-  getUserAvatar,
+  // getUserAvatar,
 } from "../controllers/userController";
-import multer from "multer";
-
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+import { upload } from "../multerConfig";
 
 const router = express.Router();
 router.post("/login", authenticateUser);
@@ -24,6 +21,6 @@ router.post("/", addUser);
 router.delete("/:id", deleteUser);
 router.put("/:id", updateUser);
 router.post("/:id/avatar", upload.single("userAvatar"), updateUserAvatar);
-router.get("/:id/avatar", getUserAvatar);
+// router.get("/:id/avatar", getUserAvatar);
 
 export default router;

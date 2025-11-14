@@ -18,19 +18,20 @@ import {
 } from "@ant-design/icons";
 import TimelineItem from "../timelineItem/timelineItem";
 import { ImageWithUpload } from "../imageWithUpload/imageWithUpload";
+import { useUser } from "../../hooks/useUser";
+import { useUserStore } from "../../store/user.store";
 
 const PatientPage = () => {
   const params = useParams();
   useTitle("User Page");
-  const [user, setUser] = useState<User | null>(null);
   const { message } = App.useApp();
 
-  useEffect(() => {
-    const { id } = params;
-    if (!id) return;
+  const { user, updateUser, getUser } = useUserStore();
 
-    getSingleUser(id || "", message).then((user) => setUser(user));
-  }, [params]);
+  useEffect(() => {
+    if (!params.id) return;
+    getUser(params.id, message);
+  }, [params.id]);
 
   const timelineItems = [
     {
@@ -68,6 +69,12 @@ const PatientPage = () => {
     },
   ];
 
+  const removeUserImage = (id: string) => {
+    if (user) {
+      updateUser(id, { ...user, avatarUrl: "" }, message);
+    }
+  };
+
   return !user ? (
     <>User not found</>
   ) : (
@@ -80,6 +87,7 @@ const PatientPage = () => {
                 <ImageWithUpload
                   avatarUrl={user.avatarUrl ?? ""}
                   userId={user._id}
+                  removeImage={() => removeUserImage(user._id)}
                 />
                 <Typography.Title level={4}>{user.name}</Typography.Title>
               </Col>

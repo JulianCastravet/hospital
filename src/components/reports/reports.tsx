@@ -179,6 +179,7 @@ export const Reports = () => {
         onCancel={handleModal}
         onOk={submitForm}
         style={{ padding: "30px" }}
+        destroyOnHidden
       >
         <ReportForm handleSubmit={submitForm} form={form} />
       </Modal>

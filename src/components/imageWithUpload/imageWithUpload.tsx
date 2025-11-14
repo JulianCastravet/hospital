@@ -1,20 +1,22 @@
-import { App, Image } from "antd";
+import React from "react";
+
+import { Image, message } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { useUser } from "../../hooks/useUser";
-import { getUserAvatar } from "../../api/user";
+import { CloseCircleFilled } from "@ant-design/icons";
+import { useUserStore } from "../../store/user.store";
 
 export const ImageWithUpload = ({
   avatarUrl,
   userId,
+  removeImage,
 }: {
   avatarUrl: string;
   userId: string;
+  removeImage: () => void;
 }) => {
   const inputRef = useRef(null);
-  const { updateAvatar } = useUser();
-  const { message } = App.useApp();
-
-  const [image, setImage] = useState<string>(avatarUrl);
+  const { updateAvatar } = useUserStore();
 
   const handleImageClick = () => {
     const inputElement = inputRef.current as unknown as HTMLInputElement;
@@ -22,22 +24,13 @@ export const ImageWithUpload = ({
   };
 
   const handleInputClick = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const image = e.target.files?.[0];
-    if (!image) return;
-
-    const fileReader = new FileReader();
-    fileReader.onloadend = () => {
-      setImage(fileReader.result as string);
-    };
-    fileReader.readAsDataURL(image);
+    const file = e.target.files?.[0];
+    if (!file) return;
 
     const formData = new FormData();
-    formData.append("userAvatar", image);
-    updateAvatar(userId, formData);
+    formData.append("userAvatar", file);
+    updateAvatar(userId, formData, message);
   };
-  useEffect(() => {
-    getUserAvatar(userId, message).then((data) => console.log(data));
-  }, []);
 
   return (
     <>
@@ -49,12 +42,19 @@ export const ImageWithUpload = ({
           maxWidth: "160px",
           height: "100%",
           maxHeight: "160px",
+          position: "relative",
         }}
         preview={false}
-        src={image || "https://placehold.co/600x400"}
+        src={avatarUrl || "https://placehold.co/600x400"}
         onClick={handleImageClick}
         className="hover:cursor-pointer"
+        loading="lazy"
       />
+
+      {avatarUrl && (
+        <CloseCircleFilled style={{ color: "red" }} onClick={removeImage} />
+      )}
+
       <input
         type="file"
         accept="image/*"

@@ -10,6 +10,7 @@ import {
   updateAppointment,
 } from "../../api/appointments";
 import { DeleteFilled, EditFilled } from "@ant-design/icons";
+import { error } from "console";
 
 export const Appointments = () => {
   useTitle("Appointments");
@@ -93,26 +94,27 @@ export const Appointments = () => {
   };
 
   const submitAppointment = async () => {
-    const appointment = form.getFieldsValue() as Appointment;
-    form
-      .validateFields()
-      .then(() => {
-        if (!isEditMode) {
-          addAppointment(appointment, message).then((res) =>
-            setAppointments(res)
-          );
-        } else {
-          updateAppointment(appointmentId, appointment, message).then((appt) =>
-            setAppointments(appt)
-          );
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    try {
+      await form.validateFields();
 
-    form.resetFields();
-    setOpen(!open);
+      const appointment = form.getFieldsValue() as Appointment;
+
+      let result: Appointment[];
+
+      if (isEditMode) {
+        result = await updateAppointment(appointmentId, appointment, message);
+      } else {
+        result = await addAppointment(appointment, message);
+      }
+
+      // Close modal + reset form
+      form.resetFields();
+      setOpen(false);
+
+      // Update list
+      setAppointments(result);
+    } catch (error) {
+    }
   };
 
   return (
@@ -125,7 +127,7 @@ export const Appointments = () => {
       <Modal
         open={open}
         onCancel={() => {
-          setOpen(!open);
+          setOpen(false);
           form.resetFields();
         }}
         onOk={submitAppointment}

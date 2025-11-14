@@ -125,9 +125,9 @@ export const updateUser = async (req: Request, res: Response) => {
       runValidators: true,
     });
 
-    const users = await User.find();
+    const user = await User.findById(id);
 
-    return res.status(200).json(users);
+    return res.status(200).json(user);
   } catch (error) {
     return res.status(500).json(error);
   }
@@ -156,13 +156,12 @@ export const updateUserAvatar = async (req: Request, res: Response) => {
         .json({ success: false, message: "No file uploaded" });
     }
 
+    const imageURL = `/uploads/${req.file.filename}`;
+
     const user = await User.findByIdAndUpdate(
       userId,
       {
-        avatarUrl: {
-          data: req.file.buffer,
-          contentType: req.file.mimetype,
-        },
+        avatarUrl: imageURL,
       },
       { new: true }
     );
@@ -174,15 +173,4 @@ export const updateUserAvatar = async (req: Request, res: Response) => {
     console.error(err);
     res.status(500).json({ success: false, message: "Upload failed" });
   }
-};
-
-export const getUserAvatar = async (req: Request, res: Response) => {
-  const user = await User.findById(req.params.id);
-
-  if (!user || !user.avatarUrl?.data) {
-    return res.status(404).json({ message: "No avatar found" });
-  }
-
-  res.set("Content-Type", user.avatarUrl.contentType);
-  res.send(user.avatarUrl.data);
 };
