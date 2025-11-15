@@ -13,12 +13,14 @@ import {
 import { User } from "../../context/authContext";
 import { deleteUser, getPatients } from "../../api/user";
 import dayjs from "dayjs";
+import { AddressMap } from "../addressMap/addressMap";
+import { useUserStore } from "../../store/user.store";
 
 export const Patients = () => {
   useTitle("Patients");
 
-  const { addUser, updateUser } = useUser();
-
+  const { updateUser } = useUserStore();
+  const { addUser } = useUser();
   const [form] = useForm();
   const { confirm } = Modal;
   const { message } = App.useApp();
@@ -72,10 +74,20 @@ export const Patients = () => {
     },
   ];
 
-  const submitAddPatient = async (editMode: boolean, user: User) => {
+  const submitAddPatient = async (editMode: boolean, values: any) => {
+    const { address, name, dateOfBirth, phone, email } = values;
+    const user: User = {
+      _id: "",
+      name,
+      dateOfBirth,
+      phone,
+      formattedAddress: address,
+      email,
+      type: "guest",
+      password: "guest",
+    };
+
     if (!editMode) {
-      user.type = "guest";
-      user.password = "guest";
       addUser(user);
       form.resetFields();
       getPatients(message).then((patients) => setPatients(patients));
@@ -83,7 +95,7 @@ export const Patients = () => {
     } else {
       const id = form.getFieldValue("_id");
 
-      updateUser(id, user);
+      updateUser(id, { ...user, _id: id }, message);
       getPatients(message).then((patients) => setPatients(patients));
 
       setModalOpen(!modalOpen);
@@ -94,10 +106,13 @@ export const Patients = () => {
   function handleEditRow(v: any): void {
     setModalOpen(true);
     setIsEditMode(true);
+
+    console.log(v);
     setTimeout(() => {
       form.setFieldsValue({
         ...v,
         dateOfBirth: dayjs(v.dateOfBirth),
+        address: v.formattedAddress,
       });
     }, 0);
   }
@@ -119,6 +134,9 @@ export const Patients = () => {
     form.resetFields();
   };
 
+  const handleMapValue = (v: string) => {
+    form.setFieldValue("address", v);
+  };
   return (
     <>
       <Table
@@ -169,6 +187,12 @@ export const Patients = () => {
                 prefix={<MailOutlined />}
                 type="mail"
                 placeholder="johndoe@mail.com"
+              />
+            </Form.Item>
+            <Form.Item name="address" label="Address">
+              <AddressMap
+                value={form.getFieldValue("address")}
+                onChange={handleMapValue}
               />
             </Form.Item>
           </Form>

@@ -44,6 +44,7 @@ export const addUser = async (req: Request, res: Response) => {
       dateOfBirth,
       type,
       specialization = "",
+      address,
     } = req.body;
 
     if (!email || !password) {
@@ -66,6 +67,7 @@ export const addUser = async (req: Request, res: Response) => {
       type,
       specialization,
       age: calculateUserAge(dateOfBirth),
+      address,
     });
 
     await newUser.save();

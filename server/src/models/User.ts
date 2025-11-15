@@ -13,6 +13,7 @@ export interface IUser extends Document {
     data: Buffer;
     contentType: string;
   };
+  formattedAddress: string;
 }
 
 const userSchema = new Schema<IUser>(
@@ -29,6 +30,7 @@ const userSchema = new Schema<IUser>(
       data: Buffer,
       contentType: String,
     },
+    formattedAddress: { type: String, required: false },
   },
   { timestamps: true }
 );

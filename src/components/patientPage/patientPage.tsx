@@ -66,7 +66,6 @@ const PatientPage = () => {
       ),
     },
   ];
-  console.log(user);
 
   const removeUserImage = (id: string) => {
     if (user) {
@@ -151,7 +150,7 @@ const PatientPage = () => {
                 <DescriptionCard
                   title="Address"
                   titleDisabled
-                  description={"address to be fixed"}
+                  description={user.formattedAddress || DASH}
                   icon={
                     <EnvironmentOutlined
                       style={{ fontSize: "20px", color: "turquoise" }}

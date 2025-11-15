@@ -1,0 +1,102 @@
+import { useEffect, useRef, useState } from "react";
+import Radar from "radar-sdk-js";
+import "radar-sdk-js/dist/radar.css";
+import { Input } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
+
+type Props = {
+  value: string;
+  onChange?: (val: string) => void;
+};
+
+export const AddressMap = (props: Props) => {
+  Radar.initialize(process.env.REACT_APP_RADAR_API_KEY ?? "");
+
+  const { value, onChange } = props;
+
+  const mapRef = useRef<any | null>(null);
+  const markerRef = useRef<any | null>(null);
+  const autocompleteRef = useRef<any | null>(null);
+
+  const [internAddress, setInternAddress] = useState<string>(value);
+
+  useEffect(() => {}, []);
+
+  useEffect(() => {
+    // 1. Initialize Radar once
+    let point: [number, number] = [-73.9911, 40.7342];
+
+    if (internAddress) {
+      Radar.forwardGeocode({
+        query: internAddress,
+      }).then((data) => {
+        const info = data.addresses[0];
+        point = [info.longitude, info.latitude];
+        mapRef.current?.flyTo({ center: point, zoom: 1 });
+        markerRef.current.setLngLat(point);
+      });
+    }
+    const map = Radar.ui.map({
+      container: "map",
+      style: "radar-default-v1",
+      center: point,
+      zoom: 1,
+    });
+    mapRef.current = map;
+
+    // Add a marker to the map
+    const marker = Radar.ui
+      .marker({ text: internAddress })
+      .setLngLat(point) // default example.
+      .addTo(map);
+    markerRef.current = marker;
+
+    // Initialize Radar autocomplete
+    autocompleteRef.current = Radar.ui.autocomplete({
+      container: "searchInput",
+      width: "400px",
+      placeholder: "Input Address",
+      onSelection: (address) => {
+        const { latitude, longitude, formattedAddress } = address;
+        setInternAddress(formattedAddress);
+        onChange?.(formattedAddress);
+
+        // Update marker position
+        markerRef.current.setLngLat([longitude, latitude]);
+
+        // Center the map on the selected address
+        mapRef.current.flyTo({ center: [longitude, latitude], zoom: 16 });
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+    });
+    return () => {
+      autocompleteRef.current?.remove();
+    };
+  }, []);
+
+  const handleInputChange = (e: any) => {
+    setInternAddress(e.target.value);
+  };
+
+  return (
+    <>
+      <Input
+        prefix={<SearchOutlined />}
+        type="text"
+        placeholder="Address"
+        id="searchInput"
+        className="autocomplete-search-field-component mb-2"
+        onChange={handleInputChange}
+        value={internAddress}
+      />
+      <div
+        id="map-container"
+        style={{ width: "100%", height: "300px", position: "relative" }}
+      >
+        <div id="map" ref={mapRef} style={{ width: "100%", height: "100%" }} />
+      </div>
+    </>
+  );
+};

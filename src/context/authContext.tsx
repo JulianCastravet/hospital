@@ -11,6 +11,7 @@ export type User = {
   password: string;
   age?: number;
   avatarUrl?: string;
+  formattedAddress?: string;
 };
 
 type AuthContextType = {
