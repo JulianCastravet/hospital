@@ -5,7 +5,7 @@ import { Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
 type Props = {
-  value: string;
+  value?: string;
   onChange?: (val: string) => void;
 };
 
@@ -18,9 +18,7 @@ export const AddressMap = (props: Props) => {
   const markerRef = useRef<any | null>(null);
   const autocompleteRef = useRef<any | null>(null);
 
-  const [internAddress, setInternAddress] = useState<string>(value);
-
-  useEffect(() => {}, []);
+  const [internAddress, setInternAddress] = useState<string>(value ?? "");
 
   useEffect(() => {
     // 1. Initialize Radar once
@@ -41,12 +39,26 @@ export const AddressMap = (props: Props) => {
       style: "radar-default-v1",
       center: point,
       zoom: 1,
+      doubleClickZoom: false,
     });
     mapRef.current = map;
 
+    map.on("click", (e) => {
+      const point = e.lngLat;
+      map.jumpTo({ center: point });
+      marker.setLngLat(point);
+      Radar.reverseGeocode({ latitude: point.lat, longitude: point.lng })
+        .then((address) => {
+          setInternAddress(address.addresses[0].formattedAddress ?? "");
+          onChange?.(address.addresses[0].formattedAddress ?? "");
+          Radar.ui.popup({ text: internAddress }).addTo(map);
+        })
+        .catch((error) => console.log(error));
+    });
+
     // Add a marker to the map
     const marker = Radar.ui
-      .marker({ text: internAddress })
+      .popup({ text: internAddress })
       .setLngLat(point) // default example.
       .addTo(map);
     markerRef.current = marker;
@@ -74,10 +86,12 @@ export const AddressMap = (props: Props) => {
     return () => {
       autocompleteRef.current?.remove();
     };
+    // eslint-disable-next-line
   }, []);
 
   const handleInputChange = (e: any) => {
     setInternAddress(e.target.value);
+    onChange?.(e.target.value);
   };
 
   return (

@@ -87,27 +87,31 @@ export const Patients = () => {
       password: "guest",
     };
 
-    if (!editMode) {
-      addUser(user);
-      form.resetFields();
-      getPatients(message).then((patients) => setPatients(patients));
-      setModalOpen(!modalOpen);
-    } else {
-      const id = form.getFieldValue("_id");
+    form
+      .validateFields(["address", "name", "dateOfBirth", "phone", "email"])
+      .then(() => {
+        if (!editMode) {
+          addUser(user);
+          form.resetFields();
+          getPatients(message).then((patients) => setPatients(patients));
+          setModalOpen(!modalOpen);
+        } else {
+          const id = form.getFieldValue("_id");
 
-      updateUser(id, { ...user, _id: id }, message);
-      getPatients(message).then((patients) => setPatients(patients));
+          updateUser(id, { ...user, _id: id }, message);
+          getPatients(message).then((patients) => setPatients(patients));
 
-      setModalOpen(!modalOpen);
-      setIsEditMode(false);
-    }
+          setModalOpen(!modalOpen);
+          setIsEditMode(false);
+        }
+      })
+      .catch((error) => console.log(error));
   };
 
   function handleEditRow(v: any): void {
     setModalOpen(true);
     setIsEditMode(true);
 
-    console.log(v);
     setTimeout(() => {
       form.setFieldsValue({
         ...v,
@@ -135,7 +139,7 @@ export const Patients = () => {
   };
 
   const handleMapValue = (v: string) => {
-    form.setFieldValue("address", v);
+    form.setFieldsValue({ address: v });
   };
   return (
     <>
@@ -189,11 +193,12 @@ export const Patients = () => {
                 placeholder="johndoe@mail.com"
               />
             </Form.Item>
-            <Form.Item name="address" label="Address">
-              <AddressMap
-                value={form.getFieldValue("address")}
-                onChange={handleMapValue}
-              />
+            <Form.Item
+              name="address"
+              label="Address"
+              rules={[{ required: true }]}
+            >
+              <AddressMap onChange={handleMapValue} />
             </Form.Item>
           </Form>
         </Modal>

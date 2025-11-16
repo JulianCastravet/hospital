@@ -33,7 +33,6 @@ export const useUserStore = create<UserState>((set) => {
     },
 
     updateUser: (id: string, u: User, message) => {
-      console.log(u)
       _updateUser(id, u, message).then((user) => {
         if (user) set({ user });
       });

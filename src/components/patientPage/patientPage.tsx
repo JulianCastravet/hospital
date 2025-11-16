@@ -18,6 +18,7 @@ import TimelineItem from "../timelineItem/timelineItem";
 import { ImageWithUpload } from "../imageWithUpload/imageWithUpload";
 import { useUserStore } from "../../store/user.store";
 import { DASH } from "../../utils/dash";
+import Title from "antd/es/typography/Title";
 
 const PatientPage = () => {
   const params = useParams();
@@ -234,7 +235,10 @@ const PatientPage = () => {
         </Col>
         <Col span={6}>
           <Card title="Medical Information">
-            <Image />
+            <Image
+              preview={false}
+              src="https://cdn11.bigcommerce.com/s-pqoyj9mdma/images/stencil/1280x1280/products/1297/2180/KMH_1__87467.1683820602.jpg?c=2"
+            />
             <Typography.Title level={3} className="text-center">
               Heart Rate
             </Typography.Title>
@@ -242,10 +246,16 @@ const PatientPage = () => {
               Heart Rate is in stable and healty state this week. This should be
               based on some parameters. need to fix
             </Typography.Paragraph>
-            <div style={{ display: "flex" }}>
-              <div> Average 78 bpm</div>
-              <div> Minimum 40 bpm</div>
-              <div> maximum 90 bpm</div>
+            <div className="flex flex-row">
+              <div className="basis-2xs text-center">
+                <Title level={4}>Average</Title> 78 bpm
+              </div>
+              <div className="basis-2xs text-center">
+                <Title level={4}>Minimum</Title> 40 bpm
+              </div>
+              <div className="basis-2xs text-center">
+                <Title level={4}>Maximum</Title> 90 bpm
+              </div>
             </div>
             <div>grafic cu bpm x = weekdays, y= count of bpm</div>
           </Card>
