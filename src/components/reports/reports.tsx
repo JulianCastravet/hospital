@@ -8,7 +8,6 @@ import {
   getAllReports,
   deleteReport,
 } from "../../api/reports";
-import { Report } from "../../data";
 import ReportForm from "../reportForm/reportForm";
 import { useForm } from "antd/es/form/Form";
 import {
@@ -18,6 +17,7 @@ import {
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { formatTime } from "../../utils/formatTime";
+import { Report } from "../../types";
 
 export const Reports = () => {
   useTitle("Reports");

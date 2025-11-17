@@ -1,8 +1,17 @@
 import { create } from "zustand";
 
-const patientsStore = create((set: any) => ({
+type HospitalTypeStore = {
+  patients: number;
+  getPatients: () => void;
+  doctors: number;
+  getDoctors: () => void;
+};
+
+const patientsStore = create<HospitalTypeStore>((set: any) => ({
   patients: 0,
-  addPatient: () => set((state: any) => ({ patients: state.patients + 1 })),
+  doctors: 0,
+  getPatients: () => {},
+  getDoctors() {},
 }));
 
 export default patientsStore;

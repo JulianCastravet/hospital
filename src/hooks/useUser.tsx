@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { User } from "../context/authContext";
 import {
   addUser as _addUser,
   updateUser as _updateUser,
@@ -7,6 +6,7 @@ import {
   updateUserAvatar,
 } from "../api/user";
 import { App } from "antd";
+import { User } from "../types";
 
 export const useUser = () => {
   const { message } = App.useApp();

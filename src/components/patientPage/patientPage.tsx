@@ -1,6 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Row, Col, Card, Image, Typography, Timeline, App } from "antd";
+import {
+  Row,
+  Col,
+  Card,
+  Image,
+  Typography,
+  Timeline,
+  App,
+  Button,
+  Modal,
+  Form,
+  Input,
+  DatePicker,
+  Select,
+} from "antd";
 import { useTitle } from "../../hooks/useTitle";
 import { formatTime } from "../../utils/formatTime";
 import DescriptionCard from "../descriptionCard/descriptionCard";
@@ -19,60 +33,88 @@ import { ImageWithUpload } from "../imageWithUpload/imageWithUpload";
 import { useUserStore } from "../../store/user.store";
 import { DASH } from "../../utils/dash";
 import Title from "antd/es/typography/Title";
+import { useForm } from "antd/es/form/Form";
+import TextArea from "antd/es/input/TextArea";
+import { capitalize } from "../../utils/capitalize";
+import { getDoctorById } from "../../utils/getDoctorById";
 
 const PatientPage = () => {
   const params = useParams();
   useTitle("User Page");
   const { message } = App.useApp();
+  const [form] = useForm();
 
-  const { user, updateUser, getUser } = useUserStore();
+  const {
+    user,
+    users,
+    updateUser,
+    getUser,
+    getUsers,
+    addDiagnose,
+    addAppointment,
+  } = useUserStore();
+
+  const [diagnoseModal, setDiagnoseModal] = useState<boolean>(false);
+  const [appointmentModal, setAppointmentModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (!params.id) return;
     getUser(params.id, message);
-  }, [params.id, message, getUser]);
+    getUsers(message);
+  }, [params.id, message, getUser, getUsers]);
 
-  const timelineItems = [
-    {
+  const timelineItems = () => {
+    if (!user?.medicalInfo?.appointments) return [];
+
+    return user?.medicalInfo?.appointments.map((app) => ({
       dot: <CheckCircleFilled style={{ fontSize: "20px" }} />,
       color: "turquoise",
       children: (
         <TimelineItem
-          date={"22 October 2024"}
-          doctor={"Dr. Septianisa"}
-          label={"Diuretics"}
+          date={app.time}
+          doctor={getDoctorById(app.doctor, users ?? [])?.name || DASH}
+          label={app.appointment}
         />
       ),
-    },
-    {
-      dot: <CheckCircleFilled style={{ fontSize: "20px" }} />,
-      color: "turquoise",
-      children: (
-        <TimelineItem
-          date={"22 October 2024"}
-          doctor={"Dr. Septianisa"}
-          label={"Diuretics"}
-        />
-      ),
-    },
-    {
-      dot: <CheckCircleFilled style={{ fontSize: "20px" }} />,
-      color: "turquoise",
-      children: (
-        <TimelineItem
-          date={"22 October 2024"}
-          doctor={"Dr. Septianisa"}
-          label={"Diuretics"}
-        />
-      ),
-    },
-  ];
+    }));
+  };
 
   const removeUserImage = (id: string) => {
     if (user) {
       updateUser(id, { ...user, avatarUrl: "" }, message);
     }
   };
+
+  const submitAddDiagnose = () => {
+    form
+      .validateFields(["time", "diagnose", "description"])
+      .then(() => {
+        if (!params.id) return;
+        addDiagnose(params.id, form.getFieldsValue(), message);
+        form.resetFields();
+        setDiagnoseModal(false);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const submitAddAppointment = () => {
+    form
+      .validateFields(["time", "appointment", "doctor"])
+      .then(() => {
+        if (!params.id) return;
+        addAppointment(params.id, form.getFieldsValue(), message);
+        form.resetFields();
+        setAppointmentModal(false);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const doctorOptions = users
+    .filter((user) => user.type === "doctor")
+    .map((doc) => ({
+      value: doc._id,
+      label: doc.name,
+    }));
 
   return !user ? (
     <>User not found</>
@@ -94,14 +136,13 @@ const PatientPage = () => {
                 <DescriptionCard
                   title="Gender"
                   titleDisabled
-                  description={user.type}
+                  description={capitalize(user.gender)}
                   icon={
                     <WomanOutlined
                       style={{ fontSize: "20px", color: "turquoise" }}
                     />
                   }
                 />
-                {/* need to fix this */}
 
                 <DescriptionCard
                   title="Age"
@@ -175,61 +216,47 @@ const PatientPage = () => {
           </Card>
           <Card title="Medical History">
             <Row gutter={100}>
-              <Col span={8}>
-                <DescriptionCard
-                  title="Hypertension"
-                  descriptionDisabled
-                  description={
-                    "high blood pressure that may require regular monitoring"
-                  }
-                  icon={
-                    <WomanOutlined
-                      style={{ fontSize: "20px", color: "turquoise" }}
+              {user.medicalInfo?.medicalHistory.map((diagnose) => {
+                return (
+                  <Col span={8} key={diagnose.id}>
+                    <DescriptionCard
+                      title={diagnose.diagnose}
+                      descriptionDisabled
+                      description={diagnose.description}
+                      icon={
+                        <WomanOutlined
+                          style={{ fontSize: "20px", color: "turquoise" }}
+                        />
+                      }
                     />
-                  }
-                />
-                {/* need to fix this */}
-              </Col>
-              <Col span={8}>
-                <DescriptionCard
-                  title="Asthma"
-                  descriptionDisabled
-                  description={
-                    "A condition causing airway inflammation and narrowing."
-                  }
-                  icon={
-                    <WomanOutlined
-                      style={{ fontSize: "20px", color: "turquoise" }}
-                    />
-                  }
-                />
-                {/* need to fix this */}
-              </Col>
-              <Col span={8}>
-                <DescriptionCard
-                  title="Chronic Kidney Disease"
-                  descriptionDisabled
-                  description={"Chronic loss of kidney function over time"}
-                  icon={
-                    <WomanOutlined
-                      style={{ fontSize: "20px", color: "turquoise" }}
-                    />
-                  }
-                />
-                {/* need to fix this */}
-              </Col>
+                  </Col>
+                );
+              })}
             </Row>
           </Card>
           <Row className="!flex flex-row gap-13">
             <Col span={10}>
               <Card title="Appointment">
-                <Timeline items={timelineItems}></Timeline>
+                <Timeline items={timelineItems()} />
               </Card>
             </Col>
             <Col span={13}>
-              <Card title="Document Agreement">
-                a list of downloadable documents
-              </Card>
+              <Row>
+                <Card title="Document Agreement">
+                  a list of downloadable documents
+                </Card>
+                <Card title="Actions">
+                  <Button type="primary" onClick={() => setDiagnoseModal(true)}>
+                    Add Diagnose
+                  </Button>
+                  <Button
+                    type="primary"
+                    onClick={() => setAppointmentModal(true)}
+                  >
+                    Add Appointment
+                  </Button>
+                </Card>
+              </Row>
             </Col>
           </Row>
         </Col>
@@ -261,6 +288,74 @@ const PatientPage = () => {
           </Card>
         </Col>
       </Row>
+
+      <Modal
+        open={diagnoseModal}
+        onOk={submitAddDiagnose}
+        destroyOnHidden
+        onCancel={() => setDiagnoseModal(false)}
+      >
+        <Form form={form}>
+          <Form.Item
+            name="time"
+            label="Date/Time"
+            required
+            rules={[{ required: true }]}
+          >
+            <DatePicker showTime format={"DD/MM/YYYY HH:mm"} />
+          </Form.Item>
+          <Form.Item
+            name="diagnose"
+            label="Diagnose"
+            required
+            rules={[{ required: true }]}
+          >
+            <Input type="text" />
+          </Form.Item>
+          <Form.Item
+            name="description"
+            label="Description"
+            required
+            rules={[{ required: true }]}
+          >
+            <TextArea />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        open={appointmentModal}
+        onOk={submitAddAppointment}
+        destroyOnHidden
+        onCancel={() => setAppointmentModal(false)}
+      >
+        <Form form={form}>
+          <Form.Item
+            name="time"
+            label="Date/Time"
+            required
+            rules={[{ required: true }]}
+          >
+            <DatePicker showTime format={"DD/MM/YYYY HH:mm"} />
+          </Form.Item>
+          <Form.Item
+            name="appointment"
+            label="Title"
+            required
+            rules={[{ required: true }]}
+          >
+            <Input type="text" />
+          </Form.Item>
+          <Form.Item
+            name="doctor"
+            label="Doctor"
+            required
+            rules={[{ required: true }]}
+          >
+            <Select options={doctorOptions} />
+          </Form.Item>
+        </Form>
+      </Modal>
     </>
   );
 };

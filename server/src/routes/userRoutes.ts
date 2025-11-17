@@ -8,7 +8,8 @@ import {
   deleteUser,
   updateUser,
   updateUserAvatar,
-  // getUserAvatar,
+  addUserDiagnose,
+  addUserAppointment,
 } from "../controllers/userController";
 import { upload } from "../multerConfig";
 
@@ -21,6 +22,7 @@ router.post("/", addUser);
 router.delete("/:id", deleteUser);
 router.put("/:id", updateUser);
 router.post("/:id/avatar", upload.single("userAvatar"), updateUserAvatar);
-// router.get("/:id/avatar", getUserAvatar);
+router.post("/:id/diagnose", addUserDiagnose);
+router.post("/:id/appointments", addUserAppointment);
 
 export default router;

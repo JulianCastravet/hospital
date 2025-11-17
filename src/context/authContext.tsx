@@ -1,18 +1,5 @@
 import { createContext, useContext, useState } from "react";
-
-export type User = {
-  _id: string;
-  type: string;
-  name: string;
-  specialization?: string | null;
-  dateOfBirth: string;
-  phone: string;
-  email: string;
-  password: string;
-  age?: number;
-  avatarUrl?: string;
-  formattedAddress?: string;
-};
+import { User } from "../types";
 
 type AuthContextType = {
   user: User | undefined;

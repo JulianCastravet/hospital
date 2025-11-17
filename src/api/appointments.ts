@@ -1,5 +1,5 @@
 import { MessageInstance } from "antd/es/message/interface";
-import { Appointment } from "../data";
+import { Appointment } from "../types";
 
 export const getAllAppointments = async (
   message: MessageInstance

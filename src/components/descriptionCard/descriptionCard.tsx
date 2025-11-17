@@ -36,7 +36,7 @@ const DescriptionCard: React.FC<DCProps> = (props: DCProps) => {
             {title}
           </Typography.Title>
         ) : (
-          <Typography.Title level={5}>{title}</Typography.Title>
+          <Typography.Title level={5} style={{ marginBottom: 0 }}>{title}</Typography.Title>
         )}
         {descriptionDisabled ? (
           <Typography.Text type="secondary">{description}</Typography.Text>

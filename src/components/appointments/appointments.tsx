@@ -2,7 +2,6 @@ import { App, Button, Flex, Form, Input, Modal, Table } from "antd";
 import { useTitle } from "../../hooks/useTitle";
 import { useEffect, useState } from "react";
 import { useForm } from "antd/es/form/Form";
-import { Appointment } from "../../data";
 import {
   addAppointment,
   deleteAppointment,
@@ -10,6 +9,7 @@ import {
   updateAppointment,
 } from "../../api/appointments";
 import { DeleteFilled, EditFilled } from "@ant-design/icons";
+import { Appointment } from "../../types";
 
 export const Appointments = () => {
   useTitle("Appointments");

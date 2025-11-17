@@ -6,8 +6,8 @@ import { useTitle } from "../hooks/useTitle";
 import { App, Button, DatePicker, Form, Radio, Select } from "antd";
 import Input from "antd/es/input/Input";
 import { LockOutlined, UserOutlined, MailOutlined } from "@ant-design/icons";
-import { User } from "../context/authContext";
 import { addUser } from "../api/user";
+import { User } from "../types";
 
 const doctorSpecialities = [
   { label: "ORL", value: "orl" },
@@ -37,6 +37,7 @@ export const SignUp = () => {
     type: "",
     _id: "",
     dateOfBirth: "",
+    gender: "",
   });
 
   const onDateChange = (date_: any, dateString: string | string[]) => {
@@ -110,6 +111,13 @@ export const SignUp = () => {
               placeholder="John Doe"
             />
           </Form.Item>
+          <Form.Item name="gender" label="Gender" required>
+            <Select>
+              <Select.Option key={"male"}>Male</Select.Option>
+              <Select.Option key={"female"}>Female</Select.Option>
+            </Select>
+          </Form.Item>
+
           <Form.Item name="dateOfBirth" label="Date of Birth">
             <DatePicker onChange={onDateChange} />
           </Form.Item>

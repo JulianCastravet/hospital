@@ -183,3 +183,36 @@ export const updateUserAvatar = async (req: Request, res: Response) => {
     res.status(500).json({ success: false, message: "Upload failed" });
   }
 };
+export const addUserDiagnose = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      { $push: { "medicalInfo.medicalHistory": req.body } },
+      { new: true }
+    );
+
+    console.log(user);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).send({ message: error });
+  }
+};
+
+export const addUserAppointment = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      { $push: { "medicalInfo.appointments": req.body } },
+      { new: true }
+    );
+
+    console.log(user);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).send({ message: error });
+  }
+};

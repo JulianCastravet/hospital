@@ -1,5 +1,5 @@
 import { MessageInstance } from "antd/es/message/interface";
-import { Report } from "../data";
+import { Report } from "../types";
 
 export const getAllReports = async (
   message: MessageInstance

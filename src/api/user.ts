@@ -1,5 +1,5 @@
 import { MessageInstance } from "antd/es/message/interface";
-import { User } from "../context/authContext";
+import { Appointment, Disease, User } from "../types";
 
 export const getAllUsers = async (message: MessageInstance) => {
   const res = await fetch(`/api/users/getAllUsers`);
@@ -101,5 +101,43 @@ export const updateUserAvatar = async (
     return res.json();
   } catch (error) {
     message.error("Failed to update avatar.");
+  }
+};
+
+export const addPatientDiagnose = async (
+  id: string,
+  disease: Disease,
+  message: MessageInstance
+) => {
+  try {
+    const res = await fetch(`/api/users/${id}/diagnose`, {
+      method: "POST",
+      body: JSON.stringify(disease),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!res.ok) message.error("Failed to add diagnose.");
+    return res.json();
+  } catch (error) {
+    message.error("Ups. Try Again!");
+  }
+};
+
+export const addPatientAppointment = async (
+  id: string,
+  appointment: Appointment,
+  message: MessageInstance
+) => {
+  try {
+    const res = await fetch(`/api/users/${id}/appointments`, {
+      method: "POST",
+      body: JSON.stringify(appointment),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!res.ok) message.error("Failed to add appointment.");
+    return res.json();
+  } catch (error) {
+    message.error("Ups. Try Again!");
   }
 };

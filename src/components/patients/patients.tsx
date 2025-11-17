@@ -1,4 +1,14 @@
-import { App, Button, DatePicker, Flex, Form, Input, Modal, Table } from "antd";
+import {
+  App,
+  Button,
+  DatePicker,
+  Flex,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Table,
+} from "antd";
 import { useUser } from "../../hooks/useUser";
 import { useTitle } from "../../hooks/useTitle";
 import { useEffect, useState } from "react";
@@ -10,11 +20,11 @@ import {
   DeleteFilled,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { User } from "../../context/authContext";
 import { deleteUser, getPatients } from "../../api/user";
 import dayjs from "dayjs";
 import { AddressMap } from "../addressMap/addressMap";
 import { useUserStore } from "../../store/user.store";
+import { User } from "../../types";
 
 export const Patients = () => {
   useTitle("Patients");
@@ -75,11 +85,12 @@ export const Patients = () => {
   ];
 
   const submitAddPatient = async (editMode: boolean, values: any) => {
-    const { address, name, dateOfBirth, phone, email } = values;
+    const { address, name, dateOfBirth, phone, email, gender } = values;
     const user: User = {
       _id: "",
       name,
       dateOfBirth,
+      gender,
       phone,
       formattedAddress: address,
       email,
@@ -88,7 +99,14 @@ export const Patients = () => {
     };
 
     form
-      .validateFields(["address", "name", "dateOfBirth", "phone", "email"])
+      .validateFields([
+        "address",
+        "name",
+        "gender",
+        "dateOfBirth",
+        "phone",
+        "email",
+      ])
       .then(() => {
         if (!editMode) {
           addUser(user);
@@ -174,6 +192,12 @@ export const Patients = () => {
                 type="text"
                 placeholder="John Doe"
               />
+            </Form.Item>
+            <Form.Item name="gender" label="Gender">
+              <Select placeholder="Select Gender">
+                <Select.Option key={"male"}>Male</Select.Option>
+                <Select.Option key={"female"}>Female</Select.Option>
+              </Select>
             </Form.Item>
             <Form.Item name="dateOfBirth" label="Date of Birth">
               <DatePicker format={"DD/MM/YYYY HH:mm"} showTime />
