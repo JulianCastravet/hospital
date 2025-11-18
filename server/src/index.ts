@@ -21,9 +21,9 @@ mongoose
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-app.use("/api/users", userRoutes);
-app.use("/api/appointments", appointmentsRoutes);
-app.use("/api/reports", reportRoutes);
+app.use("/users", userRoutes);
+app.use("/appointments", appointmentsRoutes);
+app.use("/reports", reportRoutes);
 
 //images
 app.use("/uploads", express.static("uploads"));
