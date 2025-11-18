@@ -29,23 +29,23 @@ app.use("/reports", reportRoutes);
 app.use("/uploads", express.static("uploads"));
 
 app.get("/", async (_req, res) => {
-
- try {
-    const ready = mongoose.connection.readyState; // 1 = connected
-    res.json({
-      status: ready === 1 ? "connected" : "disconnected",
-      readyState: ready,
-      db: mongoose.connection.name,
-      host: mongoose.connection.host,
-    });
-  } catch (err) {
-    res.status(500).json({ error: err });
+  try {
+    mongoose
+      .connect(process.env.MONGO_URI)
+      .then(() => {
+        res.status(200).json({ message: "MongoDB Connected" });
+      })
+      .catch((error) => {
+        console.log("NO Database with error: ", error);
+      });
+  } catch (error) {
+    res.status(500).json({ message: "DB is not connected" });
   }
-
 });
 
 if (process.env.NODE_ENV === "local") {
   app.listen(PORT, () => {
+    console.log(process.env.MONGO_URI);
     console.log(`Server running on port: ${PORT}`);
   });
 }
