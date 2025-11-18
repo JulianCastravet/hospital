@@ -1,7 +1,6 @@
 {
   "name": "hospital",
   "homepage": "",
-  "proxy": "http://localhost:4001",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

@@ -3,12 +3,24 @@ import { Appointment, Disease, User } from "../types";
 import { http } from "./httpLayer";
 import { NewUser } from "../types/user";
 
+const API_BASE =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:4000" // local backend
+    : "https://hospital-two-zeta.vercel.app"; // Vercel backend
+
+export default API_BASE;
+
 export const getAllUsers = (message: MessageInstance) =>
-  http<User[]>(`/api/users/getAllUsers`, {}, message, "Failed fetching users");
+  http<User[]>(
+    `${API_BASE}/api/users/getAllUsers`,
+    {},
+    message,
+    "Failed fetching users"
+  );
 
 export const getPatients = (message: MessageInstance) =>
   http<User[]>(
-    `/api/users/getPatients`,
+    `${API_BASE}/api/users/getPatients`,
     {},
     message,
     "Failed fetching patients"
@@ -16,7 +28,7 @@ export const getPatients = (message: MessageInstance) =>
 
 export const getSingleUser = (id: string, message: MessageInstance) =>
   http<User | null>(
-    `/api/users/${id}`,
+    `${API_BASE}/api/users/${id}`,
     {},
     message,
     `Failed to fetch user with ID: ${id}`
@@ -24,7 +36,7 @@ export const getSingleUser = (id: string, message: MessageInstance) =>
 
 export const addUser = (user: NewUser, message: MessageInstance) =>
   http<User>(
-    `/api/users`,
+    `${API_BASE}/api/users`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -39,7 +51,7 @@ export const userLoginRequest = (
   message: MessageInstance
 ) =>
   http<any>(
-    `/api/users/login`,
+    `${API_BASE}/api/users/login`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -55,7 +67,7 @@ export const updateUser = (
   message: MessageInstance
 ) =>
   http<User>(
-    `/api/users/${id}`,
+    `${API_BASE}/api/users/${id}`,
     {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -67,7 +79,7 @@ export const updateUser = (
 
 export const deleteUser = (id: string, message: MessageInstance) =>
   http<User[]>(
-    `/api/users/${id}`,
+    `${API_BASE}/api/users/${id}`,
     { method: "DELETE" },
     message,
     "Failed to delete user"
@@ -79,7 +91,7 @@ export const updateUserAvatar = (
   message: MessageInstance
 ) =>
   http<User>(
-    `/api/users/${id}/avatar`,
+    `${API_BASE}/api/users/${id}/avatar`,
     {
       method: "POST",
       body: formData,
@@ -94,7 +106,7 @@ export const addPatientDiagnose = (
   message: MessageInstance
 ) =>
   http<User>(
-    `/api/users/${id}/diagnose`,
+    `${API_BASE}/api/users/${id}/diagnose`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -110,7 +122,7 @@ export const addPatientAppointment = (
   message: MessageInstance
 ) =>
   http<User>(
-    `/api/users/${id}/appointments`,
+    `${API_BASE}/api/users/${id}/appointments`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
