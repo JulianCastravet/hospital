@@ -4,25 +4,19 @@ import { HeaderComponent } from "../components/header/headerComponent";
 import { useTitle } from "../hooks/useTitle";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Content } from "antd/es/layout/layout";
-import { userLoginRequest } from "../api/user";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/authContext";
 import { CSSProperties } from "react";
+import { useAuthStore } from "../store/auth.store";
 
 export const SignIn = () => {
   useTitle("Hospital - Sign In");
   const navigate = useNavigate();
-  const { setUserState } = useAuth();
+  const { login } = useAuthStore();
   const { message } = App.useApp();
 
   const onSubmit = async (values: any) => {
-    const data = await userLoginRequest(values, message);
-    if (data.success) {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      setUserState(data.user);
-      navigate("/dashboard/overview");
-    }
+    login(values, message);
+    navigate("/dashboard/overview");
   };
 
   const style: CSSProperties = {

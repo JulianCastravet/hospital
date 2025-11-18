@@ -1,76 +1,116 @@
 import { create } from "zustand";
-import {
-  updateUser as _updateUser,
-  getSingleUser,
-  updateUserAvatar as _updateUserAvatar,
-  getAllUsers,
-  addPatientDiagnose,
-  addPatientAppointment,
-} from "../api/user";
 import { MessageInstance } from "antd/es/message/interface";
-import { Appointment, Disease, User } from "../types";
-import { message } from "antd";
+import { User } from "../types";
+import {
+  addUser,
+  deleteUser,
+  getAllUsers,
+  getSingleUser,
+  updateUser,
+  updateUserAvatar,
+} from "../api/user";
+import { devtools, persist } from "zustand/middleware";
+import { NewUser } from "../types/user";
 
-type UserState = {
+type UserStoreState = {
   user: User | null;
   users: User[];
-  getUser: (id: string, message: MessageInstance) => void;
-  updateUser: (id: string, u: User, message: MessageInstance) => void;
+  loading: boolean;
+  error: string | null;
+
+  getUser: (id: string, message: MessageInstance) => Promise<void>;
+  getUsers: (message: MessageInstance) => Promise<void>;
+  addUser: (data: NewUser, message: MessageInstance) => Promise<void>;
+
+  updateUser: (
+    params: { id: string; data: User },
+    message: MessageInstance
+  ) => Promise<void>;
+
   updateAvatar: (
-    id: string,
-    formData: FormData,
+    params: { id: string; data: FormData },
     message: MessageInstance
-  ) => void;
-  getUsers: (message: MessageInstance) => void;
-  addDiagnose: (id: string, u: Disease, message: MessageInstance) => void;
-  addAppointment: (
-    id: string,
-    u: Appointment,
-    message: MessageInstance
-  ) => void;
+  ) => Promise<void>;
+  deleteUser: (id: string, message: MessageInstance) => void;
 };
 
-export const useUserStore = create<UserState>((set) => {
-  return {
-    user: null,
-    users: [],
+export const useUserStore = create<UserStoreState>()(
+  devtools(
+    persist(
+      (set) => {
+        return {
+          user: null,
+          users: [],
+          loading: false,
+          error: null,
 
-    getUser: (id: string, message) => {
-      getSingleUser(id, message).then((user) => {
-        if (user) set({ user });
-        else set({ user: null });
-      });
-    },
+          getUser: async (id, message) => {
+            set({ loading: true });
+            try {
+              const user = await getSingleUser(id, message);
+              set({ user, loading: false });
+            } catch {
+              set({ loading: false, error: "Failed to load user" });
+            }
+          },
 
-    updateUser: (id: string, u: User, message) => {
-      _updateUser(id, u, message).then((user) => {
-        if (user) set({ user });
-      });
-    },
+          getUsers: async (message) => {
+            set({ loading: true });
+            try {
+              const users = await getAllUsers(message);
+              set({ users, loading: false });
+            } catch {
+              set({ loading: false, error: "Failed to load users" });
+            }
+          },
+          addUser: async (data: NewUser, message: MessageInstance) => {
+            set({ loading: true, error: null });
+            try {
+              const newUser = await addUser(data, message);
+              console.log(newUser);
+              set((state) => ({
+                users: [...state.users, newUser],
+                loading: false,
+              }));
+            } catch {
+              set({ loading: false, error: "Failed to add user" });
+            }
+          },
 
-    updateAvatar: (id: string, formData: FormData, message) => {
-      _updateUserAvatar(id, formData, message).then((user) => {
-        if (user) set({ user });
-      });
-    },
+          updateUser: async ({ id, data }, message) => {
+            set({ loading: true });
+            console.log({ id, data });
+            try {
+              const updated = await updateUser(id, data, message);
+              set({ user: updated, loading: false });
+            } catch {
+              set({ loading: false, error: "Failed to update user" });
+            }
+          },
 
-    getUsers(message) {
-      getAllUsers(message).then((users) => {
-        set({ users });
-      });
-    },
+          updateAvatar: async ({ id, data }, message) => {
+            set({ loading: true });
+            try {
+              const updated = await updateUserAvatar(id, data, message);
+              set({ user: updated, loading: false });
+            } catch {
+              set({ loading: false, error: "Failed to update avatar" });
+            }
+          },
 
-    addDiagnose: (id: string, body: Disease, message: MessageInstance) => {
-      addPatientDiagnose(id, body, message).then((user) => set({ user }));
-    },
-    addAppointment: (
-      id: string,
-      appointment: Appointment,
-      message: MessageInstance
-    ) => {
-      addPatientAppointment(id, appointment, message).then((user) =>
-        set({ user })
-      );
-    },
-  };
-});
+          deleteUser: async (id, message) => {
+            set({ loading: true });
+            try {
+              const updated = await deleteUser(id, message);
+              set({ users: updated, loading: false });
+            } catch {
+              set({ loading: false, error: "Failed to delete user" });
+            }
+          },
+        };
+      },
+      { name: "UserStore" }
+    ),
+    { name: "UserStore" }
+  )
+);

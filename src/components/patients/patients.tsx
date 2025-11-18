@@ -9,7 +9,6 @@ import {
   Select,
   Table,
 } from "antd";
-import { useUser } from "../../hooks/useUser";
 import { useTitle } from "../../hooks/useTitle";
 import { useEffect, useState } from "react";
 import { useForm } from "antd/es/form/Form";
@@ -20,28 +19,36 @@ import {
   DeleteFilled,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { deleteUser, getPatients } from "../../api/user";
+import { getPatients } from "../../api/user";
 import dayjs from "dayjs";
 import { AddressMap } from "../addressMap/addressMap";
 import { useUserStore } from "../../store/user.store";
 import { User } from "../../types";
+import { NewUser } from "../../types/user";
 
 export const Patients = () => {
   useTitle("Patients");
 
-  const { updateUser } = useUserStore();
-  const { addUser } = useUser();
+  const { updateUser, deleteUser, addUser, users, getUsers } = useUserStore();
   const [form] = useForm();
   const { confirm } = Modal;
   const { message } = App.useApp();
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [patients, setPatients] = useState<User[]>();
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [patients, setPatients] = useState<User[]>(
+    users.filter((user) => user.type === "guest")
+  );
 
   useEffect(() => {
-    getPatients(message).then((pat) => setPatients(pat));
-  }, [message]);
+    getUsers(message);
+    return () => {};
+  }, [getUsers, message]);
+
+  useEffect(() => {
+    setPatients(users.filter((user) => user.type === "guest"));
+    return () => {};
+  }, [users]);
 
   const columns = [
     {
@@ -86,8 +93,7 @@ export const Patients = () => {
 
   const submitAddPatient = async (editMode: boolean, values: any) => {
     const { address, name, dateOfBirth, phone, email, gender } = values;
-    const user: User = {
-      _id: "",
+    const user: NewUser = {
       name,
       dateOfBirth,
       gender,
@@ -109,15 +115,13 @@ export const Patients = () => {
       ])
       .then(() => {
         if (!editMode) {
-          addUser(user);
+          addUser(user, message);
           form.resetFields();
-          getPatients(message).then((patients) => setPatients(patients));
           setModalOpen(!modalOpen);
         } else {
           const id = form.getFieldValue("_id");
 
-          updateUser(id, { ...user, _id: id }, message);
-          getPatients(message).then((patients) => setPatients(patients));
+          updateUser({ id, data: { _id: id, ...user } }, message);
 
           setModalOpen(!modalOpen);
           setIsEditMode(false);
@@ -129,7 +133,7 @@ export const Patients = () => {
   function handleEditRow(v: any): void {
     setModalOpen(true);
     setIsEditMode(true);
-
+    console.log(v);
     setTimeout(() => {
       form.setFieldsValue({
         ...v,
@@ -145,7 +149,7 @@ export const Patients = () => {
       icon: <ExclamationCircleOutlined />,
       content: " This action is irreversible.",
       onOk() {
-        deleteUser(data._id, message).then((patients) => setPatients(patients));
+        deleteUser(data._id, message);
       },
     });
   }

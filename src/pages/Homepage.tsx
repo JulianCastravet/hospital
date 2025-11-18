@@ -3,18 +3,18 @@ import { FooterComponent } from "../components/footer/footerComponent";
 import { Flex } from "antd";
 import { useTitle } from "../hooks/useTitle";
 import { useEffect } from "react";
-import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { useAuthStore } from "../store/auth.store";
 
 gsap.registerPlugin(useGSAP);
 
 export const Homepage = () => {
   useTitle("Hospital - Homepage");
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     if (isAuthenticated) {
       navigate("dashboard/overview");
@@ -22,8 +22,8 @@ export const Homepage = () => {
   }, [isAuthenticated, navigate]);
 
   useGSAP(() => {
-    gsap.fromTo(".title", { x: '100vw' }, { x: 0 }).duration(1);
-    gsap.fromTo(".subtitle", { x: '-100vw' }, { x: 0 }).duration(1);
+    gsap.fromTo(".title", { x: "100vw" }, { x: 0 }).duration(1);
+    gsap.fromTo(".subtitle", { x: "-100vw" }, { x: 0 }).duration(1);
   });
 
   return (

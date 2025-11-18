@@ -1,13 +1,20 @@
 import { Checkbox } from "antd";
 import { useTitle } from "../../hooks/useTitle";
-import userSettings from "../../store/userSettings.store";
+import { useAuthStore } from "../../store/auth.store";
 
 export const Settings = () => {
   useTitle("Settings");
 
-  const { userOptions, setOption } = userSettings();
+  const { userOptions, setOption } = useAuthStore();
 
-  const plainOptions = ["Dark Mode", "Patients", "Has Schedule", 'Has Messages', "Has Medications", "Has Help"];
+  const plainOptions = [
+    "Dark Mode",
+    "Patients",
+    "Has Schedule",
+    "Has Messages",
+    "Has Medications",
+    "Has Help",
+  ];
   const onChange = (checkedValues: unknown[]) => {
     setOption(checkedValues as string[]);
   };

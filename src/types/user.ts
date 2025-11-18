@@ -8,16 +8,18 @@ export type User = {
   name: string;
   specialization?: string | null;
   dateOfBirth: string;
-  gender: string,
+  gender: string;
   phone: string;
   email: string;
   password: string;
   age?: number;
   avatarUrl?: string;
-  formattedAddress?: string;
+  formattedAddress: string;
   medicalInfo?: {
     generalParams: GeneralParams;
     medicalHistory: Disease[];
     appointments: Appointment[];
   };
 };
+
+export type NewUser = Omit<User, "_id">;

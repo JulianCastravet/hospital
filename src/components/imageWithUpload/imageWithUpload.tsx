@@ -28,7 +28,7 @@ export const ImageWithUpload = ({
 
     const formData = new FormData();
     formData.append("userAvatar", file);
-    updateAvatar(userId, formData, message);
+    updateAvatar({ id: userId, data: formData }, message);
   };
 
   return (

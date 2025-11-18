@@ -1,143 +1,121 @@
 import { MessageInstance } from "antd/es/message/interface";
 import { Appointment, Disease, User } from "../types";
+import { http } from "./httpLayer";
+import { NewUser } from "../types/user";
 
-export const getAllUsers = async (message: MessageInstance) => {
-  const res = await fetch(`/api/users/getAllUsers`);
+export const getAllUsers = (message: MessageInstance) =>
+  http<User[]>(`/api/users/getAllUsers`, {}, message, "Failed fetching users");
 
-  if (!res.ok) message.error("Failed fetching all users.");
-  return res.json();
-};
+export const getPatients = (message: MessageInstance) =>
+  http<User[]>(
+    `/api/users/getPatients`,
+    {},
+    message,
+    "Failed fetching patients"
+  );
 
-export const getPatients = async (
+export const getSingleUser = (id: string, message: MessageInstance) =>
+  http<User | null>(
+    `/api/users/${id}`,
+    {},
+    message,
+    `Failed to fetch user with ID: ${id}`
+  );
+
+export const addUser = (user: NewUser, message: MessageInstance) =>
+  http<User>(
+    `/api/users`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(user),
+    },
+    message,
+    "Failed to add user"
+  );
+
+export const userLoginRequest = (
+  payload: { mail: string; password: string },
   message: MessageInstance
-): Promise<User[]> => {
-  const res = await fetch(`/api/users/getPatients`);
-  if (!res.ok) message.error("Failed fetching all patients.");
-  return res.json();
-};
+) =>
+  http<any>(
+    `/api/users/login`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    },
+    message,
+    "Failed to log in"
+  );
 
-export const getSingleUser = async (
+export const updateUser = (
   id: string,
+  data: Partial<User>,
   message: MessageInstance
-): Promise<User | null> => {
-  const res = await fetch(`/api/users/${id}`);
-  if (!res.ok) {
-    message.error(`Failed to fetch user with ID: ${id}`);
-    return null;
-  }
-  return res.json();
-};
-
-export const addUser = async (user: User, message: MessageInstance) => {
-  const res = await fetch(`/api/users/`, {
-    method: "POST",
-    body: JSON.stringify(user),
-    headers: {
-      "Content-Type": "application/json",
+) =>
+  http<User>(
+    `/api/users/${id}`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     },
-  });
-  if (!res.ok) message.error(`Failed to add user.`);
-  return res.json();
-};
+    message,
+    "Failed to update user"
+  );
 
-export const userLoginRequest = async (
-  v: {
-    mail: string;
-    password: string;
-  },
-  message: MessageInstance
-): Promise<any> => {
-  const res = await fetch(`/api/users/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(v),
-  });
+export const deleteUser = (id: string, message: MessageInstance) =>
+  http<User[]>(
+    `/api/users/${id}`,
+    { method: "DELETE" },
+    message,
+    "Failed to delete user"
+  );
 
-  if (!res.ok) message.error("Failed to log in.", 5);
-
-  return res.json();
-};
-
-export const updateUser = async (
-  id: string,
-  body: Partial<User>,
-  message: MessageInstance
-) => {
-  const res = await fetch(`/api/users/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(body),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!res.ok) message.error("Failed to update user.");
-  return res.json();
-};
-
-export const deleteUser = async (id: string, message: MessageInstance) => {
-  const res = await fetch(`/api/users/${id}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "text",
-    },
-  });
-
-  if (!res.ok) message.error("Failed to delete user.");
-  return res.json();
-};
-
-export const updateUserAvatar = async (
+export const updateUserAvatar = (
   id: string,
   formData: FormData,
   message: MessageInstance
-) => {
-  try {
-    const res = await fetch(`/api/users/${id}/avatar`, {
+) =>
+  http<User>(
+    `/api/users/${id}/avatar`,
+    {
       method: "POST",
       body: formData,
-    });
+    },
+    message,
+    "Failed to update avatar"
+  );
 
-    return res.json();
-  } catch (error) {
-    message.error("Failed to update avatar.");
-  }
-};
-
-export const addPatientDiagnose = async (
+export const addPatientDiagnose = (
   id: string,
   disease: Disease,
   message: MessageInstance
-) => {
-  try {
-    const res = await fetch(`/api/users/${id}/diagnose`, {
+) =>
+  http<User>(
+    `/api/users/${id}/diagnose`,
+    {
       method: "POST",
-      body: JSON.stringify(disease),
       headers: { "Content-Type": "application/json" },
-    });
+      body: JSON.stringify(disease),
+    },
+    message,
+    "Failed to add diagnose"
+  );
 
-    if (!res.ok) message.error("Failed to add diagnose.");
-    return res.json();
-  } catch (error) {
-    message.error("Ups. Try Again!");
-  }
-};
-
-export const addPatientAppointment = async (
+export const addPatientAppointment = (
   id: string,
   appointment: Appointment,
   message: MessageInstance
-) => {
-  try {
-    const res = await fetch(`/api/users/${id}/appointments`, {
+) =>
+  http<User>(
+    `/api/users/${id}/appointments`,
+    {
       method: "POST",
-      body: JSON.stringify(appointment),
       headers: { "Content-Type": "application/json" },
-    });
-
-    if (!res.ok) message.error("Failed to add appointment.");
-    return res.json();
-  } catch (error) {
-    message.error("Ups. Try Again!");
-  }
-};
+      body: JSON.stringify(appointment),
+    },
+    message,
+    "Failed to add appointment"
+  );

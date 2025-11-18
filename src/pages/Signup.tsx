@@ -6,8 +6,8 @@ import { useTitle } from "../hooks/useTitle";
 import { App, Button, DatePicker, Form, Radio, Select } from "antd";
 import Input from "antd/es/input/Input";
 import { LockOutlined, UserOutlined, MailOutlined } from "@ant-design/icons";
-import { addUser } from "../api/user";
 import { User } from "../types";
+import { useUserStore } from "../store/user.store";
 
 const doctorSpecialities = [
   { label: "ORL", value: "orl" },
@@ -26,8 +26,8 @@ const doctorSpecialities = [
 export const SignUp = () => {
   useTitle("Hospital - Sign Up");
   const { message } = App.useApp();
-  const [date, setDate] = useState<Date>(new Date());
   const [form] = Form.useForm();
+  const { addUser } = useUserStore();
   const [user, setUser] = useState<User>({
     name: "",
     email: "",
@@ -38,14 +38,10 @@ export const SignUp = () => {
     _id: "",
     dateOfBirth: "",
     gender: "",
+    formattedAddress: "",
   });
 
-  const onDateChange = (date_: any, dateString: string | string[]) => {
-    setDate(new Date(dateString === "string" ? dateString : dateString[0]));
-  };
-
   const onSubmit = (user: User) => {
-    user.dateOfBirth = new Date(date).toLocaleDateString();
     addUser(user, message);
 
     resetForm();
@@ -119,7 +115,7 @@ export const SignUp = () => {
           </Form.Item>
 
           <Form.Item name="dateOfBirth" label="Date of Birth">
-            <DatePicker onChange={onDateChange} />
+            <DatePicker format={"DD/MM/YYYY"} />
           </Form.Item>
 
           <Form.Item label="Phone" required name="phone">

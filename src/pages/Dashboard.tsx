@@ -22,18 +22,15 @@ import {
   QuestionCircleOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
-import { useAuth } from "../context/authContext";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import userSettings from "../store/userSettings.store";
+import { useAuthStore } from "../store/auth.store";
 
 export const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [subtitle, setSubtitle] = useState<string>("Overview");
   const navigate = useNavigate();
   const location = useLocation();
-  const { setUserState } = useAuth();
-
-  const { userOptions } = userSettings();
+  const { logout, userOptions } = useAuthStore();
 
   type MenuItem = Required<MenuProps>["items"][number];
 
@@ -73,9 +70,7 @@ export const Dashboard = () => {
   };
 
   const userLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setUserState(undefined);
+    logout();
     navigate("/");
   };
 

@@ -37,6 +37,7 @@ import { useForm } from "antd/es/form/Form";
 import TextArea from "antd/es/input/TextArea";
 import { capitalize } from "../../utils/capitalize";
 import { getDoctorById } from "../../utils/getDoctorById";
+import { usePatientStore } from "../../store/patient.store";
 
 const PatientPage = () => {
   const params = useParams();
@@ -44,15 +45,8 @@ const PatientPage = () => {
   const { message } = App.useApp();
   const [form] = useForm();
 
-  const {
-    user,
-    users,
-    updateUser,
-    getUser,
-    getUsers,
-    addDiagnose,
-    addAppointment,
-  } = useUserStore();
+  const { user, users, updateUser, getUser, getUsers } = useUserStore();
+  const { addAppointment, addDiagnose } = usePatientStore();
 
   const [diagnoseModal, setDiagnoseModal] = useState<boolean>(false);
   const [appointmentModal, setAppointmentModal] = useState<boolean>(false);
@@ -81,7 +75,7 @@ const PatientPage = () => {
 
   const removeUserImage = (id: string) => {
     if (user) {
-      updateUser(id, { ...user, avatarUrl: "" }, message);
+      updateUser({ id: id, data: user }, message);
     }
   };
 
@@ -90,7 +84,7 @@ const PatientPage = () => {
       .validateFields(["time", "diagnose", "description"])
       .then(() => {
         if (!params.id) return;
-        addDiagnose(params.id, form.getFieldsValue(), message);
+        addDiagnose({ id: params.id, body: form.getFieldsValue() }, message);
         form.resetFields();
         setDiagnoseModal(false);
       })
@@ -102,7 +96,7 @@ const PatientPage = () => {
       .validateFields(["time", "appointment", "doctor"])
       .then(() => {
         if (!params.id) return;
-        addAppointment(params.id, form.getFieldsValue(), message);
+        addAppointment({ id: params.id, body: form.getFieldsValue() }, message);
         form.resetFields();
         setAppointmentModal(false);
       })

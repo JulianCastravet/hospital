@@ -2,7 +2,6 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
-import { AuthProvider } from "./context/authContext";
 import { App as Antapp, ConfigProvider } from "antd";
 
 import "./index.css";
@@ -15,11 +14,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <Antapp>
     <ConfigProvider theme={themeToken}>
-      <AuthProvider>
         <BrowserRouter>
           <App />
         </BrowserRouter>
-      </AuthProvider>
     </ConfigProvider>
   </Antapp>
 );

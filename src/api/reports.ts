@@ -31,7 +31,7 @@ export const updateReport = async (
   id: string,
   body: Partial<Report>,
   message: MessageInstance
-) => {
+): Promise<Report[]> => {
   const res = await fetch(`/api/reports/${id}`, {
     method: "PUT",
     body: JSON.stringify(body),

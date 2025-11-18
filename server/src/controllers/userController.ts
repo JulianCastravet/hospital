@@ -44,8 +44,10 @@ export const addUser = async (req: Request, res: Response) => {
       dateOfBirth,
       type,
       specialization = "",
-      address,
+      formattedAddress,
+      gender,
     } = req.body;
+    console.log(req.body);
 
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password required" });
@@ -67,14 +69,13 @@ export const addUser = async (req: Request, res: Response) => {
       type,
       specialization,
       age: calculateUserAge(dateOfBirth),
-      address,
+      formattedAddress,
+      gender,
     });
 
     await newUser.save();
 
-    const users = await User.find();
-
-    return res.status(200).json(users);
+    return res.status(200).json(newUser);
   } catch (error) {
     console.error("Add user error:", error);
     res.status(500).json({ message: "Error adding user" });
@@ -108,7 +109,7 @@ export const authenticateUser = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       token,
-      user: { id: user._id, email: user.email, name: user.name },
+      user,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: "Server error" });
@@ -128,6 +129,7 @@ export const updateUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const data = req.body;
+    console.log(id, data);
 
     await User.findByIdAndUpdate(id, data, {
       new: true,
