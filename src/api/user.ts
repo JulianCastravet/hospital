@@ -6,7 +6,7 @@ import { NewUser } from "../types/user";
 const API_BASE =
   process.env.NODE_ENV === "development"
     ? "http://localhost:4001" // local backend
-    : "https://hospital-two-zeta.vercel.app"; // Vercel backend
+    : "https://hospital-server-pied.vercel.app"; // Vercel backend
 
 export default API_BASE;
 
