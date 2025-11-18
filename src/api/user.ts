@@ -36,7 +36,7 @@ export const getSingleUser = (id: string, message: MessageInstance) =>
 
 export const addUser = (user: NewUser, message: MessageInstance) =>
   http<User>(
-    `${API_BASE}/api/users`,
+    `${API_BASE}/api/users/`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
