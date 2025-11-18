@@ -42,6 +42,7 @@ export const Patients = () => {
 
   useEffect(() => {
     getUsers(message);
+    getPatients(message);
     return () => {};
   }, [getUsers, message]);
 

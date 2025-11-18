@@ -28,7 +28,21 @@ app.use("/reports", reportRoutes);
 //images
 app.use("/uploads", express.static("uploads"));
 
-app.get("/", (_req, res) => res.send("Backend running 🚀"));
+app.get("/", async (_req, res) => {
+
+ try {
+    const ready = mongoose.connection.readyState; // 1 = connected
+    res.json({
+      status: ready === 1 ? "connected" : "disconnected",
+      readyState: ready,
+      db: mongoose.connection.name,
+      host: mongoose.connection.host,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
+
+});
 
 if (process.env.NODE_ENV === "local") {
   app.listen(PORT, () => {
