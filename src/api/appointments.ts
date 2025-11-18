@@ -1,10 +1,11 @@
 import { MessageInstance } from "antd/es/message/interface";
 import { Appointment } from "../types";
+import env from "../environment";
 
 export const getAllAppointments = async (
   message: MessageInstance
 ): Promise<Appointment[]> => {
-  const res = await fetch(`/api/appointments`);
+  const res = await fetch(`${env.API_BASE}/appointments`);
   if (!res.ok) {
     message.error("Failed fetching appointments.");
   }
@@ -15,7 +16,7 @@ export const getAppointmentById = async (
   id: number,
   message: MessageInstance
 ): Promise<Appointment> => {
-  const res = await fetch(`/api/appointments/${id}`);
+  const res = await fetch(`${env.API_BASE}/appointments/${id}`);
   if (!res.ok) message.error(`Failed fetching appointment with ID: ${id}`);
   return res.json();
 };
@@ -24,7 +25,7 @@ export const addAppointment = async (
   app: Appointment,
   message: MessageInstance
 ): Promise<Appointment[]> => {
-  const res = await fetch(`/api/appointments`, {
+  const res = await fetch(`${env.API_BASE}/appointments`, {
     method: "POST",
     body: JSON.stringify(app),
     headers: {
@@ -39,7 +40,7 @@ export const deleteAppointment = async (
   id: string,
   message: MessageInstance
 ): Promise<Appointment[]> => {
-  const res = await fetch(`/api/appointments/${id}`, {
+  const res = await fetch(`${env.API_BASE}/appointments/${id}`, {
     method: "DELETE",
   });
   if (!res.ok) message.error(`Failed deleting appointment with ID: ${id}`);
@@ -52,7 +53,7 @@ export const updateAppointment = async (
   body: Appointment,
   message: MessageInstance
 ): Promise<Appointment[]> => {
-  const res = await fetch(`/api/appointments/${id}`, {
+  const res = await fetch(`${env.API_BASE}/appointments/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

@@ -1,10 +1,11 @@
 import { MessageInstance } from "antd/es/message/interface";
 import { Report } from "../types";
+import env from "../environment";
 
 export const getAllReports = async (
   message: MessageInstance
 ): Promise<Report[]> => {
-  const res = await fetch(`/api/reports`);
+  const res = await fetch(`${env.API_BASE}/reports`);
 
   if (!res.ok) message.error("Failed fetching all reports.");
   return res.json();
@@ -14,7 +15,7 @@ export const addReport = async (
   report: Report,
   message: MessageInstance
 ): Promise<Report[]> => {
-  const res = await fetch(`/api/reports`, {
+  const res = await fetch(`${env.API_BASE}/reports`, {
     method: "POST",
     body: JSON.stringify(report),
     headers: {
@@ -32,7 +33,7 @@ export const updateReport = async (
   body: Partial<Report>,
   message: MessageInstance
 ): Promise<Report[]> => {
-  const res = await fetch(`/api/reports/${id}`, {
+  const res = await fetch(`${env.API_BASE}/reports/${id}`, {
     method: "PUT",
     body: JSON.stringify(body),
     headers: {
@@ -47,7 +48,7 @@ export const deleteReport = async (
   id: string,
   message: MessageInstance
 ): Promise<Report[]> => {
-  const res = await fetch(`/api/reports/${id}`, {
+  const res = await fetch(`${env.API_BASE}/reports/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "text",
