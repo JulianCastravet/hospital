@@ -1,23 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  Row,
-  Col,
-  Card,
-  Image,
-  Typography,
-  Timeline,
-  App,
-  Button,
-  Modal,
-  Form,
-  Input,
-  DatePicker,
-  Select,
-} from "antd";
+import { Row, Col, Card, Image, Typography, Timeline, App, Button } from "antd";
 import { useTitle } from "../../hooks/useTitle";
 import { formatTime } from "../../utils/formatTime";
-import DescriptionCard from "../descriptionCard/descriptionCard";
+import DescriptionCard from "../../components/descriptionCard/descriptionCard";
 import {
   CalendarOutlined,
   HourglassOutlined,
@@ -28,16 +14,17 @@ import {
   HeartOutlined,
   CheckCircleFilled,
 } from "@ant-design/icons";
-import TimelineItem from "../timelineItem/timelineItem";
-import { ImageWithUpload } from "../imageWithUpload/imageWithUpload";
+import TimelineItem from "../../components/timelineItem/timelineItem";
+import { ImageWithUpload } from "../../components/imageWithUpload/imageWithUpload";
 import { useUserStore } from "../../store/user.store";
 import { DASH } from "../../utils/dash";
 import Title from "antd/es/typography/Title";
 import { useForm } from "antd/es/form/Form";
-import TextArea from "antd/es/input/TextArea";
 import { capitalize } from "../../utils/capitalize";
 import { getDoctorById } from "../../utils/getDoctorById";
 import { usePatientStore } from "../../store/patient.store";
+import { DiagnoseModal } from "../../components/diagnoseModal/diagnoseModal";
+import { AppointmentModal } from "../../components/appointmentModal/appointmentModal";
 
 const PatientPage = () => {
   const params = useParams();
@@ -45,7 +32,8 @@ const PatientPage = () => {
   const { message } = App.useApp();
   const [form] = useForm();
 
-  const { user, users, updateUser, getUser, getUsers } = useUserStore();
+  const { user, users, getUser, getUsers, deleteAvatar, loading } =
+    useUserStore();
   const { addAppointment, addDiagnose } = usePatientStore();
 
   const [diagnoseModal, setDiagnoseModal] = useState<boolean>(false);
@@ -75,7 +63,7 @@ const PatientPage = () => {
 
   const removeUserImage = (id: string) => {
     if (user) {
-      updateUser({ id: id, data: user }, message);
+      deleteAvatar(id, message);
     }
   };
 
@@ -107,7 +95,11 @@ const PatientPage = () => {
     .filter((user) => user.type === "doctor")
     .map((doc) => ({
       value: doc._id,
-      label: doc.name,
+      label: (
+        <span>
+          {doc.name} | {capitalize(doc.specialization ?? "")}
+        </span>
+      ),
     }));
 
   return !user ? (
@@ -123,6 +115,7 @@ const PatientPage = () => {
                   avatarUrl={user.avatarUrl ?? ""}
                   userId={user._id}
                   removeImage={() => removeUserImage(user._id)}
+                  loading={loading}
                 />
                 <Typography.Title level={4}>{user.name}</Typography.Title>
               </Col>
@@ -258,6 +251,7 @@ const PatientPage = () => {
           <Card title="Medical Information">
             <Image
               preview={false}
+              loading="lazy"
               src="https://cdn11.bigcommerce.com/s-pqoyj9mdma/images/stencil/1280x1280/products/1297/2180/KMH_1__87467.1683820602.jpg?c=2"
             />
             <Typography.Title level={3} className="text-center">
@@ -283,73 +277,19 @@ const PatientPage = () => {
         </Col>
       </Row>
 
-      <Modal
-        open={diagnoseModal}
-        onOk={submitAddDiagnose}
-        destroyOnHidden
+      <DiagnoseModal
+        form={form}
         onCancel={() => setDiagnoseModal(false)}
-      >
-        <Form form={form}>
-          <Form.Item
-            name="time"
-            label="Date/Time"
-            required
-            rules={[{ required: true }]}
-          >
-            <DatePicker showTime format={"DD/MM/YYYY HH:mm"} />
-          </Form.Item>
-          <Form.Item
-            name="diagnose"
-            label="Diagnose"
-            required
-            rules={[{ required: true }]}
-          >
-            <Input type="text" />
-          </Form.Item>
-          <Form.Item
-            name="description"
-            label="Description"
-            required
-            rules={[{ required: true }]}
-          >
-            <TextArea />
-          </Form.Item>
-        </Form>
-      </Modal>
-
-      <Modal
-        open={appointmentModal}
-        onOk={submitAddAppointment}
-        destroyOnHidden
+        onOk={submitAddDiagnose}
+        open={diagnoseModal}
+      />
+      <AppointmentModal
+        form={form}
         onCancel={() => setAppointmentModal(false)}
-      >
-        <Form form={form}>
-          <Form.Item
-            name="time"
-            label="Date/Time"
-            required
-            rules={[{ required: true }]}
-          >
-            <DatePicker showTime format={"DD/MM/YYYY HH:mm"} />
-          </Form.Item>
-          <Form.Item
-            name="appointment"
-            label="Title"
-            required
-            rules={[{ required: true }]}
-          >
-            <Input type="text" />
-          </Form.Item>
-          <Form.Item
-            name="doctor"
-            label="Doctor"
-            required
-            rules={[{ required: true }]}
-          >
-            <Select options={doctorOptions} />
-          </Form.Item>
-        </Form>
-      </Modal>
+        onOk={submitAddAppointment}
+        doctorOptions={doctorOptions}
+        open={appointmentModal}
+      />
     </>
   );
 };

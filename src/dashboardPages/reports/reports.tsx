@@ -1,5 +1,4 @@
 import { App, Button, Checkbox, Flex, Modal, Table } from "antd";
-import { Pill } from "../pill/pill";
 import { useTitle } from "../../hooks/useTitle";
 import { useEffect, useState } from "react";
 import {
@@ -8,7 +7,6 @@ import {
   getAllReports,
   deleteReport,
 } from "../../api/reports";
-import ReportForm from "../reportForm/reportForm";
 import { useForm } from "antd/es/form/Form";
 import {
   EditFilled,
@@ -18,6 +16,8 @@ import {
 import dayjs from "dayjs";
 import { formatTime } from "../../utils/formatTime";
 import { Report } from "../../types";
+import ReportForm from "../../components/reportForm/reportForm";
+import { Pill } from "../../components/pill/pill";
 
 export const Reports = () => {
   useTitle("Reports");

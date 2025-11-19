@@ -1,11 +1,11 @@
 import { create } from "zustand";
 import { MessageInstance } from "antd/es/message/interface";
-import { User, Disease, Appointment } from "../types";
+import { Disease, Appointment } from "../types";
 import { addPatientDiagnose, addPatientAppointment } from "../api/user";
 import { devtools, persist } from "zustand/middleware";
+import { useUserStore } from "./user.store";
 
 type PatientStoreState = {
-  user: User | null;
   loading: boolean;
   error: string | null;
 
@@ -33,7 +33,8 @@ export const usePatientStore = create<PatientStoreState>()(
             set({ loading: true });
             try {
               const updated = await addPatientDiagnose(id, body, message);
-              set({ user: updated, loading: false });
+              useUserStore.getState().setUser(updated);
+              set({ loading: false });
             } catch {
               set({ loading: false, error: "Failed to add diagnose" });
             }
@@ -43,7 +44,8 @@ export const usePatientStore = create<PatientStoreState>()(
             set({ loading: true });
             try {
               const updated = await addPatientAppointment(id, body, message);
-              set({ user: updated, loading: false });
+              useUserStore.getState().setUser(updated);
+              set({ loading: false });
             } catch {
               set({ loading: false, error: "Failed to add appointment" });
             }

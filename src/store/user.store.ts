@@ -4,6 +4,7 @@ import { User } from "../types";
 import {
   addUser,
   deleteUser,
+  deleteUserAvatar,
   getAllUsers,
   getSingleUser,
   updateUser,
@@ -17,6 +18,8 @@ type UserStoreState = {
   users: User[];
   loading: boolean;
   error: string | null;
+
+  setUser: (u: User) => void;
 
   getUser: (id: string, message: MessageInstance) => Promise<void>;
   getUsers: (message: MessageInstance) => Promise<void>;
@@ -32,6 +35,7 @@ type UserStoreState = {
     message: MessageInstance
   ) => Promise<void>;
   deleteUser: (id: string, message: MessageInstance) => void;
+  deleteAvatar: (id: string, message: MessageInstance) => void;
 };
 
 export const useUserStore = create<UserStoreState>()(
@@ -43,6 +47,8 @@ export const useUserStore = create<UserStoreState>()(
           users: [],
           loading: false,
           error: null,
+
+          setUser: (user) => set({ user }),
 
           getUser: async (id, message) => {
             set({ loading: true });
@@ -79,7 +85,6 @@ export const useUserStore = create<UserStoreState>()(
 
           updateUser: async ({ id, data }, message) => {
             set({ loading: true });
-            console.log({ id, data });
             try {
               const updated = await updateUser(id, data, message);
               set({ user: updated, loading: false });
@@ -105,6 +110,20 @@ export const useUserStore = create<UserStoreState>()(
               set({ users: updated, loading: false });
             } catch {
               set({ loading: false, error: "Failed to delete user" });
+            }
+          },
+
+          deleteAvatar: async (id, message) => {
+            set((store) => ({
+              ...store,
+              loading: true,
+              user: store.user ? { ...store.user, avatarUrl: "" } : store.user,
+            }));
+            try {
+              const updatedUser = await deleteUserAvatar(id, message);
+              set({ user: updatedUser, loading: false });
+            } catch (error) {
+              set({ loading: false, error: "Failed to delete avatar" });
             }
           },
         };

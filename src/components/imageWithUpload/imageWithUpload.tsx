@@ -1,18 +1,20 @@
 import React from "react";
 
-import { Image, message } from "antd";
+import { Image, message, Spin } from "antd";
 import { useRef } from "react";
-import { CloseCircleFilled } from "@ant-design/icons";
+import { CloseCircleFilled, LoadingOutlined } from "@ant-design/icons";
 import { useUserStore } from "../../store/user.store";
 
 export const ImageWithUpload = ({
   avatarUrl,
   userId,
   removeImage,
+  loading,
 }: {
   avatarUrl: string;
   userId: string;
   removeImage: () => void;
+  loading: boolean;
 }) => {
   const inputRef = useRef(null);
   const { updateAvatar } = useUserStore();
@@ -32,7 +34,21 @@ export const ImageWithUpload = ({
   };
 
   return (
-    <>
+    <div className="relative size-fit">
+      {avatarUrl && (
+        <CloseCircleFilled
+          className="absolute text-red-500 right-[10px] top-[10px] z-1"
+          onClick={removeImage}
+        />
+      )}
+      {loading && (
+        <Spin
+          className="absolute z-1 inset-0 top-[50px]"
+          indicator={<LoadingOutlined spin style={{ fontSize: 48 }} />}
+          size="large"
+        />
+      )}
+
       <Image
         style={{
           objectFit: "cover",
@@ -44,23 +60,14 @@ export const ImageWithUpload = ({
           position: "relative",
         }}
         preview={false}
-        src={avatarUrl || "https://placehold.co/600x400"}
+        src={
+          avatarUrl ||
+          "https://dugonvenomlab.com/assets/images/imgPlaceholder.jpg"
+        }
         onClick={handleImageClick}
         className="hover:cursor-pointer"
         loading="lazy"
       />
-
-      {avatarUrl && (
-        <CloseCircleFilled
-          style={{
-            color: "red",
-            position: "absolute",
-            right: "20px",
-            top: "10px",
-          }}
-          onClick={removeImage}
-        />
-      )}
 
       <input
         type="file"
@@ -70,6 +77,6 @@ export const ImageWithUpload = ({
         onChange={handleInputClick}
         className="hidden"
       />
-    </>
+    </div>
   );
 };

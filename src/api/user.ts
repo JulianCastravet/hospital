@@ -4,7 +4,6 @@ import { http } from "./httpLayer";
 import { NewUser } from "../types/user";
 import env from "../environment";
 
-console.log(env.API_BASE)
 export const getAllUsers = (message: MessageInstance) =>
   http<User[]>(
     `${env.API_BASE}/users/getAllUsers`,
@@ -93,6 +92,16 @@ export const updateUserAvatar = (
     },
     message,
     "Failed to update avatar"
+  );
+
+export const deleteUserAvatar = (id: string, message: MessageInstance) =>
+  http<User>(
+    `${env.API_BASE}/users/${id}/avatar`,
+    {
+      method: "DELETE",
+    },
+    message,
+    "Failed to delete avatar"
   );
 
 export const addPatientDiagnose = (

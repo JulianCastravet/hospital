@@ -25,9 +25,6 @@ app.use("/users", userRoutes);
 app.use("/appointments", appointmentsRoutes);
 app.use("/reports", reportRoutes);
 
-//images
-app.use("/uploads", express.static("uploads"));
-
 app.get("/", async (_req, res) => {
   try {
     mongoose
@@ -45,7 +42,6 @@ app.get("/", async (_req, res) => {
 
 if (process.env.NODE_ENV === "local") {
   app.listen(PORT, () => {
-    console.log(process.env.MONGO_URI);
     console.log(`Server running on port: ${PORT}`);
   });
 }

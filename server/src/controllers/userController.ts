@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { User } from "../models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import CloudinaryService from "../services/CloudinaryUpload";
 
 export const getAllUsers = async (_req: Request, res: Response) => {
   try {
@@ -47,7 +48,6 @@ export const addUser = async (req: Request, res: Response) => {
       formattedAddress,
       gender,
     } = req.body;
-    console.log(req.body);
 
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password required" });
@@ -167,22 +167,55 @@ export const updateUserAvatar = async (req: Request, res: Response) => {
         .json({ success: false, message: "No file uploaded" });
     }
 
-    const imageURL = `/uploads/${req.file.filename}`;
+    const { name, avatarUrl } = await User.findById(userId);
+
+    if (avatarUrl) {
+      await CloudinaryService.deleteImage(name.replace(" ", ""));
+    }
+    const imageObj = await CloudinaryService.uploadImage(
+      req.file.buffer,
+      name.replace(" ", "")
+    );
 
     const user = await User.findByIdAndUpdate(
       userId,
       {
-        avatarUrl: imageURL,
+        avatarUrl: imageObj.secure_url,
       },
       { new: true }
     );
-
-    console.log("user", user);
 
     res.json(user);
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Upload failed" });
+  }
+};
+
+export const deleteUserAvatar = async (req: Request, res: Response) => {
+  try {
+    const userId = req.params.id;
+
+    const user = await User.findById(userId);
+
+    if (user.avatarUrl) {
+      const userPublicID = `avatars/${user.name.replace(" ", "")}`;
+      const data = await CloudinaryService.deleteImage(userPublicID);
+      if (data.result === "ok") {
+        const user = await User.findByIdAndUpdate(
+          userId,
+          {
+            avatarUrl: "",
+          },
+          { new: true }
+        );
+        res.json(user);
+      } else {
+        res.status(500).json(user);
+      }
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Delete failed" });
   }
 };
 export const addUserDiagnose = async (req: Request, res: Response) => {
@@ -195,7 +228,6 @@ export const addUserDiagnose = async (req: Request, res: Response) => {
       { new: true }
     );
 
-    console.log(user);
     res.status(200).json(user);
   } catch (error) {
     res.status(500).send({ message: error });
@@ -212,7 +244,6 @@ export const addUserAppointment = async (req: Request, res: Response) => {
       { new: true }
     );
 
-    console.log(user);
     res.status(200).json(user);
   } catch (error) {
     res.status(500).send({ message: error });
