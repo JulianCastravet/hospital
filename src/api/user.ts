@@ -4,6 +4,7 @@ import { http } from "./httpLayer";
 import { NewUser } from "../types/user";
 import env from "../environment";
 
+console.log(env.API_BASE)
 export const getAllUsers = (message: MessageInstance) =>
   http<User[]>(
     `${env.API_BASE}/users/getAllUsers`,
