@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Row, Col, Card, Image, Typography, Timeline, App, Button } from "antd";
+import { Row, Col, Card, Image, Typography, App, Button } from "antd";
 import { useTitle } from "../../hooks/useTitle";
 import { formatTime } from "../../utils/formatTime";
 import DescriptionCard from "../../components/descriptionCard/descriptionCard";
@@ -12,32 +12,24 @@ import {
   MailOutlined,
   EnvironmentOutlined,
   HeartOutlined,
-  CheckCircleFilled,
 } from "@ant-design/icons";
-import TimelineItem from "../../components/timelineItem/timelineItem";
 import { ImageWithUpload } from "../../components/imageWithUpload/imageWithUpload";
 import { useUserStore } from "../../store/user.store";
 import { DASH } from "../../utils/dash";
 import Title from "antd/es/typography/Title";
-import { useForm } from "antd/es/form/Form";
 import { capitalize } from "../../utils/capitalize";
-import { getDoctorById } from "../../utils/getDoctorById";
-import { usePatientStore } from "../../store/patient.store";
-import { DiagnoseModal } from "../../components/diagnoseModal/diagnoseModal";
-import { AppointmentModal } from "../../components/appointmentModal/appointmentModal";
+import { MedicalHistory } from "../../components/medicalHistory/medicalHistory";
+import { AppointmentsHistory } from "../../components/appointmentsHistory/appointmentsHistory";
+import { DocumentAgreements } from "../../components/documentsAgreement/documentsAgreement";
 
 const PatientPage = () => {
   const params = useParams();
   useTitle("User Page");
   const { message } = App.useApp();
-  const [form] = useForm();
 
-  const { user, users, getUser, getUsers, deleteAvatar, loading } =
-    useUserStore();
-  const { addAppointment, addDiagnose } = usePatientStore();
+  const { user, getUser, getUsers, deleteAvatar, loading } = useUserStore();
 
   const [diagnoseModal, setDiagnoseModal] = useState<boolean>(false);
-  const [appointmentModal, setAppointmentModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (!params.id) return;
@@ -45,62 +37,11 @@ const PatientPage = () => {
     getUsers(message);
   }, [params.id, message, getUser, getUsers]);
 
-  const timelineItems = () => {
-    if (!user?.medicalInfo?.appointments) return [];
-
-    return user?.medicalInfo?.appointments.map((app) => ({
-      dot: <CheckCircleFilled style={{ fontSize: "20px" }} />,
-      color: "turquoise",
-      children: (
-        <TimelineItem
-          date={app.time}
-          doctor={getDoctorById(app.doctor, users ?? [])?.name || DASH}
-          label={app.appointment}
-        />
-      ),
-    }));
-  };
-
   const removeUserImage = (id: string) => {
     if (user) {
       deleteAvatar(id, message);
     }
   };
-
-  const submitAddDiagnose = () => {
-    form
-      .validateFields(["time", "diagnose", "description"])
-      .then(() => {
-        if (!params.id) return;
-        addDiagnose({ id: params.id, body: form.getFieldsValue() }, message);
-        form.resetFields();
-        setDiagnoseModal(false);
-      })
-      .catch((error) => console.log(error));
-  };
-
-  const submitAddAppointment = () => {
-    form
-      .validateFields(["time", "appointment", "doctor"])
-      .then(() => {
-        if (!params.id) return;
-        addAppointment({ id: params.id, body: form.getFieldsValue() }, message);
-        form.resetFields();
-        setAppointmentModal(false);
-      })
-      .catch((error) => console.log(error));
-  };
-
-  const doctorOptions = users
-    .filter((user) => user.type === "doctor")
-    .map((doc) => ({
-      value: doc._id,
-      label: (
-        <span>
-          {doc.name} | {capitalize(doc.specialization ?? "")}
-        </span>
-      ),
-    }));
 
   return !user ? (
     <>User not found</>
@@ -201,49 +142,17 @@ const PatientPage = () => {
               </Col>
             </Row>
           </Card>
-          <Card title="Medical History">
-            <Row gutter={100}>
-              {user.medicalInfo?.medicalHistory.map((diagnose) => {
-                return (
-                  <Col span={8} key={diagnose.id}>
-                    <DescriptionCard
-                      title={diagnose.diagnose}
-                      descriptionDisabled
-                      description={diagnose.description}
-                      icon={
-                        <WomanOutlined
-                          style={{ fontSize: "20px", color: "turquoise" }}
-                        />
-                      }
-                    />
-                  </Col>
-                );
-              })}
-            </Row>
-          </Card>
-          <Row className="!flex flex-row gap-13">
-            <Col span={10}>
-              <Card title="Appointment">
-                <Timeline items={timelineItems()} />
-              </Card>
-            </Col>
-            <Col span={13}>
-              <Row>
-                <Card title="Document Agreement">
-                  a list of downloadable documents
-                </Card>
-                <Card title="Actions">
-                  <Button type="primary" onClick={() => setDiagnoseModal(true)}>
-                    Add Diagnose
-                  </Button>
-                  <Button
-                    type="primary"
-                    onClick={() => setAppointmentModal(true)}
-                  >
-                    Add Appointment
-                  </Button>
-                </Card>
-              </Row>
+          <MedicalHistory
+            medicalHistory={user.medicalInfo?.medicalHistory ?? []}
+          />
+          <Row className="!flex flex-row " gutter={10}>
+            <AppointmentsHistory
+              appointments={user.medicalInfo?.appointments ?? []}
+            />
+            <Col span={14}>
+              <DocumentAgreements
+                documents={user.medicalInfo?.documents ?? []}
+              />
             </Col>
           </Row>
         </Col>
@@ -276,20 +185,6 @@ const PatientPage = () => {
           </Card>
         </Col>
       </Row>
-
-      <DiagnoseModal
-        form={form}
-        onCancel={() => setDiagnoseModal(false)}
-        onOk={submitAddDiagnose}
-        open={diagnoseModal}
-      />
-      <AppointmentModal
-        form={form}
-        onCancel={() => setAppointmentModal(false)}
-        onOk={submitAddAppointment}
-        doctorOptions={doctorOptions}
-        open={appointmentModal}
-      />
     </>
   );
 };

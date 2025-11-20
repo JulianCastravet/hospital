@@ -1,6 +1,7 @@
 import { Appointment } from "./appointment";
 import { Disease } from "./disease";
 import { GeneralParams } from "./generalParams";
+import { Document } from "./document";
 
 export type User = {
   _id: string;
@@ -19,6 +20,7 @@ export type User = {
     generalParams: GeneralParams;
     medicalHistory: Disease[];
     appointments: Appointment[];
+    documents: Document[];
   };
 };
 

@@ -134,7 +134,6 @@ export const Patients = () => {
   function handleEditRow(v: any): void {
     setModalOpen(true);
     setIsEditMode(true);
-    console.log(v);
     setTimeout(() => {
       form.setFieldsValue({
         ...v,

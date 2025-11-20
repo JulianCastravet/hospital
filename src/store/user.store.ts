@@ -73,7 +73,6 @@ export const useUserStore = create<UserStoreState>()(
             set({ loading: true, error: null });
             try {
               const newUser = await addUser(data, message);
-              console.log(newUser);
               set((state) => ({
                 users: [...state.users, newUser],
                 loading: false,

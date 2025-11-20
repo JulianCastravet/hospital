@@ -135,3 +135,29 @@ export const addPatientAppointment = (
     message,
     "Failed to add appointment"
   );
+
+export const addPatientDocument = (
+  id: string,
+  formData: FormData,
+  message: MessageInstance
+) =>
+  http<User>(
+    `${env.API_BASE}/users/${id}/documents`,
+    {
+      method: "POST",
+      body: formData,
+    },
+    message,
+    "Failed to add document"
+  );
+
+export const deleteUserDocument = async (
+  { userId, docId }: { userId: string; docId: string },
+  message: MessageInstance
+) =>
+  http<User>(
+    `${env.API_BASE}/users/${userId}/documents/${docId}`,
+    { method: "DELETE" },
+    message,
+    "Failed to delete document."
+  );

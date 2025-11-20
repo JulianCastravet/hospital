@@ -3,6 +3,7 @@ import { User } from "../models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import CloudinaryService from "../services/CloudinaryUpload";
+import { v4 as uuid } from "uuid";
 
 export const getAllUsers = async (_req: Request, res: Response) => {
   try {
@@ -77,7 +78,6 @@ export const addUser = async (req: Request, res: Response) => {
 
     return res.status(200).json(newUser);
   } catch (error) {
-    console.error("Add user error:", error);
     res.status(500).json({ message: "Error adding user" });
   }
 };
@@ -129,7 +129,6 @@ export const updateUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const data = req.body;
-    console.log(id, data);
 
     await User.findByIdAndUpdate(id, data, {
       new: true,
@@ -170,7 +169,7 @@ export const updateUserAvatar = async (req: Request, res: Response) => {
     const { name, avatarUrl } = await User.findById(userId);
 
     if (avatarUrl) {
-      await CloudinaryService.deleteImage(name.replace(" ", ""));
+      await CloudinaryService.deleteFile(name.replace(" ", ""));
     }
     const imageObj = await CloudinaryService.uploadImage(
       req.file.buffer,
@@ -200,7 +199,7 @@ export const deleteUserAvatar = async (req: Request, res: Response) => {
 
     if (user.avatarUrl) {
       const userPublicID = `avatars/${user.name.replace(" ", "")}`;
-      const data = await CloudinaryService.deleteImage(userPublicID);
+      const data = await CloudinaryService.deleteFile(userPublicID);
       if (data.result === "ok") {
         const user = await User.findByIdAndUpdate(
           userId,
@@ -247,5 +246,62 @@ export const addUserAppointment = async (req: Request, res: Response) => {
     res.status(200).json(user);
   } catch (error) {
     res.status(500).send({ message: error });
+  }
+};
+
+export const addUserDocument = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+    const { title, date } = req.body;
+
+    const builtName = `${
+      user.name.replaceAll(" ", "_") +
+      "_" +
+      title.replaceAll(" ", "_") +
+      "_" +
+      date
+    }`;
+
+    const PdfFile = await CloudinaryService.uploadPdf(
+      req.file.buffer,
+      builtName
+    );
+
+    user.medicalInfo.documents.push({
+      id: uuid(),
+      title: title,
+      date: date,
+      url: PdfFile.secure_url,
+      uploadedAt: new Date(),
+      cloudinaryId: PdfFile.public_id,
+    });
+    user.save();
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+};
+
+export const deleteUserDocument = async (req: Request, res: Response) => {
+  try {
+    const { userId, docId } = req.params;
+    const user = await User.findById(userId);
+
+    const document = user.medicalInfo.documents.find((doc) => doc.id === docId);
+    const data = await CloudinaryService.deleteFile(document.cloudinaryId);
+    if (data.result === "ok") {
+      user.medicalInfo.documents = user.medicalInfo.documents.filter(
+        (doc) => doc.id !== docId
+      );
+      await user.save();
+    } else {
+      throw new Error();
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Something happened on BE" });
   }
 };

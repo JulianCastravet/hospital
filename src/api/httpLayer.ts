@@ -20,6 +20,7 @@ export const http = async <T>(
     return (await res.json()) as T;
   } catch (err) {
     if (message) message.error(errorMsg || "Unknown error", 4);
+    message?.error("something wrong on backend");
     throw err;
   }
 };

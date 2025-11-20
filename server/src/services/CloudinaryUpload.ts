@@ -35,7 +35,29 @@ class CloudinaryService {
     });
   }
 
-  static async deleteImage(publicId: string) {
+  static async uploadPdf(
+    fileBuffer: Buffer,
+    fileName: string
+  ): Promise<UploadApiResponse> {
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          {
+            folder: "documents",
+            public_id: fileName,
+            format: "pdf",
+            access_mode: "authenticated",
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result as UploadApiResponse);
+          }
+        )
+        .end(fileBuffer);
+    });
+  }
+
+  static async deleteFile(publicId: string) {
     return await cloudinary.uploader.destroy(publicId);
   }
 }

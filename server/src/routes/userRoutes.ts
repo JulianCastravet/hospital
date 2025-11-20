@@ -11,6 +11,8 @@ import {
   addUserDiagnose,
   addUserAppointment,
   deleteUserAvatar,
+  addUserDocument,
+  deleteUserDocument
 } from "../controllers/userController";
 import { upload } from "../multerConfig";
 
@@ -26,5 +28,7 @@ router.post("/:id/avatar", upload.single("userAvatar"), updateUserAvatar);
 router.delete("/:id/avatar", deleteUserAvatar);
 router.post("/:id/diagnose", addUserDiagnose);
 router.post("/:id/appointments", addUserAppointment);
+router.post("/:id/documents", upload.single("file"), addUserDocument);
+router.delete('/:userId/documents/:docId', deleteUserDocument)
 
 export default router;

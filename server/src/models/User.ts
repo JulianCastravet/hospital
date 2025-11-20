@@ -19,6 +19,15 @@ export interface Disease {
   time: string;
 }
 
+export interface UserDocument {
+  id: string;
+  title: string;
+  date: Date;
+  url: string;
+  cloudinaryId: string; // needed for deleting
+  uploadedAt: Date;
+}
+
 // ------------------
 // Subschemas
 // ------------------
@@ -27,7 +36,7 @@ const DiseaseSchema = new Schema<Disease>(
   {
     id: {
       type: String,
-      default: uuid,  // generate disease id ourselves
+      default: uuid, // generate disease id ourselves
     },
     diagnose: String,
     description: String,
@@ -47,6 +56,18 @@ const GeneralParamsSchema = new Schema<GeneralParams>(
     },
   },
   { _id: false }
+);
+
+const UserDocumentSchema = new Schema<UserDocument>(
+  {
+    id: { type: String, default: uuid },
+    title: String,
+    date: Date,
+    url: String,
+    cloudinaryId: String, // needed for deleting
+    uploadedAt: Date,
+  },
+  { _id: false } // disable Mongo’s auto _id
 );
 
 // ------------------
@@ -72,6 +93,7 @@ export interface IUser extends Document {
     generalParams: GeneralParams;
     medicalHistory: Disease[];
     appointments: IAppointment[];
+    documents: UserDocument[];
   };
 }
 
@@ -96,8 +118,9 @@ const userSchema = new Schema<IUser>(
 
     medicalInfo: {
       generalParams: GeneralParamsSchema,
-      medicalHistory: [DiseaseSchema],  // <-- ARRAY of subdocuments
-      appointments: { type: Array },    // you can also make a schema here later
+      medicalHistory: [DiseaseSchema],
+      appointments: { type: Array },
+      documents: [UserDocumentSchema],
     },
   },
   { timestamps: true }
