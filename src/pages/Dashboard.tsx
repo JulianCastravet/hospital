@@ -119,7 +119,10 @@ export const Dashboard = () => {
         <div className="demo-logo-vertical" style={{ color: "white" }}>
           <Flex justify="center" align="center">
             <div style={{ width: "50%" }}>
-              <Image src="https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png" />
+              <Image
+                src="https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png"
+                preview={false}
+              />
             </div>
           </Flex>
         </div>

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Row, Col, Card, Image, Typography, App, Button } from "antd";
+import { Row, Col, Card, Image, Typography, App } from "antd";
 import { useTitle } from "../../hooks/useTitle";
 import { formatTime } from "../../utils/formatTime";
 import DescriptionCard from "../../components/descriptionCard/descriptionCard";
@@ -21,27 +21,66 @@ import { capitalize } from "../../utils/capitalize";
 import { MedicalHistory } from "../../components/medicalHistory/medicalHistory";
 import { AppointmentsHistory } from "../../components/appointmentsHistory/appointmentsHistory";
 import { DocumentAgreements } from "../../components/documentsAgreement/documentsAgreement";
+import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from "recharts";
 
 const PatientPage = () => {
   const params = useParams();
   useTitle("User Page");
   const { message } = App.useApp();
 
-  const { user, getUser, getUsers, deleteAvatar, loading } = useUserStore();
-
-  const [diagnoseModal, setDiagnoseModal] = useState<boolean>(false);
+  const { user, getUser, deleteAvatar, loading } = useUserStore();
 
   useEffect(() => {
     if (!params.id) return;
     getUser(params.id, message);
-    getUsers(message);
-  }, [params.id, message, getUser, getUsers]);
+  }, [params.id, message, getUser]);
 
   const removeUserImage = (id: string) => {
     if (user) {
       deleteAvatar(id, message);
     }
   };
+
+  const data = [
+    {
+      name: "SUN",
+      min_bpm: 90,
+      max_bpm: 120,
+      get med_bpm() {
+        return (this.min_bpm + this.max_bpm) / 2;
+      },
+    },
+    {
+      name: "MON",
+      min_bpm: 70,
+      max_bpm: 85,
+    },
+    {
+      name: "TUE",
+      min_bpm: 68,
+      max_bpm: 92,
+    },
+    {
+      name: "WED",
+      min_bpm: 75,
+      max_bpm: 93,
+    },
+    {
+      name: "THU",
+      min_bpm: 86,
+      max_bpm: 115,
+    },
+    {
+      name: "FRI",
+      min_bpm: 92,
+      max_bpm: 130,
+    },
+    {
+      name: "SAT",
+      min_bpm: 120,
+      max_bpm: 170,
+    },
+  ];
 
   return !user ? (
     <>User not found</>
@@ -181,7 +220,26 @@ const PatientPage = () => {
                 <Title level={4}>Maximum</Title> 90 bpm
               </div>
             </div>
-            <div>grafic cu bpm x = weekdays, y= count of bpm</div>
+            <div>
+              <LineChart
+                style={{
+                  width: "100%",
+                  aspectRatio: 1.618,
+                  maxWidth: 800,
+                  margin: "auto",
+                }}
+                responsive
+                data={data}
+              >
+                <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                <XAxis dataKey="name" />
+                <YAxis width="auto" />
+                <Line type="monotone" dataKey="min_bpm" stroke="#1a0e86ff" />
+                <Line type="monotone" dataKey="max_bpm" stroke="#b30e3fff" />
+                <Line type="monotone" dataKey="avg_bpm" stroke="#14c6ccff" />
+                <Legend />
+              </LineChart>
+            </div>
           </Card>
         </Col>
       </Row>

@@ -1,8 +1,20 @@
-const { LOCALHOST_BE, VERCEL_BE } = process.env;
-const env = {
-  API_BASE:
-    process.env.NODE_ENV === "development"
-      ? "http://localhost:4001" // local backend
-      : "https://hospital-server-theta-nine.vercel.app", // Vercel backend
+const {
+  REACT_APP_LOCALHOST_BE,
+  REACT_APP_VERCEL_BE,
+  REACT_APP_RADAR_API_KEY,
+  REACT_APP_RADAR_API_KEY_PUBLIC,
+} = process.env;
+
+const localEnv = {
+  API_BASE: REACT_APP_LOCALHOST_BE,
+  RADAR_API_KEY: REACT_APP_RADAR_API_KEY,
 };
+
+const prodEnv = {
+  API_BASE: REACT_APP_VERCEL_BE,
+  RADAR_API_KEY: REACT_APP_RADAR_API_KEY_PUBLIC,
+};
+
+const env = process.env.NODE_ENV === "production" ? prodEnv : localEnv;
+
 export default env;

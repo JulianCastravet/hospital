@@ -47,7 +47,7 @@ export const DocumentModal = (props: DocumentModalProps) => {
       onCancel={onCancel}
       confirmLoading={confirmLoading}
     >
-      <Form form={form}>
+      <Form form={form} onFinish={onOk}>
         <Form.Item
           name="time"
           label="Date/Time"

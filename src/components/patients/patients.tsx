@@ -29,7 +29,7 @@ import { NewUser } from "../../types/user";
 export const Patients = () => {
   useTitle("Patients");
 
-  const { updateUser, deleteUser, addUser, users, getUsers } = useUserStore();
+  const { updateUser, deleteUser, addUser, users } = useUserStore();
   const [form] = useForm();
   const { confirm } = Modal;
   const { message } = App.useApp();
@@ -41,10 +41,9 @@ export const Patients = () => {
   );
 
   useEffect(() => {
-    getUsers(message);
     getPatients(message);
     return () => {};
-  }, [getUsers, message]);
+  }, [message]);
 
   useEffect(() => {
     setPatients(users.filter((user) => user.type === "guest"));
@@ -128,7 +127,7 @@ export const Patients = () => {
           setIsEditMode(false);
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.error(error));
   };
 
   function handleEditRow(v: any): void {

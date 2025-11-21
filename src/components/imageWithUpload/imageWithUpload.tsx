@@ -5,22 +5,24 @@ import { useRef } from "react";
 import { CloseCircleFilled, LoadingOutlined } from "@ant-design/icons";
 import { useUserStore } from "../../store/user.store";
 
+interface ImageWithUploadInterface {
+  avatarUrl: string;
+  userId: string;
+  removeImage: () => void;
+  loading: boolean;
+}
+
 export const ImageWithUpload = ({
   avatarUrl,
   userId,
   removeImage,
   loading,
-}: {
-  avatarUrl: string;
-  userId: string;
-  removeImage: () => void;
-  loading: boolean;
-}) => {
+}: ImageWithUploadInterface) => {
   const inputRef = useRef(null);
   const { updateAvatar } = useUserStore();
+  const inputElement = inputRef.current as unknown as HTMLInputElement;
 
   const handleImageClick = () => {
-    const inputElement = inputRef.current as unknown as HTMLInputElement;
     inputElement.click();
   };
 
@@ -31,6 +33,7 @@ export const ImageWithUpload = ({
     const formData = new FormData();
     formData.append("userAvatar", file);
     updateAvatar({ id: userId, data: formData }, message);
+    e.target.value = "";
   };
 
   return (
@@ -64,7 +67,7 @@ export const ImageWithUpload = ({
           avatarUrl ||
           "https://dugonvenomlab.com/assets/images/imgPlaceholder.jpg"
         }
-        onClick={handleImageClick}
+        onClick={!loading ? handleImageClick : () => {}}
         className="hover:cursor-pointer"
         loading="lazy"
       />

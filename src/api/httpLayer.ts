@@ -8,9 +8,8 @@ export const http = async <T>(
 ): Promise<T> => {
   try {
     const res = await fetch(url, options);
-
     if (!res.ok) {
-      if (message && errorMsg) message.error(errorMsg, 4);
+      message && message.error(errorMsg || "Unknown error", 4);
       throw new Error(`${errorMsg} (status: ${res.status})`);
     }
 
@@ -19,8 +18,7 @@ export const http = async <T>(
 
     return (await res.json()) as T;
   } catch (err) {
-    if (message) message.error(errorMsg || "Unknown error", 4);
-    message?.error("something wrong on backend");
+    message?.error("Something wrong on backend");
     throw err;
   }
 };

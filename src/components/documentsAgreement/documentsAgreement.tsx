@@ -1,12 +1,7 @@
 import { App, Button, Card, Modal, Row } from "antd";
 import { Document } from "../../types/document";
 import DescriptionCard from "../descriptionCard/descriptionCard";
-import {
-  FilePdfFilled,
-  DeleteFilled,
-  AlertFilled,
-  SplitCellsOutlined,
-} from "@ant-design/icons";
+import { FilePdfFilled, DeleteFilled, AlertFilled } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { DocumentModal } from "../documentModal/documentModal";
 import { useForm } from "antd/es/form/Form";
@@ -31,14 +26,13 @@ export const DocumentAgreements = (props: DocumentAgreementsProps) => {
 
   useEffect(() => {
     if (!loading) {
-      form.resetFields();
       setDocumentModalOpen(false);
     }
   }, [loading]);
 
   const addDocument = () => {
     form
-      .validateFields({ validateOnly: true })
+      .validateFields()
       .then(() => {
         if (!id) return;
         const {
@@ -53,8 +47,9 @@ export const DocumentAgreements = (props: DocumentAgreementsProps) => {
         formData.append("file", file);
         formData.append("date", time.toISOString());
         uploadDocument({ id, formData }, message);
+        form.resetFields();
       })
-      .catch((error) => {});
+      .catch(() => {});
   };
   const closeModal = () => {
     setDocumentModalOpen(false);
@@ -71,7 +66,6 @@ export const DocumentAgreements = (props: DocumentAgreementsProps) => {
         message.success({ content: "Document deleted successfully" });
       },
     });
-
   };
 
   return (

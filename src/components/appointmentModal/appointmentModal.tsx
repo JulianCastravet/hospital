@@ -14,7 +14,7 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
 
   return (
     <Modal open={open} onOk={onOk} destroyOnHidden onCancel={onCancel}>
-      <Form form={form}>
+      <Form form={form} onFinish={onOk}>
         <Form.Item
           name="time"
           label="Date/Time"

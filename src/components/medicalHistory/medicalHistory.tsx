@@ -29,7 +29,12 @@ export const MedicalHistory = (props: MedicalHistoryProps) => {
         form.resetFields();
         setDiagnoseModal(false);
       })
-      .catch((error) => console.log(error));
+      .catch(() => {});
+  };
+
+  const handleModalClose = () => {
+    setDiagnoseModal(false);
+    form.resetFields();
   };
 
   return (
@@ -63,13 +68,14 @@ export const MedicalHistory = (props: MedicalHistoryProps) => {
           </Button>
         </Row>
       </Card>
-
+      [ diagnoseModal &&
       <DiagnoseModal
         form={form}
-        onCancel={() => setDiagnoseModal(false)}
+        onCancel={handleModalClose}
         onOk={submitAddDiagnose}
         open={diagnoseModal}
       />
+      ]
     </>
   );
 };

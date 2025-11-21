@@ -3,6 +3,7 @@ import Radar from "radar-sdk-js";
 import "radar-sdk-js/dist/radar.css";
 import { Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
+import env from "../../environment";
 
 type Props = {
   value?: string;
@@ -10,7 +11,7 @@ type Props = {
 };
 
 export const AddressMap = (props: Props) => {
-  Radar.initialize(process.env.REACT_APP_RADAR_API_KEY ?? "");
+  Radar.initialize(env.RADAR_API_KEY ?? "");
 
   const { value, onChange } = props;
 
@@ -53,7 +54,7 @@ export const AddressMap = (props: Props) => {
           onChange?.(address.addresses[0].formattedAddress ?? "");
           Radar.ui.popup({ text: internAddress }).addTo(map);
         })
-        .catch((error) => console.log(error));
+        .catch((error) => console.error(error));
     });
 
     // Add a marker to the map
@@ -80,7 +81,7 @@ export const AddressMap = (props: Props) => {
         mapRef.current.flyTo({ center: [longitude, latitude], zoom: 16 });
       },
       onError: (error) => {
-        console.log(error);
+        console.error(error);
       },
     });
     return () => {

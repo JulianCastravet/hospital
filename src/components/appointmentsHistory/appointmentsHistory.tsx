@@ -36,7 +36,7 @@ export const AppointmentsHistory = (props: AppointmentsHistoryProps) => {
         form.resetFields();
         setAppointmentModal(false);
       })
-      .catch((error) => console.log(error));
+      .catch(() => {});
   };
 
   const doctorOptions = users
@@ -66,6 +66,10 @@ export const AppointmentsHistory = (props: AppointmentsHistoryProps) => {
       };
     }
   );
+  const handleCloseModal = () => {
+    setAppointmentModal(false);
+    form.resetFields();
+  };
 
   return (
     <>
@@ -85,13 +89,15 @@ export const AppointmentsHistory = (props: AppointmentsHistoryProps) => {
         </Card>
       </Col>
 
-      <AppointmentModal
-        form={form}
-        onCancel={() => setAppointmentModal(false)}
-        onOk={submitAddAppointment}
-        doctorOptions={doctorOptions}
-        open={appointmentModal}
-      />
+      {appointmentModal && (
+        <AppointmentModal
+          form={form}
+          onCancel={handleCloseModal}
+          onOk={submitAddAppointment}
+          doctorOptions={doctorOptions}
+          open={appointmentModal}
+        />
+      )}
     </>
   );
 };
