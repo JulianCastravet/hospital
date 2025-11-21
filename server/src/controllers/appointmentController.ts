@@ -1,6 +1,18 @@
 import { Request, Response } from "express";
 import { Appointment } from "../models/Appointment";
 
+export const getAppointmentById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const appointment = await Appointment.findById(id);
+
+    res.status(200).json(appointment);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching appointment." });
+  }
+};
+
 export const getAllAppointments = async (req: Request, res: Response) => {
   try {
     const appts = await Appointment.find();

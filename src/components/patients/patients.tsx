@@ -31,8 +31,7 @@ export const Patients = () => {
 
   const { updateUser, deleteUser, addUser, users } = useUserStore();
   const [form] = useForm();
-  const { confirm } = Modal;
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
@@ -143,7 +142,7 @@ export const Patients = () => {
   }
 
   function handleDeleteRow(data: any) {
-    confirm({
+    modal.confirm({
       title: "Are you sure?",
       icon: <ExclamationCircleOutlined />,
       content: " This action is irreversible.",

@@ -2,31 +2,32 @@ import { App, Button, Flex, Form, Input, Modal, Table } from "antd";
 import { useTitle } from "../../hooks/useTitle";
 import { useEffect, useState } from "react";
 import { useForm } from "antd/es/form/Form";
-import {
-  addAppointment,
-  deleteAppointment,
-  getAllAppointments,
-  updateAppointment,
-} from "../../api/appointments";
+
 import { DeleteFilled, EditFilled } from "@ant-design/icons";
 import { Appointment } from "../../types";
+import { useAppointmentStore } from "../../store/appointments.store";
 
 export const Appointments = () => {
   useTitle("Appointments");
   const [open, setOpen] = useState<boolean>(false);
-  const [appointments, setAppointments] = useState<Appointment[]>();
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
-  const [appointmentId, setAppointmentId] = useState<string>("");
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
+
+  const {
+    appointment,
+    appointments,
+    getAllAppointments,
+    getAppointmentById,
+    addAppointment,
+    updateAppointment,
+    deleteAppointment,
+  } = useAppointmentStore();
 
   useEffect(() => {
-    getAllAppointments(message).then((apps) => {
-      setAppointments(apps);
-    });
-  }, [message]);
+    getAllAppointments(message);
+  }, [message, getAllAppointments]);
 
   const [form] = useForm();
-  const { confirm } = Modal;
 
   const columns = [
     {
@@ -74,51 +75,48 @@ export const Appointments = () => {
   ];
 
   const handleDeleteRow = (v: any) => {
-    confirm({
+    modal.confirm({
       title: "Are you sure?",
       content: "This action is irreversible",
       icon: <DeleteFilled />,
-      onOk: () =>
-        deleteAppointment(v._id, message).then((apps: Appointment[]) =>
-          setAppointments(apps)
-        ),
+      onOk: () => deleteAppointment(v._id, message),
     });
   };
 
   const handleEditRow = (v: any) => {
+    getAppointmentById(v._id, message);
     setOpen(true);
     setIsEditMode(true);
     form.setFieldsValue(v);
-    setAppointmentId(v._id);
   };
 
-  const submitAppointment = async () => {
+  const submitAppointment = () => {
     try {
-      await form.validateFields();
+      const editedForm = form.getFieldsValue() as Appointment;
 
-      const appointment = form.getFieldsValue() as Appointment;
-
-      let result: Appointment[];
-
-      if (isEditMode) {
-        result = await updateAppointment(appointmentId, appointment, message);
+      if (isEditMode && appointment) {
+        updateAppointment(appointment._id, editedForm, message);
+        setIsEditMode(false);
       } else {
-        result = await addAppointment(appointment, message);
+        const newForm = form.getFieldsValue() as Appointment;
+        console.log("new", newForm);
+        addAppointment(newForm, message);
       }
-
-      // Close modal + reset form
       form.resetFields();
       setOpen(false);
-
-      // Update list
-      setAppointments(result);
     } catch (error) {}
   };
 
   return (
     <>
       <Table columns={columns} dataSource={appointments} rowKey={"_id"}></Table>
-      <Button type="primary" onClick={() => setOpen(!open)}>
+      <Button
+        type="primary"
+        onClick={() => {
+          setOpen(true);
+          setIsEditMode(false);
+        }}
+      >
         Add Appointment
       </Button>
 
@@ -130,44 +128,40 @@ export const Appointments = () => {
         }}
         onOk={submitAppointment}
       >
-        <Flex>
-          <Form
-            form={form}
-            style={{ padding: "20px" }}
-            onFinish={submitAppointment}
+        <Form
+          form={form}
+          style={{ padding: "20px" }}
+          onFinish={submitAppointment}
+        >
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[{ required: true, message: "Please input your Name!" }]}
           >
-            <Form.Item
-              name="name"
-              label="Name"
-              rules={[{ required: true, message: "Please input your Name!" }]}
-            >
-              <Input type="text" placeholder="John Doe" />
-            </Form.Item>
-            <Form.Item
-              name="email"
-              label="Email"
-              rules={[{ required: true, message: "Please input your Email!" }]}
-            >
-              <Input type="text" placeholder="johndoe@test.com" />
-            </Form.Item>
-            <Form.Item
-              name="phone"
-              label="Phone"
-              rules={[
-                { required: true, message: "Please input phone number!" },
-              ]}
-            >
-              <Input type="text" placeholder="+123456789" />
-            </Form.Item>
-            <Form.Item
-              name="diagnosis"
-              label="Diagnosis"
-              rules={[{ required: true, message: "Please input diagnosis" }]}
-            >
-              <Input type="text" placeholder="ex: blood checkup" />
-            </Form.Item>
-          </Form>
-        </Flex>
+            <Input type="text" placeholder="John Doe" />
+          </Form.Item>
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[{ required: true, message: "Please input your Email!" }]}
+          >
+            <Input type="text" placeholder="johndoe@test.com" />
+          </Form.Item>
+          <Form.Item
+            name="phone"
+            label="Phone"
+            rules={[{ required: true, message: "Please input phone number!" }]}
+          >
+            <Input type="text" placeholder="+123456789" />
+          </Form.Item>
+          <Form.Item
+            name="diagnosis"
+            label="Diagnosis"
+            rules={[{ required: true, message: "Please input diagnosis" }]}
+          >
+            <Input type="text" placeholder="ex: blood checkup" />
+          </Form.Item>
+        </Form>
       </Modal>
     </>
   );

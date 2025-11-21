@@ -1,59 +1,63 @@
 import { MessageInstance } from "antd/es/message/interface";
 import { Report } from "../types";
 import env from "../environment";
+import { http } from "./httpLayer";
 
-export const getAllReports = async (
-  message: MessageInstance
-): Promise<Report[]> => {
-  const res = await fetch(`${env.API_BASE}/reports`);
+export const getAllReports = (message: MessageInstance): Promise<Report[]> =>
+  http<Report[]>(
+    `${env.API_BASE}/reports`,
+    {},
+    message,
+    "Failed fetching all reports."
+  );
 
-  if (!res.ok) message.error("Failed fetching all reports.");
-  return res.json();
-};
-
-export const addReport = async (
+export const addReport = (
   report: Report,
   message: MessageInstance
-): Promise<Report[]> => {
-  const res = await fetch(`${env.API_BASE}/reports`, {
-    method: "POST",
-    body: JSON.stringify(report),
-    headers: {
-      "Content-type": "application/json",
+): Promise<Report[]> =>
+  http<Report[]>(
+    `${env.API_BASE}/reports`,
+    {
+      method: "POST",
+      body: JSON.stringify(report),
+      headers: {
+        "Content-type": "application/json",
+      },
     },
-  });
+    message,
+    "Failed to add new report."
+  );
 
-  if (!res.ok) message.error("Failed to add new report.");
-
-  return res.json();
-};
-
-export const updateReport = async (
+export const updateReport = (
   id: string,
   body: Partial<Report>,
   message: MessageInstance
-): Promise<Report[]> => {
-  const res = await fetch(`${env.API_BASE}/reports/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(body),
-    headers: {
-      "Content-Type": "application/json",
+): Promise<Report[]> =>
+  http<Report[]>(
+    `${env.API_BASE}/reports/${id}`,
+    {
+      method: "PUT",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
-  });
-  if (!res.ok) message.error("Failed to update report.");
-  return res.json();
-};
+    message,
+    "Failed to update report."
+  );
 
-export const deleteReport = async (
+export const deleteReport = (
   id: string,
   message: MessageInstance
-): Promise<Report[]> => {
-  const res = await fetch(`${env.API_BASE}/reports/${id}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "text",
+): Promise<Report[]> =>
+  http<Report[]>(
+    `${env.API_BASE}/reports/${id}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "text",
+      },
     },
-  });
-  if (!res.ok) message.error(`Failed to delete report with ID: ${id}`);
-  return res.json();
-};
+    message,
+    `Failed to delete report with ID: ${id}`
+  );

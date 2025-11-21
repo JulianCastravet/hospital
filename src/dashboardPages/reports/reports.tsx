@@ -22,8 +22,7 @@ import { Pill } from "../../components/pill/pill";
 export const Reports = () => {
   useTitle("Reports");
   const [form] = useForm();
-  const { confirm } = Modal;
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
 
   useEffect(() => {
     getAllReports(message).then((reports) => setReports(reports));
@@ -148,13 +147,10 @@ export const Reports = () => {
   };
 
   const handleDeleteRow = (v: any) => {
-    confirm({
+    modal.confirm({
       title: "Are you sure?",
       icon: <ExclamationCircleOutlined />,
       content: "This operation will delete the report from database.",
-      okText: "Yes",
-      okType: "danger",
-      cancelText: "No",
       onOk() {
         deleteReport(v._id, message).then((reports) => setReports(reports));
       },
@@ -175,6 +171,7 @@ export const Reports = () => {
         Add Report
       </Button>
       <Modal
+        forceRender
         open={openModal}
         onCancel={handleModal}
         onOk={submitForm}

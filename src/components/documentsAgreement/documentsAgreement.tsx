@@ -1,4 +1,4 @@
-import { App, Button, Card, Modal, Row } from "antd";
+import { App, Button, Card, Row } from "antd";
 import { Document } from "../../types/document";
 import DescriptionCard from "../descriptionCard/descriptionCard";
 import { FilePdfFilled, DeleteFilled, AlertFilled } from "@ant-design/icons";
@@ -19,10 +19,9 @@ export const DocumentAgreements = (props: DocumentAgreementsProps) => {
   const { id } = useParams();
   const [documentModalOpen, setDocumentModalOpen] = useState<boolean>(false);
   const [form] = useForm();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
 
   const { uploadDocument, deleteDocument, loading } = usePatientStore();
-  const { confirm } = Modal;
 
   useEffect(() => {
     if (!loading) {
@@ -57,7 +56,7 @@ export const DocumentAgreements = (props: DocumentAgreementsProps) => {
   };
 
   const handleDeleteIcon = (_id: string) => {
-    confirm({
+    modal.confirm({
       title: "Danger!",
       content: "This action is irreversible. Are you sure?",
       icon: <AlertFilled />,

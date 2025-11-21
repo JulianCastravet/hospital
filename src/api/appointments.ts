@@ -1,66 +1,71 @@
 import { MessageInstance } from "antd/es/message/interface";
 import { Appointment } from "../types";
 import env from "../environment";
+import { http } from "./httpLayer";
 
-export const getAllAppointments = async (
-  message: MessageInstance
-): Promise<Appointment[]> => {
-  const res = await fetch(`${env.API_BASE}/appointments`);
-  if (!res.ok) {
-    message.error("Failed fetching appointments.");
-  }
-  return res.json();
-};
+export const getAllAppointments = (message: MessageInstance) =>
+  http<Appointment[]>(
+    `${env.API_BASE}/appointments`,
+    {},
+    message,
+    "Failed fetching appointments."
+  );
 
-export const getAppointmentById = async (
-  id: number,
-  message: MessageInstance
-): Promise<Appointment> => {
-  const res = await fetch(`${env.API_BASE}/appointments/${id}`);
-  if (!res.ok) message.error(`Failed fetching appointment with ID: ${id}`);
-  return res.json();
-};
-
-export const addAppointment = async (
-  app: Appointment,
-  message: MessageInstance
-): Promise<Appointment[]> => {
-  const res = await fetch(`${env.API_BASE}/appointments`, {
-    method: "POST",
-    body: JSON.stringify(app),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  if (!res.ok) message.error("Error adding appointment.");
-  return res.json();
-};
-
-export const deleteAppointment = async (
+export const getAppointmentById = (
   id: string,
   message: MessageInstance
-): Promise<Appointment[]> => {
-  const res = await fetch(`${env.API_BASE}/appointments/${id}`, {
-    method: "DELETE",
-  });
-  if (!res.ok) message.error(`Failed deleting appointment with ID: ${id}`);
+): Promise<Appointment> =>
+  http<Appointment>(
+    `${env.API_BASE}/appointments/${id}`,
+    {},
+    message,
+    `Failed fetching appointment with ID: ${id}`
+  );
 
-  return res.json();
-};
+export const addAppointment = (
+  app: Appointment,
+  message: MessageInstance
+): Promise<Appointment[]> =>
+  http<Appointment[]>(
+    `${env.API_BASE}/appointments`,
+    {
+      method: "POST",
+      body: JSON.stringify(app),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+    message,
+    "Error adding appointment."
+  );
 
-export const updateAppointment = async (
+export const deleteAppointment = (
+  id: string,
+  message: MessageInstance
+): Promise<Appointment[]> =>
+  http<Appointment[]>(
+    `${env.API_BASE}/appointments/${id}`,
+    {
+      method: "DELETE",
+    },
+    message,
+    `Failed deleting appointment with ID: ${id}`
+  );
+
+export const updateAppointment = (
   id: string,
   body: Appointment,
   message: MessageInstance
-): Promise<Appointment[]> => {
-  const res = await fetch(`${env.API_BASE}/appointments/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
+): Promise<Appointment[]> =>
+  http<Appointment[]>(
+    `${env.API_BASE}/appointments/${id}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
     },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) message.error("Error updating appointment");
-  return res.json();
-};
+    message,
+    "Error updating appointment"
+  );

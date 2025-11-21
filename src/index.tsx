@@ -12,13 +12,13 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <Antapp>
-    <ConfigProvider theme={themeToken}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-    </ConfigProvider>
-  </Antapp>
+  <ConfigProvider theme={themeToken}>
+    <Antapp>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Antapp>
+  </ConfigProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function
