@@ -12,16 +12,21 @@ import {
   addUserAppointment,
   deleteUserAvatar,
   addUserDocument,
-  deleteUserDocument
+  deleteUserDocument,
 } from "../controllers/userController";
 import { upload } from "../multerConfig";
+import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = express.Router();
 router.post("/login", authenticateUser);
+router.post("/register", addUser);
+
+
+router.use(authMiddleware);
+router.post("/", addUser);
 router.get("/getAllUsers", getAllUsers);
 router.get("/getPatients", getPatients);
 router.get("/:id", getSingleUser);
-router.post("/", addUser);
 router.delete("/:id", deleteUser);
 router.put("/:id", updateUser);
 router.post("/:id/avatar", upload.single("userAvatar"), updateUserAvatar);
@@ -29,6 +34,6 @@ router.delete("/:id/avatar", deleteUserAvatar);
 router.post("/:id/diagnose", addUserDiagnose);
 router.post("/:id/appointments", addUserAppointment);
 router.post("/:id/documents", upload.single("file"), addUserDocument);
-router.delete('/:userId/documents/:docId', deleteUserDocument)
+router.delete("/:userId/documents/:docId", deleteUserDocument);
 
 export default router;

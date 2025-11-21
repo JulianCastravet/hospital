@@ -1,4 +1,5 @@
 import { MessageInstance } from "antd/es/message/interface";
+import { authToken } from "../store/auth.store";
 
 export const http = async <T>(
   url: string,
@@ -7,7 +8,15 @@ export const http = async <T>(
   errorMsg?: string
 ): Promise<T> => {
   try {
-    const res = await fetch(url, options);
+    const token = authToken();
+
+    const res = await fetch(url, {
+      ...options,
+      headers: {
+        ...(options.headers || {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
     if (!res.ok) {
       message && message.error(errorMsg || "Unknown error", 4);
       throw new Error(`${errorMsg} (status: ${res.status})`);

@@ -8,6 +8,7 @@ type AuthState = {
   user: User | null;
   isAuthenticated: boolean;
   loading: boolean;
+  token: string;
   error: string | null;
   userOptions: string[];
   setOption: (p: string[]) => void;
@@ -27,6 +28,7 @@ export const useAuthStore = create<AuthState>()(
         user: null,
         isAuthenticated: false,
         loading: false,
+        token: "",
         error: null,
         userOptions: [],
         setOption: (options: string[]) =>
@@ -41,6 +43,7 @@ export const useAuthStore = create<AuthState>()(
                 user: data.user,
                 isAuthenticated: true,
                 loading: false,
+                token: data.token,
               });
             } else {
               set({ error: "Login failed", loading: false });
@@ -59,3 +62,5 @@ export const useAuthStore = create<AuthState>()(
     { name: "auth-store" }
   )
 );
+
+export const authToken = () => useAuthStore.getState().token;
