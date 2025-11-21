@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Row, Col, Card, Image, Typography, App } from "antd";
@@ -220,31 +221,41 @@ const PatientPage = () => {
                 <Title level={4}>Maximum</Title> 90 bpm
               </div>
             </div>
-            <div>
-              <LineChart
-                style={{
-                  width: "100%",
-                  aspectRatio: 1.618,
-                  maxWidth: 800,
-                  margin: "auto",
-                }}
-                responsive
-                data={data}
-              >
-                <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                <XAxis dataKey="name" />
-                <YAxis width="auto" />
-                <Line type="monotone" dataKey="min_bpm" stroke="#1a0e86ff" />
-                <Line type="monotone" dataKey="max_bpm" stroke="#b30e3fff" />
-                <Line type="monotone" dataKey="avg_bpm" stroke="#14c6ccff" />
-                <Legend />
-              </LineChart>
-            </div>
+            <HeartRateChart data={data} />
           </Card>
         </Col>
       </Row>
     </>
   );
 };
+
+const HeartRateChart = React.memo(function HeartRateChart({
+  data,
+}: {
+  data: any;
+}) {
+  return (
+    <div>
+      <LineChart
+        style={{
+          width: "100%",
+          aspectRatio: 1.618,
+          maxWidth: 800,
+          margin: "auto",
+        }}
+        responsive
+        data={data}
+      >
+        <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+        <XAxis dataKey="name" />
+        <YAxis width="auto" />
+        <Line type="monotone" dataKey="min_bpm" stroke="#1a0e86ff" />
+        <Line type="monotone" dataKey="max_bpm" stroke="#b30e3fff" />
+        <Line type="monotone" dataKey="avg_bpm" stroke="#14c6ccff" />
+        <Legend />
+      </LineChart>
+    </div>
+  );
+});
 
 export default PatientPage;

@@ -68,14 +68,14 @@ export const MedicalHistory = (props: MedicalHistoryProps) => {
           </Button>
         </Row>
       </Card>
-      [ diagnoseModal &&
-      <DiagnoseModal
-        form={form}
-        onCancel={handleModalClose}
-        onOk={submitAddDiagnose}
-        open={diagnoseModal}
-      />
-      ]
+      {diagnoseModal && (
+        <DiagnoseModal
+          form={form}
+          onCancel={handleModalClose}
+          onOk={submitAddDiagnose}
+          open={diagnoseModal}
+        />
+      )}
     </>
   );
 };

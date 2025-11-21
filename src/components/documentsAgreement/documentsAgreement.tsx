@@ -99,7 +99,7 @@ export const DocumentAgreements = (props: DocumentAgreementsProps) => {
             );
           })
         ) : (
-          <>No documents available</>
+          <>No documents available.</>
         )}
 
         <Row className="mt-5">
