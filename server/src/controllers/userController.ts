@@ -117,9 +117,20 @@ export const authenticateUser = async (req: Request, res: Response) => {
 };
 
 export const getPatients = async (req: Request, res: Response) => {
+  const { page, pageSize } = req.query;
+  const Npage = Number(page);
+  const NpageSize = Number(pageSize);
+
+  const skippedDocs = (Npage - 1) * NpageSize;
+
   try {
-    const patients = await User.find({ type: "guest" });
-    res.status(200).json(patients);
+    const allPatientsCount = (await User.find({ type: "guest" })).length;
+
+    const patients = await User.find({ type: "guest" })
+      .skip(skippedDocs)
+      .limit(NpageSize);
+
+    res.status(200).json({ users: patients, totalPatients: allPatientsCount });
   } catch (error) {
     res.status(500).json({ message: "something went wrong" });
   }

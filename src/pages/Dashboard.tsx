@@ -21,6 +21,7 @@ import {
   LinkOutlined,
   QuestionCircleOutlined,
   SettingOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/auth.store";
@@ -115,6 +116,7 @@ export const Dashboard = () => {
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
         theme={userOptions.includes("Dark Mode") ? "dark" : "light"}
+        collapsedWidth={60}
       >
         <div className="demo-logo-vertical" style={{ color: "white" }}>
           <Flex justify="center" align="center">
@@ -134,8 +136,14 @@ export const Dashboard = () => {
           onClick={handleMenuItemClick}
         />
         <Flex justify="center" style={{ marginTop: "20px" }}>
-          <Button type="primary" onClick={userLogout}>
-            Log Out
+          <Button
+            icon={<LogoutOutlined />}
+            type="primary"
+            onClick={userLogout}
+            size="large"
+            className="w-full m-1"
+          >
+            {!collapsed && "Log Out"}
           </Button>
         </Flex>
       </Sider>

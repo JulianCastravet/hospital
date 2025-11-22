@@ -1,4 +1,4 @@
-import { App, Button, Checkbox, Flex, Modal, Table } from "antd";
+import { App, Button, Checkbox, Flex, Modal, Row, Table } from "antd";
 import { useTitle } from "../../hooks/useTitle";
 import { useEffect, useState } from "react";
 import {
@@ -165,11 +165,13 @@ export const Reports = () => {
         dataSource={reports}
         rowKey={"_id"}
         rowHoverable
-      ></Table>
+      />
+      <Row className="mt-2">
+        <Button type="primary" onClick={() => setOpenModal(true)}>
+          Add Report
+        </Button>
+      </Row>
 
-      <Button type="primary" onClick={() => setOpenModal(true)}>
-        Add Report
-      </Button>
       <Modal
         forceRender
         open={openModal}

@@ -3,7 +3,7 @@ import { Appointment } from "../types";
 import { MessageInstance } from "antd/es/message/interface";
 import { create } from "zustand";
 import {
-  getAllAppointments as _getAllAppointments,
+  getAllAppointmentsByPage as _getAllAppointmentsByPage,
   getAppointmentById as _getAppointmentById,
   addAppointment as _addAppointment,
   deleteAppointment as _deleteAppointment,
@@ -13,8 +13,13 @@ import {
 export type AppointmentStore = {
   appointment: Appointment | null;
   appointments: Appointment[];
+  totalAppointments: number;
+
   appointmentsLoading: boolean;
-  getAllAppointments: (message: MessageInstance) => void;
+  getAllAppointmentsByPage: (
+    { page, pageSize }: { page: number; pageSize: number },
+    message: MessageInstance
+  ) => void;
 
   getAppointmentById: (id: string, message: MessageInstance) => void;
 
@@ -36,12 +41,19 @@ export const useAppointmentStore = create<AppointmentStore>()(
         appointment: null,
         appointments: [],
         appointmentsLoading: false,
-        getAllAppointments: async (message: MessageInstance) => {
+        totalAppointments: 0,
+        getAllAppointmentsByPage: async ({ page, pageSize }, message) => {
           set({ appointmentsLoading: true });
 
           try {
-            const appointments = await _getAllAppointments(message);
-            set({ appointments });
+            const data = await _getAllAppointmentsByPage(
+              { page, pageSize },
+              message
+            );
+            set({
+              appointments: data.appointments,
+              totalAppointments: data.totalCount,
+            });
             set({ appointmentsLoading: false });
           } catch (error) {
             set({ appointmentsLoading: false });

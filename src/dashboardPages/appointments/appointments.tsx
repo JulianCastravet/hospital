@@ -1,4 +1,14 @@
-import { App, Button, Flex, Form, Input, Modal, Table } from "antd";
+import {
+  App,
+  Button,
+  Flex,
+  Form,
+  Input,
+  Modal,
+  Row,
+  Table,
+  TablePaginationConfig,
+} from "antd";
 import { useTitle } from "../../hooks/useTitle";
 import { useEffect, useState } from "react";
 import { useForm } from "antd/es/form/Form";
@@ -6,6 +16,7 @@ import { useForm } from "antd/es/form/Form";
 import { DeleteFilled, EditFilled } from "@ant-design/icons";
 import { Appointment } from "../../types";
 import { useAppointmentStore } from "../../store/appointments.store";
+import { paginationConfig } from "../../configs";
 
 export const Appointments = () => {
   useTitle("Appointments");
@@ -16,7 +27,8 @@ export const Appointments = () => {
   const {
     appointment,
     appointments,
-    getAllAppointments,
+    totalAppointments,
+    getAllAppointmentsByPage,
     getAppointmentById,
     addAppointment,
     updateAppointment,
@@ -24,8 +36,8 @@ export const Appointments = () => {
   } = useAppointmentStore();
 
   useEffect(() => {
-    getAllAppointments(message);
-  }, [message, getAllAppointments]);
+    getAllAppointmentsByPage({ page: 1, pageSize: 10 }, message);
+  }, [message, getAllAppointmentsByPage]);
 
   const [form] = useForm();
 
@@ -99,7 +111,6 @@ export const Appointments = () => {
         setIsEditMode(false);
       } else {
         const newForm = form.getFieldsValue() as Appointment;
-        console.log("new", newForm);
         addAppointment(newForm, message);
       }
       form.resetFields();
@@ -107,18 +118,33 @@ export const Appointments = () => {
     } catch (error) {}
   };
 
+  const apConfig: TablePaginationConfig = {
+    ...paginationConfig,
+    onChange: (page: number, pageSize: number) => {
+      getAllAppointmentsByPage({ page, pageSize }, message);
+    },
+    total: totalAppointments,
+  };
+
   return (
     <>
-      <Table columns={columns} dataSource={appointments} rowKey={"_id"}></Table>
-      <Button
-        type="primary"
-        onClick={() => {
-          setOpen(true);
-          setIsEditMode(false);
-        }}
-      >
-        Add Appointment
-      </Button>
+      <Table
+        columns={columns}
+        dataSource={appointments}
+        rowKey={"_id"}
+        pagination={apConfig}
+      ></Table>
+      <Row className="mt-2">
+        <Button
+          type="primary"
+          onClick={() => {
+            setOpen(true);
+            setIsEditMode(false);
+          }}
+        >
+          Add Appointment
+        </Button>
+      </Row>
 
       <Modal
         open={open}

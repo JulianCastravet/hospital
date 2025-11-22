@@ -13,10 +13,21 @@ export const getAppointmentById = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllAppointments = async (req: Request, res: Response) => {
+export const getAllAppointmentsByPage = async (req: Request, res: Response) => {
   try {
+    const { page, pageSize } = req.params;
+    const num_page = Number(page);
+    const num_pageSize = Number(pageSize);
+
+    const skippedAppts = (num_page - 1) * num_pageSize;
+
+    const appointments = await Appointment.find()
+      .skip(skippedAppts)
+      .limit(num_pageSize);
+
     const appts = await Appointment.find();
-    res.status(200).json(appts);
+
+    res.status(200).json({ totalCount: appts.length, appointments });
   } catch (error) {
     res.status(500).json({ message: "Error fetching appointments" });
   }
