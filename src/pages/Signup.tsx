@@ -6,8 +6,9 @@ import { useTitle } from "../hooks/useTitle";
 import { App, Button, DatePicker, Form, Radio, Select } from "antd";
 import Input from "antd/es/input/Input";
 import { LockOutlined, UserOutlined, MailOutlined } from "@ant-design/icons";
-import { User } from "../types";
 import { useUserStore } from "../store/user.store";
+import { NewUser } from "../types/user";
+import { useNavigate } from "react-router-dom";
 
 const doctorSpecialities = [
   { label: "ORL", value: "orl" },
@@ -28,23 +29,23 @@ export const SignUp = () => {
   const { message } = App.useApp();
   const [form] = Form.useForm();
   const { addUser } = useUserStore();
-  const [user, setUser] = useState<User>({
+  const navigate = useNavigate();
+  const [user, setUser] = useState<NewUser>({
     name: "",
     email: "",
     phone: "",
     password: "",
     specialization: "",
     type: "",
-    _id: "",
     dateOfBirth: "",
     gender: "",
     formattedAddress: "",
   });
 
-  const onSubmit = (user: User) => {
+  const onSubmit = (user: NewUser) => {
     addUser(user, message);
-
     resetForm();
+    navigate("/sign-in");
   };
 
   const resetForm = () => {
@@ -114,8 +115,14 @@ export const SignUp = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item name="dateOfBirth" label="Date of Birth">
-            <DatePicker format={"DD/MM/YYYY"} />
+          <Form.Item
+            name="dateOfBirth"
+            label="Date of Birth"
+            rules={[
+              { required: true, message: "Please select your Date of Birth!" },
+            ]}
+          >
+            <DatePicker format={"DD/MM/YYYY"} className="w-full" />
           </Form.Item>
 
           <Form.Item label="Phone" required name="phone">

@@ -25,7 +25,7 @@ export const authMiddleware = (
       process.env.JWT_SECRET || "secret"
     ) as JwtPayload;
 
-    (req as any).userId = decoded.userId;//get the user in the request. for ROLES?
+    (req as any).userId = decoded.userId; //get the user in the request. for ROLES?
     next();
   } catch (err) {
     return res.status(403).json({ message: "Invalid or expired token" });

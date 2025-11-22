@@ -28,9 +28,13 @@ export const getSingleUser = (id: string, message: MessageInstance) =>
     `Failed to fetch user with ID: ${id}`
   );
 
-export const addUser = (user: NewUser, message: MessageInstance) =>
-  http<User>(
-    `${env.API_BASE}/users/`,
+export const addUser = (user: NewUser, message: MessageInstance) => {
+  const apiURL = window.location.href.includes("/sign-up")
+    ? `${env.API_BASE}/users/register`
+    : `${env.API_BASE}/users/`;
+
+  return http<User>(
+    apiURL,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -39,6 +43,7 @@ export const addUser = (user: NewUser, message: MessageInstance) =>
     message,
     "Failed to add user"
   );
+};
 
 export const userLoginRequest = (
   payload: { mail: string; password: string },
