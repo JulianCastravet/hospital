@@ -5,96 +5,149 @@ import { useTitle } from "../hooks/useTitle";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Content } from "antd/es/layout/layout";
 import { useNavigate } from "react-router-dom";
-import { CSSProperties } from "react";
 import { useAuthStore } from "../store/auth.store";
+import { useEffect } from "react";
 
 export const SignIn = () => {
   useTitle("Hospital - Sign In");
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const { login, isAuthenticated } = useAuthStore();
   const { message } = App.useApp();
+
+  useEffect(() => {
+    isAuthenticated && navigate("/dashboard/overview");
+  }, [isAuthenticated, navigate]);
 
   const onSubmit = async (values: any) => {
     login(values, message);
-    navigate("/dashboard/overview");
-  };
-
-  const style: CSSProperties = {
-    width: "50%",
-    height: "calc(100vh - 130px)",
-    padding: "20px",
-    display: "flex",
-    justifyContent: "center",
-    alignContent: "center",
-    alignItems: "center",
-    fontSize: "30px",
-    textAlign: "center",
-  };
-
-  const contentStyle: CSSProperties = {
-    width: "100vw",
-    backgroundImage:
-      'url("https://i.pinimg.com/736x/ca/5f/ae/ca5faec29743ad86b0b67ae03243187f.jpg")',
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
   };
 
   return (
     <>
       <HeaderComponent />
-      <Content style={contentStyle}>
-        <Flex className="columns-2">
-          <div style={style}>
-            Please sign in to see the full potential of the nextGen Hospital
-            Dashboard
-          </div>
-          <div style={style}>
-            <Form
-              name="login"
-              initialValues={{ remember: true }}
-              style={{ maxWidth: 360 }}
-              onFinish={onSubmit}
-            >
-              <Form.Item
-                name="mail"
-                rules={[
-                  { required: true, message: "Please input your Email!" },
-                ]}
-              >
-                <Input prefix={<UserOutlined />} placeholder="Email" />
-              </Form.Item>
-              <Form.Item
-                name="password"
-                rules={[
-                  { required: true, message: "Please input your Password!" },
-                ]}
-              >
-                <Input
-                  prefix={<LockOutlined />}
-                  type="password"
-                  placeholder="Password"
-                />
-              </Form.Item>
-              <Form.Item>
-                <Flex justify="space-between" align="center">
-                  <Form.Item name="remember" valuePropName="checked" noStyle>
-                    <Checkbox>Remember me</Checkbox>
-                  </Form.Item>
-                  <a href="/">Forgot password</a>
-                </Flex>
-              </Form.Item>
 
-              <Form.Item>
-                <Button block type="primary" htmlType="submit">
-                  Log in
-                </Button>
-                or <a href="/sign-up">Register now!</a>
-              </Form.Item>
-            </Form>
+      <Content
+        className="min-h-[calc(100vh-77px)] w-full relative"
+        style={{
+          backgroundImage: "url('/assets/1.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        <div
+          className="
+          relative z-10 
+          w-full h-full 
+          flex flex-col lg:flex-row
+          "
+        >
+          <div
+            className="
+            w-full lg:w-1/2 
+            flex items-center justify-center
+            px-6 lg:px-12 
+            text-white text-center
+          
+            "
+          >
+            <div className="max-w-xl">
+              <h1 className="text-4xl lg:text-5xl font-semibold mb-6 drop-shadow-xl">
+                Join the Mission
+              </h1>
+
+              <p className="text-lg lg:text-xl text-gray-200 leading-relaxed">
+                Sign in and access the
+                <strong>Mars Advanced Medical Center</strong> — the first
+                interplanetary system designed to protect and monitor human life
+                on the Red Planet.
+              </p>
+            </div>
           </div>
-        </Flex>
+
+          <div
+            className="
+            w-full lg:w-1/2
+            flex items-center justify-center
+            px-6 lg:px-12
+              backdrop-blur-md min-h-[calc(100vh-141px)]
+            "
+          >
+            <div
+              className="
+              w-full max-w-sm 
+               text-white p-8 rounded-xl 
+              "
+            >
+              <Form
+                name="login"
+                initialValues={{ remember: true }}
+                onFinish={onSubmit}
+              >
+                <Form.Item
+                  name="mail"
+                  rules={[
+                    { required: true, message: "Please input your Email!" },
+                  ]}
+                >
+                  <Input
+                    prefix={<UserOutlined />}
+                    placeholder="Email"
+                    className="!bg-white/10 !text-white"
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="password"
+                  rules={[
+                    { required: true, message: "Please input your Password!" },
+                  ]}
+                >
+                  <Input.Password
+                    prefix={<LockOutlined />}
+                    placeholder="Password"
+                    className="!bg-white/10 !text-white placeholder-white"
+                  />
+                </Form.Item>
+
+                <Form.Item>
+                  <Flex justify="space-between">
+                    <Form.Item name="remember" valuePropName="checked" noStyle>
+                      <Checkbox className="text-gray-300">Remember me</Checkbox>
+                    </Form.Item>
+
+                    <a href="/" className="text-red-300 hover:text-red-400">
+                      Forgot password?
+                    </a>
+                  </Flex>
+                </Form.Item>
+
+                <Form.Item className="mt-6">
+                  <Button
+                    block
+                    type="primary"
+                    htmlType="submit"
+                    className="!py-2 !h-auto !text-lg !rounded-lg"
+                  >
+                    Sign In
+                  </Button>
+
+                  <div className="mt-4 text-center text-gray-300">
+                    Or{" "}
+                    <a
+                      href="/sign-up"
+                      className="text-red-400 hover:text-red-500"
+                    >
+                      Register now!
+                    </a>
+                  </div>
+                </Form.Item>
+              </Form>
+            </div>
+          </div>
+        </div>
       </Content>
+
       <FooterComponent />
     </>
   );
