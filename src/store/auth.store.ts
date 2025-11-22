@@ -45,6 +45,8 @@ export const useAuthStore = create<AuthState>()(
                 loading: false,
                 token: data.token,
               });
+
+              return data;
             } else {
               set({ error: "Login failed", loading: false });
             }
