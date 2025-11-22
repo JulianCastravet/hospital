@@ -3,9 +3,12 @@ import { Appointment } from "../types";
 import env from "../environment";
 import { http } from "./httpLayer";
 
-export const getAllAppointments = (message: MessageInstance) =>
-  http<Appointment[]>(
-    `${env.API_BASE}/appointments`,
+export const getAllAppointmentsByPage = (
+  { page, pageSize }: { page: number; pageSize: number },
+  message: MessageInstance
+) =>
+  http<{ totalCount: number; appointments: Appointment[] }>(
+    `${env.API_BASE}/appointments?page=${page}&pageSize=${pageSize}`,
     {},
     message,
     "Failed fetching appointments."

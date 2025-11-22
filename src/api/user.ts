@@ -12,9 +12,12 @@ export const getAllUsers = (message: MessageInstance) =>
     "Failed fetching users"
   );
 
-export const getPatients = (message: MessageInstance) =>
-  http<User[]>(
-    `${env.API_BASE}/users/getPatients`,
+export const getPatientsByPage = (
+  { page, pageSize }: { page: number; pageSize: number },
+  message: MessageInstance
+) =>
+  http<{ users: User[]; totalPatients: number }>(
+    `${env.API_BASE}/users/getPatients?page=${page}&pageSize=${pageSize}`,
     {},
     message,
     "Failed fetching patients"

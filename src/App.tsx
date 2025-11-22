@@ -8,7 +8,7 @@ import { Medications } from "./dashboardPages/medications/medications";
 import { Messages } from "./components/messages/messages";
 import { Overview } from "./dashboardPages/overview/overview";
 import PatientPage from "./dashboardPages/patientPage/patientPage";
-import { Patients } from "./components/patients/patients";
+import { Patients } from "./dashboardPages/patients/patients";
 import { ProtectedRoute } from "./components/protected/protectedRoute";
 import { Reports } from "./dashboardPages/reports/reports";
 import { Schedule } from "./dashboardPages/schedule/schedule";
@@ -32,7 +32,6 @@ function App() {
           </ProtectedRoute>
         }
       >
-        {/* <Route index element={<Navigate to="overview" replace />} /> */}
         <Route path="overview" Component={Overview} />
         <Route path="appointments" Component={Appointments} />
         <Route path="patients" Component={Patients} />
