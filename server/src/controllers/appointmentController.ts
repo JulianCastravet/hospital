@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Appointment } from "../models/Appointment";
+import { appointmentSchema } from "../validation/schemas";
 
 export const getAppointmentById = async (req: Request, res: Response) => {
   try {
@@ -35,7 +36,16 @@ export const getAllAppointmentsByPage = async (req: Request, res: Response) => {
 
 export const addAppointment = async (req: Request, res: Response) => {
   try {
-    const appt = new Appointment(req.body);
+    const parsed = appointmentSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      return res.status(400).json({
+        message: "Invalid appointment data",
+        errors: parsed.error.flatten(),
+      });
+    }
+
+    const appt = new Appointment(parsed.data);
 
     await appt.save();
     const appts = await Appointment.find();

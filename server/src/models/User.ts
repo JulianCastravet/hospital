@@ -22,7 +22,7 @@ export interface Disease {
 export interface UserDocument {
   id: string;
   title: string;
-  date: Date;
+  date: string;
   url: string;
   cloudinaryId: string; // needed for deleting
   uploadedAt: Date;
@@ -74,8 +74,11 @@ const UserDocumentSchema = new Schema<UserDocument>(
 // User Schema
 // ------------------
 
+export type UserRole = "admin" | "doctor" | "patient";
+
 export interface IUser extends Document {
   type: string;
+  role: UserRole;
   name: string;
   dateOfBirth: string;
   gender: string;
@@ -101,6 +104,11 @@ const userSchema = new Schema<IUser>(
   {
     name: { type: String, required: true },
     type: { type: String, required: true },
+    role: {
+      type: String,
+      enum: ["admin", "doctor", "nurse", "patient"],
+      default: "patient",
+    },
     phone: String,
     gender: String,
     dateOfBirth: { type: String, required: true },

@@ -4,6 +4,15 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import CloudinaryService from "../services/CloudinaryUpload";
 import { v4 as uuid } from "uuid";
+import environment from "../environment";
+import {
+  createUserSchema,
+  loginSchema,
+  updateUserSchema,
+  diseaseSchema,
+  userAppointmentSchema,
+  userDocumentSchema,
+} from "../validation/schemas";
 
 export const getAllUsers = async (_req: Request, res: Response) => {
   try {
@@ -38,6 +47,14 @@ const calculateUserAge = (date: string): number => {
 
 export const addUser = async (req: Request, res: Response) => {
   try {
+    const parsed = createUserSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      return res
+        .status(400)
+        .json({ message: "Invalid user data", errors: parsed.error.flatten() });
+    }
+
     const {
       name,
       email,
@@ -48,11 +65,7 @@ export const addUser = async (req: Request, res: Response) => {
       specialization = "",
       formattedAddress,
       gender,
-    } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email and password required" });
-    }
+    } = parsed.data;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -84,7 +97,16 @@ export const addUser = async (req: Request, res: Response) => {
 
 export const authenticateUser = async (req: Request, res: Response) => {
   try {
-    const { mail, password } = req.body;
+    console.log(req.body);
+    const parsed = loginSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid credentials payload" });
+    }
+
+    const { mail, password } = parsed.data;
 
     const user = await User.findOne({ email: mail });
     if (!user) {
@@ -101,8 +123,8 @@ export const authenticateUser = async (req: Request, res: Response) => {
     }
 
     const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET || "secret",
+      { userId: user._id, role: user.role },
+      environment.JWT_SECRET,
       { expiresIn: "1W" }
     );
 
@@ -139,7 +161,15 @@ export const getPatients = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const data = req.body;
+    const parsed = updateUserSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      return res
+        .status(400)
+        .json({ message: "Invalid user data", errors: parsed.error.flatten() });
+    }
+
+    const data = parsed.data;
 
     await User.findByIdAndUpdate(id, data, {
       new: true,
@@ -231,10 +261,18 @@ export const deleteUserAvatar = async (req: Request, res: Response) => {
 export const addUserDiagnose = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
+    const parsed = diseaseSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      return res.status(400).json({
+        message: "Invalid diagnose data",
+        errors: parsed.error.flatten(),
+      });
+    }
 
     const user = await User.findByIdAndUpdate(
       id,
-      { $push: { "medicalInfo.medicalHistory": req.body } },
+      { $push: { "medicalInfo.medicalHistory": parsed.data } },
       { new: true }
     );
 
@@ -247,10 +285,18 @@ export const addUserDiagnose = async (req: Request, res: Response) => {
 export const addUserAppointment = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
+    const parsed = userAppointmentSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      return res.status(400).json({
+        message: "Invalid appointment data",
+        errors: parsed.error.flatten(),
+      });
+    }
 
     const user = await User.findByIdAndUpdate(
       id,
-      { $push: { "medicalInfo.appointments": req.body } },
+      { $push: { "medicalInfo.appointments": parsed.data } },
       { new: true }
     );
 
@@ -265,7 +311,16 @@ export const addUserDocument = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     const user = await User.findById(id);
-    const { title, date } = req.body;
+    const parsed = userDocumentSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      return res.status(400).json({
+        message: "Invalid document data",
+        errors: parsed.error.flatten(),
+      });
+    }
+
+    const { title, date } = parsed.data;
 
     const builtName = `${
       user.name.replaceAll(" ", "_") +

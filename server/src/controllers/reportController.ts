@@ -1,5 +1,6 @@
 import { Report } from "../models/Reports";
 import { Request, Response } from "express";
+import { reportSchema } from "../validation/schemas";
 
 export const getAllReports = async (req: Request, res: Response) => {
   try {
@@ -13,31 +14,16 @@ export const getAllReports = async (req: Request, res: Response) => {
 
 export const addReport = async (req: Request, res: Response) => {
   try {
-    const {
-      signed,
-      result,
-      status,
-      collBy,
-      handling,
-      cost,
-      priority,
-      lab,
-      test,
-      number,
-    } = req.body;
+    const parsed = reportSchema.safeParse(req.body);
 
-    const document = new Report({
-      signed,
-      result,
-      status,
-      collBy,
-      handling,
-      cost,
-      priority,
-      lab,
-      test,
-      number,
-    });
+    if (!parsed.success) {
+      return res.status(400).json({
+        message: "Invalid report data",
+        errors: parsed.error.flatten(),
+      });
+    }
+
+    const document = new Report(parsed.data);
 
     await document.save();
 
