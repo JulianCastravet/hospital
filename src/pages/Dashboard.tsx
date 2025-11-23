@@ -21,6 +21,7 @@ import {
   LinkOutlined,
   QuestionCircleOutlined,
   SettingOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/auth.store";
@@ -30,7 +31,7 @@ export const Dashboard = () => {
   const [subtitle, setSubtitle] = useState<string>("Overview");
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout, userOptions } = useAuthStore();
+  const { logout, user } = useAuthStore();
 
   type MenuItem = Required<MenuProps>["items"][number];
 
@@ -64,6 +65,9 @@ export const Dashboard = () => {
     "9": "Settings",
   };
 
+  const role = user?.role;
+  const isStaff = role === "admin" || role === "doctor";
+
   const handleMenuItemClick = (i: { key: string; value?: string }) => {
     setSubtitle(dictionary[i.key]);
     navigate(`/dashboard/${dictionary[i.key].toLowerCase()}`);
@@ -74,10 +78,6 @@ export const Dashboard = () => {
     navigate("/");
   };
 
-  useEffect(() => {
-    getDefaultLink();
-  });
-
   const getDefaultLink = (): string[] => {
     for (let i in dictionary) {
       if (location.pathname.includes(dictionary[i].toLowerCase())) {
@@ -86,23 +86,28 @@ export const Dashboard = () => {
     }
     return [""];
   };
+
+  useEffect(() => {
+    if (user) getDefaultLink();
+  }, [user, getDefaultLink]);
+
   const items = [
     getItem("Overview", "1", <WindowsOutlined />),
-    getItem("Appointments", "2", <CalendarOutlined />),
-    userOptions.includes("Patients")
+    isStaff ? getItem("Appointments", "2", <CalendarOutlined />) : null,
+    isStaff && user?.userSettings.includes("Patients")
       ? getItem("Patients", "3", <UserOutlined />)
       : null,
-    userOptions.includes("Has Schedule")
+    isStaff && user?.userSettings.includes("Has Schedule")
       ? getItem("Schedule", "4", <ScheduleOutlined />)
       : null,
-    getItem("Reports", "5", <RiseOutlined />),
-    userOptions.includes("Has Messages")
+    isStaff ? getItem("Reports", "5", <RiseOutlined />) : null,
+    isStaff && user?.userSettings.includes("Has Messages")
       ? getItem("Messages", "6", <MailOutlined />)
       : null,
-    userOptions.includes("Has Medications")
+    isStaff && user?.userSettings.includes("Has Medications")
       ? getItem("Medications", "7", <LinkOutlined />)
       : null,
-    userOptions.includes("Has Help")
+    isStaff && user?.userSettings.includes("Has Help")
       ? getItem("Help", "8", <QuestionCircleOutlined />)
       : null,
     getItem("Settings", "9", <SettingOutlined />),
@@ -114,7 +119,8 @@ export const Dashboard = () => {
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
-        theme={userOptions.includes("Dark Mode") ? "dark" : "light"}
+        theme={user?.userSettings.includes("Dark Mode") ? "dark" : "light"}
+        collapsedWidth={60}
       >
         <div className="demo-logo-vertical" style={{ color: "white" }}>
           <Flex justify="center" align="center">
@@ -127,15 +133,21 @@ export const Dashboard = () => {
           </Flex>
         </div>
         <Menu
-          theme={userOptions.includes("Dark Mode") ? "dark" : "light"}
+          theme={user?.userSettings.includes("Dark Mode") ? "dark" : "light"}
           defaultSelectedKeys={getDefaultLink()}
           mode="inline"
           items={items}
           onClick={handleMenuItemClick}
         />
         <Flex justify="center" style={{ marginTop: "20px" }}>
-          <Button type="primary" onClick={userLogout}>
-            Log Out
+          <Button
+            icon={<LogoutOutlined />}
+            type="primary"
+            onClick={userLogout}
+            size="large"
+            className="w-full m-1"
+          >
+            {!collapsed && "Log Out"}
           </Button>
         </Flex>
       </Sider>

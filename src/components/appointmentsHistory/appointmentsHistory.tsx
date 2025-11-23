@@ -40,7 +40,7 @@ export const AppointmentsHistory = (props: AppointmentsHistoryProps) => {
   };
 
   const doctorOptions = users
-    .filter((user) => user.type === "doctor")
+    .filter((user) => user.role === "doctor")
     .map((doc) => ({
       value: doc._id,
       label: (

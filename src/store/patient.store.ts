@@ -6,6 +6,8 @@ import {
   addPatientAppointment,
   addPatientDocument,
   deleteUserDocument,
+  getPatientsByPage,
+  deleteUser,
 } from "../api/user";
 import { devtools, persist } from "zustand/middleware";
 import { useUserStore } from "./user.store";
@@ -13,6 +15,8 @@ import { useUserStore } from "./user.store";
 type PatientStoreState = {
   loading: boolean;
   error: string | null;
+  patients: User[];
+  totalPatients: number;
 
   addDiagnose: (
     params: { id: string; body: Disease },
@@ -33,6 +37,14 @@ type PatientStoreState = {
     { userId, docId }: { userId: string; docId: string },
     message: MessageInstance
   ) => Promise<User | undefined>;
+
+  getPatientsByPage: (
+    { page, pageSize }: { page: number; pageSize: number },
+    message: MessageInstance
+  ) => Promise<void>;
+
+  addPatient: (user: User) => void;
+  deletePatient: (id: string, message: MessageInstance) => void;
 };
 
 export const usePatientStore = create<PatientStoreState>()(
@@ -42,6 +54,8 @@ export const usePatientStore = create<PatientStoreState>()(
         return {
           loading: false,
           error: null,
+          patients: [],
+          totalPatients: 0,
 
           addDiagnose: async ({ id, body }, message) => {
             set({ loading: true });
@@ -91,6 +105,33 @@ export const usePatientStore = create<PatientStoreState>()(
               set({ loading: false, error: "Failed delete document" });
               throw error; // <-- MUST rethrow so AntD waits and shows spinner
             }
+          },
+
+          getPatientsByPage: async ({ page, pageSize }, message) => {
+            set({ loading: true });
+            try {
+              const data = await getPatientsByPage({ page, pageSize }, message);
+              set({
+                loading: false,
+                patients: data.users,
+                totalPatients: data.totalPatients,
+              });
+            } catch (error) {
+              set({ loading: false });
+              throw error;
+            }
+          },
+          addPatient: (user: User) =>
+            set((state) => ({ patients: [...state.patients, user] })),
+
+          deletePatient: async (id, message) => {
+            set({ loading: true });
+            const patients = await deleteUser(id, message);
+
+            const filteredPatients = patients.filter(
+              (patient) => patient._id !== id
+            );
+            set({ patients: filteredPatients, loading: false });
           },
         };
       },

@@ -16,24 +16,35 @@ import {
 } from "../controllers/userController";
 import { upload } from "../multerConfig";
 import { authMiddleware } from "../middleware/authMiddleware";
+import { requireRole } from "../middleware/roleMiddleware";
 
 const router = express.Router();
 router.post("/login", authenticateUser);
 router.post("/register", addUser);
 
-
 router.use(authMiddleware);
-router.post("/", addUser);
-router.get("/getAllUsers", getAllUsers);
-router.get("/getPatients", getPatients);
+
+router.post("/", requireRole(["admin", "doctor"]), addUser);
+router.get("/getAllUsers", requireRole("admin"), getAllUsers);
+router.get("/getPatients", requireRole(["admin", "doctor"]), getPatients);
 router.get("/:id", getSingleUser);
-router.delete("/:id", deleteUser);
+router.delete("/:id", requireRole("admin"), deleteUser);
 router.put("/:id", updateUser);
 router.post("/:id/avatar", upload.single("userAvatar"), updateUserAvatar);
 router.delete("/:id/avatar", deleteUserAvatar);
-router.post("/:id/diagnose", addUserDiagnose);
-router.post("/:id/appointments", addUserAppointment);
-router.post("/:id/documents", upload.single("file"), addUserDocument);
-router.delete("/:userId/documents/:docId", deleteUserDocument);
+router.post("/:id/diagnose", requireRole("doctor"), addUserDiagnose);
+router.post("/:id/appointments", requireRole("doctor"), addUserAppointment);
+router.post(
+  "/:id/documents",
+  upload.single("file"),
+  requireRole(["doctor", "patient"]),
+  addUserDocument
+);
+router.delete(
+  "/:userId/documents/:docId",
+  requireRole("admin"),
+  deleteUserDocument
+);
 
 export default router;
+ 

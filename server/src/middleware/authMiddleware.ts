@@ -1,9 +1,12 @@
 // middleware/authMiddleware.ts
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import environment from "../environment";
+import { UserRole } from "../models/User";
 
 interface JwtPayload {
   userId: string;
+  role?: UserRole;
 }
 
 export const authMiddleware = (
@@ -20,12 +23,11 @@ export const authMiddleware = (
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || "secret"
-    ) as JwtPayload;
+    const decoded = jwt.verify(token, environment.JWT_SECRET) as JwtPayload;
 
-    (req as any).userId = decoded.userId; //get the user in the request. for ROLES?
+    (req as any).userId = decoded.userId;
+    (req as any).user = { id: decoded.userId, role: decoded.role };
+
     next();
   } catch (err) {
     return res.status(403).json({ message: "Invalid or expired token" });

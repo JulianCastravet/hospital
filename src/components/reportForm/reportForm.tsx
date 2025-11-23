@@ -1,4 +1,4 @@
-import { Checkbox, DatePicker, Form, Input } from "antd";
+import { Checkbox, DatePicker, Form, Input, InputNumber } from "antd";
 import { FormInstance } from "antd/es/form/Form";
 
 export interface ReportFormProps {
@@ -13,40 +13,81 @@ const ReportForm = ({ handleSubmit, form }: ReportFormProps) => {
         <Checkbox></Checkbox>
       </Form.Item>
 
-      <Form.Item name="result" label="Result" rules={[{ required: true }]}>
+      <Form.Item
+        name="result"
+        label="Result"
+        rules={[{ required: true, message: "Please enter the result" }]}
+      >
         <Input placeholder="Result Comment" />
       </Form.Item>
 
-      <Form.Item name="status" label="Status" rules={[{ required: true }]}>
+      <Form.Item
+        name="status"
+        label="Status"
+        rules={[{ required: true, message: "Please enter the status" }]}
+      >
         <Input placeholder="Result Added" />
       </Form.Item>
 
       <Form.Item
         name="collBy"
-        label="Collected By"
-        rules={[{ required: true }]}
+        label="Collected At"
+        rules={[{ required: true, message: "Please select collection date" }]}
       >
         <DatePicker showTime />
       </Form.Item>
 
-      <Form.Item name="handling" label="Handling" rules={[{ required: true }]}>
+      <Form.Item
+        name="handling"
+        label="Handling"
+        rules={[{ required: true, message: "Please enter handling info" }]}
+      >
         <Input placeholder="John Doe" />
       </Form.Item>
 
-      <Form.Item name="cost" label="Cost" rules={[{ required: true }]}>
-        <Input placeholder="N500" />
+      <Form.Item
+        name="cost"
+        label="Cost"
+        rules={[{ required: true, message: "Please enter the cost" }]}
+      >
+        <InputNumber
+          min={0}
+          className="w-full"
+          placeholder="500"
+          addonBefore="N"
+        />
       </Form.Item>
 
-      <Form.Item name="priority" label="Priority" rules={[{ required: true }]}>
+      <Form.Item
+        name="priority"
+        label="Priority"
+        rules={[{ required: true, message: "Please enter the priority" }]}
+      >
         <Input placeholder="Low/High" />
       </Form.Item>
 
-      <Form.Item name="lab" label="Laboratory" rules={[{ required: true }]}>
+      <Form.Item
+        name="lab"
+        label="Laboratory"
+        rules={[{ required: true, message: "Please enter lab name" }]}
+      >
         <Input placeholder="Microbiology" />
       </Form.Item>
 
-      <Form.Item name="test" label="Test">
+      <Form.Item
+        name="test"
+        label="Test"
+        rules={[{ required: true, message: "Please enter test name" }]}
+      >
         <Input placeholder="Blood Count" />
+      </Form.Item>
+
+      <Form.Item
+        name="number"
+        label="Report Number"
+        rules={[{ required: true, message: "Please enter report number" }]}
+      >
+        <InputNumber min={0} className="w-full" placeholder="1" />
       </Form.Item>
     </Form>
   );

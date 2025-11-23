@@ -5,7 +5,7 @@ import { Document } from "./document";
 
 export type User = {
   _id: string;
-  type: string;
+  role: "admin" | "doctor" | "patient";
   name: string;
   specialization?: string | null;
   dateOfBirth: string;
@@ -22,6 +22,7 @@ export type User = {
     appointments: Appointment[];
     documents: Document[];
   };
+  userSettings: string[];
 };
 
 export type NewUser = Omit<User, "_id">;

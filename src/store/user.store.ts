@@ -12,6 +12,7 @@ import {
 } from "../api/user";
 import { devtools, persist } from "zustand/middleware";
 import { NewUser } from "../types/user";
+import { usePatientStore } from "./patient.store";
 
 type UserStoreState = {
   user: User | null;
@@ -26,7 +27,7 @@ type UserStoreState = {
   addUser: (data: NewUser, message: MessageInstance) => Promise<void>;
 
   updateUser: (
-    params: { id: string; data: User },
+    params: { id: string; data: Partial<User> },
     message: MessageInstance
   ) => Promise<void>;
 
@@ -73,10 +74,11 @@ export const useUserStore = create<UserStoreState>()(
             set({ loading: true, error: null });
             try {
               const newUser = await addUser(data, message);
-              set((state) => ({
-                users: [...state.users, newUser],
+
+              usePatientStore.getState().addPatient(newUser);
+              set({
                 loading: false,
-              }));
+              });
             } catch {
               set({ loading: false, error: "Failed to add user" });
             }
