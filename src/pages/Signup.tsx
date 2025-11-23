@@ -15,7 +15,6 @@ import {
 import { useUserStore } from "../store/user.store";
 import { NewUser } from "../types/user";
 import { useNavigate } from "react-router-dom";
-import useMessage from "antd/es/message/useMessage";
 
 const doctorSpecialities = [
   { label: "ORL", value: "orl" },

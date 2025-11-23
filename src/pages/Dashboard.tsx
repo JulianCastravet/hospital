@@ -10,7 +10,7 @@ import {
 } from "antd";
 import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   WindowsOutlined,
   CalendarOutlined,
@@ -86,10 +86,6 @@ export const Dashboard = () => {
     }
     return [""];
   };
-
-  useEffect(() => {
-    if (user) getDefaultLink();
-  }, [user, getDefaultLink]);
 
   const items = [
     getItem("Overview", "1", <WindowsOutlined />),
