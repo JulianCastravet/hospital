@@ -155,7 +155,7 @@ export const SignIn = () => {
                   )}
 
                   <div className="mt-4 text-center text-gray-300">
-                    Or
+                    Or{" "}
                     <a
                       href="/sign-up"
                       className="text-red-400 hover:text-red-500"

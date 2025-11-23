@@ -15,6 +15,7 @@ import {
 import { useUserStore } from "../store/user.store";
 import { NewUser } from "../types/user";
 import { useNavigate } from "react-router-dom";
+import useMessage from "antd/es/message/useMessage";
 
 const doctorSpecialities = [
   { label: "ORL", value: "orl" },
@@ -51,10 +52,14 @@ export const SignUp = () => {
 
   const [visible, setVisible] = useState<boolean>(false);
 
-  const onSubmit = (user: NewUser) => {
-    addUser(user, message);
-    resetForm();
-    navigate("/sign-in");
+  const onSubmit = async (user: NewUser) => {
+    try {
+      await addUser(user, message);
+      resetForm();
+      navigate("/sign-in");
+    } catch (error) {
+      message.error("Ups, something happened");
+    }
   };
 
   const resetForm = () => {

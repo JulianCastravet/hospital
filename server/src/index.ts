@@ -10,31 +10,36 @@ import errorHandler from "./middleware/errorHandler";
 
 const app = express();
 
+// ---------- MONGOOSE CONNECTION ----------
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI!);
+    console.log(" MongoDB Connected");
+  } catch (error) {
+    console.error(" MongoDB Connection Error:", error);
+    process.exit(1);
+  }
+};
+
+connectDB(); // <--- connect ONCE here
+// -----------------------------------------
+
 app.use(cors());
 app.use(express.json());
 
+// ---------- ROUTES ----------
 app.use("/users", userRoutes);
 app.use("/appointments", appointmentsRoutes);
 app.use("/reports", reportRoutes);
 
-app.get("/", async (_req, res) => {
-  try {
-    mongoose
-      .connect(process.env.MONGO_URI)
-      .then(() => {
-        res.status(200).json({ db: "MongoDB Connected", api: "API running" });
-      })
-      .catch((error) => {
-        console.log("NO Database with error: ", error);
-      });
-  } catch (error) {
-    res.status(500).json({ message: "DB is not connected" });
-    process.exit(1);
-  }
+// Base endpoint (NO DB logic here)
+app.get("/", (_req, res) => {
+  res.status(200).json({ db: "MongoDB Connected", api: "API running" });
 });
 
+// Health check
 app.get("/health", (_req, res) => {
-  const dbState = mongoose.connection.readyState;
+  const dbState = mongoose.connection.readyState; // 1 = connected
   const dbConnected = dbState === 1;
 
   if (!dbConnected) {
@@ -46,9 +51,10 @@ app.get("/health", (_req, res) => {
 
 app.use(errorHandler);
 
+// Start server only in local mode
 if (process.env.NODE_ENV === "local") {
   app.listen(environment.PORT, () => {
-    console.log(`Server running on port: ${environment.PORT}`);
+    console.log(`🚀 Server running on port: ${environment.PORT}`);
   });
 }
 
