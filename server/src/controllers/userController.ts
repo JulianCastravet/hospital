@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { User } from "../models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -13,29 +13,35 @@ import {
   userAppointmentSchema,
   userDocumentSchema,
 } from "../validation/schemas";
+import { AppError } from "../errors/AppError";
 
-export const getAllUsers = async (_req: Request, res: Response) => {
+export const getAllUsers = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const users = await User.find();
     res.status(200).json(users);
   } catch (error) {
-    res.status(500).json({ message: "Error getting users" });
+    next(error);
   }
 };
 
 export const getSingleUser = async (
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<any> => {
   try {
     const { id } = req.params;
     const user = await User.findById(id);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      throw new AppError("User not found", 404);
     }
     return res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: error });
+    next(error);
   }
 };
 
@@ -45,15 +51,41 @@ const calculateUserAge = (date: string): number => {
   return today - yearofB;
 };
 
-export const addUser = async (req: Request, res: Response) => {
+export const addUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const parsed = createUserSchema.safeParse(req.body);
 
     if (!parsed.success) {
-      return res
-        .status(400)
-        .json({ message: "Invalid user data", errors: parsed.error.flatten() });
+      const details = parsed.error.flatten().fieldErrors;
+      throw new AppError("Invalid user data", 400, details);
     }
+
+    // one-time data migration:
+    // map legacy `type` field to the new `role` field
+    await User.updateMany(
+      { role: { $exists: false }, type: "guest" },
+      { $set: { role: "patient" } }
+    );
+    await User.updateMany(
+      { role: { $exists: false }, type: "patient" },
+      { $set: { role: "patient" } }
+    );
+    await User.updateMany(
+      { role: { $exists: false }, type: "doctor" },
+      { $set: { role: "doctor" } }
+    );
+    await User.updateMany(
+      { role: { $exists: false }, type: "admin" },
+      { $set: { role: "admin" } }
+    );
+    await User.updateMany(
+      { userSettings: { $exists: false } },
+      { $set: { userSettings: [] } }
+    );
 
     const {
       name,
@@ -61,7 +93,7 @@ export const addUser = async (req: Request, res: Response) => {
       password,
       phone,
       dateOfBirth,
-      type,
+      role,
       specialization = "",
       formattedAddress,
       gender,
@@ -69,7 +101,7 @@ export const addUser = async (req: Request, res: Response) => {
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+      throw new AppError("User already exists", 400);
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -80,7 +112,7 @@ export const addUser = async (req: Request, res: Response) => {
       password: hashedPassword,
       phone,
       dateOfBirth,
-      type,
+      role,
       specialization,
       age: calculateUserAge(dateOfBirth),
       formattedAddress,
@@ -91,35 +123,34 @@ export const addUser = async (req: Request, res: Response) => {
 
     return res.status(200).json(newUser);
   } catch (error) {
-    res.status(500).json({ message: "Error adding user" });
+    next(error);
   }
 };
 
-export const authenticateUser = async (req: Request, res: Response) => {
+export const authenticateUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     console.log(req.body);
     const parsed = loginSchema.safeParse(req.body);
 
     if (!parsed.success) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid credentials payload" });
+      const details = parsed.error.flatten().fieldErrors;
+      throw new AppError("Invalid credentials payload", 400, details);
     }
 
     const { mail, password } = parsed.data;
 
     const user = await User.findOne({ email: mail });
     if (!user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "User not found" });
+      throw new AppError("User not found", 401);
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid credentials" });
+      throw new AppError("Invalid credentials", 401);
     }
 
     const token = jwt.sign(
@@ -134,11 +165,15 @@ export const authenticateUser = async (req: Request, res: Response) => {
       user,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server error" });
+    next(error);
   }
 };
 
-export const getPatients = async (req: Request, res: Response) => {
+export const getPatients = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { page, pageSize } = req.query;
   const Npage = Number(page);
   const NpageSize = Number(pageSize);
@@ -146,27 +181,29 @@ export const getPatients = async (req: Request, res: Response) => {
   const skippedDocs = (Npage - 1) * NpageSize;
 
   try {
-    const allPatientsCount = (await User.find({ type: "guest" })).length;
+    const allPatientsCount = (await User.find({ role: "patient" })).length;
 
-    const patients = await User.find({ type: "guest" })
+    const patients = await User.find({ role: "patient" })
       .skip(skippedDocs)
       .limit(NpageSize);
 
     res.status(200).json({ users: patients, totalPatients: allPatientsCount });
   } catch (error) {
-    res.status(500).json({ message: "something went wrong" });
+    next(error);
   }
 };
 
-export const updateUser = async (req: Request, res: Response) => {
+export const updateUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     const parsed = updateUserSchema.safeParse(req.body);
 
     if (!parsed.success) {
-      return res
-        .status(400)
-        .json({ message: "Invalid user data", errors: parsed.error.flatten() });
+      throw new AppError("Invalid user data", 400, parsed.error.flatten());
     }
 
     const data = parsed.data;
@@ -180,11 +217,15 @@ export const updateUser = async (req: Request, res: Response) => {
 
     return res.status(200).json(user);
   } catch (error) {
-    return res.status(500).json(error);
+    return next(error);
   }
 };
 
-export const deleteUser = async (req: Request, res: Response) => {
+export const deleteUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     await User.findByIdAndDelete(id);
@@ -193,18 +234,20 @@ export const deleteUser = async (req: Request, res: Response) => {
 
     return res.status(200).json(users);
   } catch (error) {
-    res.status(500).json({ message: error });
+    next(error);
   }
 };
 
-export const updateUserAvatar = async (req: Request, res: Response) => {
+export const updateUserAvatar = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const userId = req.params.id;
 
     if (!req.file) {
-      return res
-        .status(400)
-        .json({ success: false, message: "No file uploaded" });
+      throw new AppError("No file uploaded", 400);
     }
 
     const { name, avatarUrl } = await User.findById(userId);
@@ -227,12 +270,15 @@ export const updateUserAvatar = async (req: Request, res: Response) => {
 
     res.json(user);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Upload failed" });
+    next(err);
   }
 };
 
-export const deleteUserAvatar = async (req: Request, res: Response) => {
+export const deleteUserAvatar = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const userId = req.params.id;
 
@@ -251,23 +297,25 @@ export const deleteUserAvatar = async (req: Request, res: Response) => {
         );
         res.json(user);
       } else {
-        res.status(500).json(user);
+        throw new AppError("Failed to delete avatar", 500);
       }
     }
   } catch (err) {
-    res.status(500).json({ success: false, message: "Delete failed" });
+    next(err);
   }
 };
-export const addUserDiagnose = async (req: Request, res: Response) => {
+export const addUserDiagnose = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const id = req.params.id;
     const parsed = diseaseSchema.safeParse(req.body);
 
     if (!parsed.success) {
-      return res.status(400).json({
-        message: "Invalid diagnose data",
-        errors: parsed.error.flatten(),
-      });
+      const details = parsed.error.flatten().fieldErrors;
+      throw new AppError("Invalid diagnose data", 400, details);
     }
 
     const user = await User.findByIdAndUpdate(
@@ -278,20 +326,22 @@ export const addUserDiagnose = async (req: Request, res: Response) => {
 
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).send({ message: error });
+    next(error);
   }
 };
 
-export const addUserAppointment = async (req: Request, res: Response) => {
+export const addUserAppointment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const id = req.params.id;
     const parsed = userAppointmentSchema.safeParse(req.body);
 
     if (!parsed.success) {
-      return res.status(400).json({
-        message: "Invalid appointment data",
-        errors: parsed.error.flatten(),
-      });
+      const details = parsed.error.flatten().fieldErrors;
+      throw new AppError("Invalid appointment data", 400, details);
     }
 
     const user = await User.findByIdAndUpdate(
@@ -302,11 +352,15 @@ export const addUserAppointment = async (req: Request, res: Response) => {
 
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).send({ message: error });
+    next(error);
   }
 };
 
-export const addUserDocument = async (req: Request, res: Response) => {
+export const addUserDocument = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
 
@@ -314,10 +368,8 @@ export const addUserDocument = async (req: Request, res: Response) => {
     const parsed = userDocumentSchema.safeParse(req.body);
 
     if (!parsed.success) {
-      return res.status(400).json({
-        message: "Invalid document data",
-        errors: parsed.error.flatten(),
-      });
+      const details = parsed.error.flatten().fieldErrors;
+      throw new AppError("Invalid document data", 400, details);
     }
 
     const { title, date } = parsed.data;
@@ -347,11 +399,15 @@ export const addUserDocument = async (req: Request, res: Response) => {
 
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: error });
+    next(error);
   }
 };
 
-export const deleteUserDocument = async (req: Request, res: Response) => {
+export const deleteUserDocument = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { userId, docId } = req.params;
     const user = await User.findById(userId);
@@ -364,10 +420,10 @@ export const deleteUserDocument = async (req: Request, res: Response) => {
       );
       await user.save();
     } else {
-      throw new Error();
+      throw new AppError("Failed to delete document", 500);
     }
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: "Something happened on BE" });
+    next(error);
   }
 };

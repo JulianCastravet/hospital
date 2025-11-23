@@ -6,6 +6,7 @@ import userRoutes from "./routes/userRoutes";
 import appointmentsRoutes from "./routes/appointmentsRoutes";
 import reportRoutes from "./routes/reportsRoutes";
 import environment from "./environment";
+import errorHandler from "./middleware/errorHandler";
 
 const app = express();
 
@@ -16,7 +17,7 @@ mongoose
   .connect(environment.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => {
-    console.error("MongoDB connection error:", err);
+    console.error("MongoDB connection error", err);
     process.exit(1);
   });
 
@@ -33,13 +34,13 @@ app.get("/health", (_req, res) => {
   const dbConnected = dbState === 1;
 
   if (!dbConnected) {
-    return res
-      .status(500)
-      .json({ status: "error", dbConnected: false });
+    return res.status(500).json({ status: "error", dbConnected: false });
   }
 
   return res.status(200).json({ status: "ok", dbConnected: true });
 });
+
+app.use(errorHandler);
 
 if (process.env.NODE_ENV === "local") {
   app.listen(environment.PORT, () => {

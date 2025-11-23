@@ -5,7 +5,13 @@ import { HeaderComponent } from "../components/header/headerComponent";
 import { useTitle } from "../hooks/useTitle";
 import { App, Button, DatePicker, Form, Radio, Select } from "antd";
 import Input from "antd/es/input/Input";
-import { LockOutlined, UserOutlined, MailOutlined } from "@ant-design/icons";
+import {
+  LockOutlined,
+  UserOutlined,
+  MailOutlined,
+  EyeTwoTone,
+  EyeInvisibleOutlined,
+} from "@ant-design/icons";
 import { useUserStore } from "../store/user.store";
 import { NewUser } from "../types/user";
 import { useNavigate } from "react-router-dom";
@@ -35,12 +41,15 @@ export const SignUp = () => {
     email: "",
     phone: "",
     password: "",
+    role: "patient",
     specialization: "",
-    type: "",
     dateOfBirth: "",
     gender: "",
     formattedAddress: "",
+    userSettings: [],
   });
+
+  const [visible, setVisible] = useState<boolean>(false);
 
   const onSubmit = (user: NewUser) => {
     addUser(user, message);
@@ -73,20 +82,21 @@ export const SignUp = () => {
       <Content style={contentStyle}>
         <Form onFinish={onSubmit} form={form}>
           <Form.Item
-            name={"type"}
-            label="Type"
-            rules={[{ required: true, message: "Please select type of user!" }]}
+            name={"role"}
+            label="Role"
+            rules={[{ required: true, message: "Please select user role!" }]}
           >
             <Radio.Group
-              value={user?.type}
-              onChange={(e) => setUser({ ...user, type: e.target.value })}
+              value={user.role}
+              onChange={(e) => setUser({ ...user, role: e.target.value })}
             >
-              <Radio value="guest">Guest</Radio>
+              <Radio value="patient">Patient</Radio>
               <Radio value="doctor">Doctor</Radio>
+              <Radio value="admin">Admin</Radio>
             </Radio.Group>
           </Form.Item>
 
-          {user.type === "doctor" && (
+          {user.role === "doctor" && (
             <Form.Item label="Speciality" required name="specialization">
               <Select
                 style={{ width: 250 }}
@@ -142,12 +152,22 @@ export const SignUp = () => {
           <Form.Item
             name="password"
             label="Password"
-            rules={[{ required: true, message: "Please input your Password!" }]}
+            rules={[
+              { required: true, message: "Please input your Password!" },
+              { min: 6, message: "At least 6 characters" },
+            ]}
           >
             <Input
+              type={visible ? "text" : "password"}
               prefix={<LockOutlined />}
-              type="password"
               placeholder="Password"
+              suffix={
+                visible ? (
+                  <EyeTwoTone onClick={() => setVisible(false)} />
+                ) : (
+                  <EyeInvisibleOutlined onClick={() => setVisible(true)} />
+                )
+              }
             />
           </Form.Item>
           <Form.Item>

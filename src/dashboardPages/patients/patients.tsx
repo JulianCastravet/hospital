@@ -92,11 +92,12 @@ export const Patients = () => {
       name,
       dateOfBirth,
       gender,
+      role: "patient",
       phone,
       formattedAddress: address,
       email,
-      type: "guest",
       password: "guest",
+      userSettings: [],
     };
 
     form
@@ -123,7 +124,7 @@ export const Patients = () => {
             phone,
             formattedAddress: address,
             email,
-            type: "guest",
+            role: "patient",
           };
 
           updateUser({ id, data: { _id: id, ...user } }, message);

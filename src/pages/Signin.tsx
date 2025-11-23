@@ -11,11 +11,11 @@ import { useEffect } from "react";
 export const SignIn = () => {
   useTitle("Hospital - Sign In");
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuthStore();
+  const { login, isAuthenticated, loading, error, user } = useAuthStore();
   const { message } = App.useApp();
 
   useEffect(() => {
-    isAuthenticated && navigate("/dashboard/overview");
+    isAuthenticated && user && navigate("/dashboard/overview");
   }, [isAuthenticated, navigate]);
 
   const onSubmit = async (values: any) => {
@@ -87,7 +87,14 @@ export const SignIn = () => {
                 <Form.Item
                   name="mail"
                   rules={[
-                    { required: true, message: "Please input your Email!" },
+                    {
+                      required: true,
+                      message: "Please input your Email!",
+                    },
+                    {
+                      type: "email",
+                      message: "Please enter a valid Email address!",
+                    },
                   ]}
                 >
                   <Input
@@ -100,7 +107,14 @@ export const SignIn = () => {
                 <Form.Item
                   name="password"
                   rules={[
-                    { required: true, message: "Please input your Password!" },
+                    {
+                      required: true,
+                      message: "Please input your Password!",
+                    },
+                    {
+                      min: 6,
+                      message: "Password must be at least 6 characters.",
+                    },
                   ]}
                 >
                   <Input.Password
@@ -126,14 +140,22 @@ export const SignIn = () => {
                   <Button
                     block
                     type="primary"
+                    loading={loading}
+                    disabled={loading}
                     htmlType="submit"
                     className="!py-2 !h-auto !text-lg !rounded-lg"
                   >
                     Sign In
                   </Button>
 
+                  {error && (
+                    <div className="mt-3 text-center text-red-300 text-sm">
+                      {error}
+                    </div>
+                  )}
+
                   <div className="mt-4 text-center text-gray-300">
-                    Or{" "}
+                    Or
                     <a
                       href="/sign-up"
                       className="text-red-400 hover:text-red-500"

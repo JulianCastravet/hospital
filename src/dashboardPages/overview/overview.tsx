@@ -21,8 +21,8 @@ export const Overview = () => {
   const userData = [
     {
       name: "",
-      Patients: users.filter((user) => user.type === "guest").length,
-      Doctors: users.filter((user) => user.type === "doctor").length,
+      Patients: users.filter((user) => user.role === "patient").length,
+      Doctors: users.filter((user) => user.role === "doctor").length,
     },
   ];
   const reportData = [

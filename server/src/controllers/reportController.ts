@@ -1,26 +1,33 @@
 import { Report } from "../models/Reports";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { reportSchema } from "../validation/schemas";
+import { AppError } from "../errors/AppError";
 
-export const getAllReports = async (req: Request, res: Response) => {
+export const getAllReports = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const reports = await Report.find();
 
     res.status(200).json(reports);
   } catch (error) {
-    res.status(500).send({ message: error });
+    next(error);
   }
 };
 
-export const addReport = async (req: Request, res: Response) => {
+export const addReport = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const parsed = reportSchema.safeParse(req.body);
 
     if (!parsed.success) {
-      return res.status(400).json({
-        message: "Invalid report data",
-        errors: parsed.error.flatten(),
-      });
+      const details = parsed.error.flatten().fieldErrors;
+      throw new AppError("Invalid report data", 400, details);
     }
 
     const document = new Report(parsed.data);
@@ -31,21 +38,22 @@ export const addReport = async (req: Request, res: Response) => {
 
     res.status(200).json(reports);
   } catch (error) {
-    res.status(500).json(error);
+    next(error);
   }
 };
 
-export const updateReport = async (req: Request, res: Response) => {
+export const updateReport = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
 
     const existing = await Report.findById(id);
     if (!existing) {
-      return res.status(404).json({
-        success: false,
-        message: "Report not found",
-      });
+      throw new AppError("Report not found", 404);
     }
 
     await Report.findByIdAndUpdate(id, updateData, {
@@ -58,15 +66,15 @@ export const updateReport = async (req: Request, res: Response) => {
     return res.status(200).json(allReports);
   } catch (error: any) {
     console.error("Error updating report:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server error updating report",
-      error: error.message,
-    });
+    return next(error);
   }
 };
 
-export const deleteReport = async (req: Request, res: Response) => {
+export const deleteReport = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const id = req.params.id;
 
@@ -76,8 +84,6 @@ export const deleteReport = async (req: Request, res: Response) => {
 
     return res.status(200).json(reports);
   } catch (error) {
-    return res.status(500).json({
-      message: error,
-    });
+    return next(error);
   }
 };

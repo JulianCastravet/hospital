@@ -5,7 +5,7 @@ import { useAuthStore } from "../../store/auth.store";
 export const Settings = () => {
   useTitle("Settings");
 
-  const { userOptions, setOption } = useAuthStore();
+  const { user, setOption } = useAuthStore();
 
   const plainOptions = [
     "Dark Mode",
@@ -23,7 +23,7 @@ export const Settings = () => {
     <>
       <Checkbox.Group
         options={plainOptions}
-        defaultValue={userOptions}
+        defaultValue={user?.userSettings}
         onChange={onChange}
       />
     </>

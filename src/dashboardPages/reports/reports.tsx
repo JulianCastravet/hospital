@@ -18,11 +18,15 @@ import { formatTime } from "../../utils/formatTime";
 import { Report } from "../../types";
 import ReportForm from "../../components/reportForm/reportForm";
 import { Pill } from "../../components/pill/pill";
+import { useAuthStore } from "../../store/auth.store";
+import { useNavigate } from "react-router-dom";
 
 export const Reports = () => {
   useTitle("Reports");
   const [form] = useForm();
   const { message, modal } = App.useApp();
+  const { user } = useAuthStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
     getAllReports(message).then((reports) => setReports(reports));
@@ -108,26 +112,46 @@ export const Reports = () => {
     },
   ];
 
-  const submitForm = () => {
-    const formObj = form.getFieldsValue();
-    if (!isEditMode) {
-      form
-        .validateFields()
-        .then(() => {
-          formObj.signed = formObj.signed ?? false;
-          formObj.collBy = formObj.collBy?.format("HH.mm MM/DD");
-          addReport(formObj, message).then((reports) => setReports(reports));
-          setOpenModal(false);
-          form.resetFields();
-        })
-        .catch((error) => {});
-    } else {
-      updateReport(reportId, formObj, message).then((reports) =>
-        setReports(reports)
-      );
+  useEffect(() => {
+    const allowedRoles = ["admin", "doctor"];
+    if (user && user.role && !allowedRoles.includes(user.role)) {
+      navigate("/dashboard/overview");
+    }
+  }, [user, navigate]);
+
+  const submitForm = async () => {
+    try {
+      const formValues = await form.validateFields();
+
+      const payload: any = {
+        ...formValues,
+        signed: formValues.signed ?? false,
+        collBy: formValues.collBy
+          ? formValues.collBy.format("HH.mm MM/DD")
+          : undefined,
+        cost:
+          typeof formValues.cost === "number"
+            ? formValues.cost
+            : Number(formValues.cost),
+        number:
+          typeof formValues.number === "number"
+            ? formValues.number
+            : Number(formValues.number),
+      };
+
+      if (!isEditMode) {
+        const reports = await addReport(payload, message);
+        setReports(reports);
+      } else {
+        const reports = await updateReport(reportId, payload, message);
+        setReports(reports);
+        setIsEditMode(false);
+      }
+
       setOpenModal(false);
       form.resetFields();
-      setIsEditMode(false);
+    } catch (error) {
+      // validation or ApiError: user already sees messages; keep modal open
     }
   };
 
