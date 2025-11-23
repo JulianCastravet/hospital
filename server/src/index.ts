@@ -12,7 +12,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-
+console.log(environment.MONGO_URI)
 mongoose
   .connect(environment.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
@@ -26,13 +26,14 @@ app.use("/appointments", appointmentsRoutes);
 app.use("/reports", reportRoutes);
 
 app.get("/", (_req, res) => {
-  console.log(process.env.NODE_ENV)
+  console.log(process.env.NODE_ENV);
   res.status(200).json({ message: "API running" });
 });
 
 app.get("/health", (_req, res) => {
   const dbState = mongoose.connection.readyState;
   const dbConnected = dbState === 1;
+  console.log('dbConected',dbConnected);
 
   if (!dbConnected) {
     return res.status(500).json({ status: "error", dbConnected: false });
