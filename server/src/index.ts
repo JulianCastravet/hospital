@@ -12,28 +12,32 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-console.log(environment.MONGO_URI)
-mongoose
-  .connect(environment.MONGO_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => {
-    console.error("MongoDB connection error", err);
-    process.exit(1);
-  });
 
 app.use("/users", userRoutes);
 app.use("/appointments", appointmentsRoutes);
 app.use("/reports", reportRoutes);
 
-app.get("/", (_req, res) => {
-  console.log(process.env.NODE_ENV);
-  res.status(200).json({ message: "API running" });
+app.get("/", async (_req, res) => {
+  try {
+    mongoose
+      .connect(process.env.MONGO_URI)
+      .then(() => {
+        res.status(200).json({ message: "MongoDB Connected" });
+        res.status(200).json({ message: "API running" });
+      })
+      .catch((error) => {
+        console.log("NO Database with error: ", error);
+      });
+  } catch (error) {
+    res.status(500).json({ message: "DB is not connected" });
+    process.exit(1);
+  }
 });
 
 app.get("/health", (_req, res) => {
   const dbState = mongoose.connection.readyState;
   const dbConnected = dbState === 1;
-  console.log('dbConected',dbConnected);
+  console.log("dbConected", dbConnected);
 
   if (!dbConnected) {
     return res.status(500).json({ status: "error", dbConnected: false });
