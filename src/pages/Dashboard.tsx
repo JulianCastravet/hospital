@@ -33,8 +33,6 @@ export const Dashboard = () => {
   const location = useLocation();
   const { logout, user } = useAuthStore();
 
-  console.log(user);
-
   type MenuItem = Required<MenuProps>["items"][number];
 
   const {
