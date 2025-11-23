@@ -26,6 +26,7 @@ app.use("/appointments", appointmentsRoutes);
 app.use("/reports", reportRoutes);
 
 app.get("/", (_req, res) => {
+  console.log(process.env.NODE_ENV)
   res.status(200).json({ message: "API running" });
 });
 

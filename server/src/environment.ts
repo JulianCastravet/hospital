@@ -4,7 +4,7 @@ dotenv.config();
 
 type Environment = {
   NODE_ENV: string;
-  PORT: number;
+  PORT?: number;
   MONGO_URI: string;
   JWT_SECRET: string;
   CLOUDINARY_CLOUD_NAME?: string;
@@ -32,7 +32,6 @@ const devConfig: Environment = {
 
 const prodConfig: Environment = {
   NODE_ENV,
-  PORT: Number(mustGetEnv("PORT")),
   MONGO_URI: mustGetEnv("MONGO_URI"),
   JWT_SECRET: mustGetEnv("JWT_SECRET"),
   CLOUDINARY_CLOUD_NAME: mustGetEnv("CLOUDINARY_CLOUD_NAME"),
