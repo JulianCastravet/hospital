@@ -133,7 +133,6 @@ export const authenticateUser = async (
   next: NextFunction
 ) => {
   try {
-    console.log(req.body);
     const parsed = loginSchema.safeParse(req.body);
 
     if (!parsed.success) {

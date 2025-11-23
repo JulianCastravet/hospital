@@ -45,7 +45,12 @@ export const createUserSchema = z.object({
   gender: z.string().optional(),
 });
 
-export const updateUserSchema = createUserSchema.partial();
+// For updates we also allow userSettings to be sent from the frontend.
+export const updateUserSchema = createUserSchema
+  .partial()
+  .extend({
+    userSettings: z.array(z.string()).optional(),
+  });
 
 export const appointmentSchema = z.object({
   name: z
