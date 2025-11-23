@@ -22,8 +22,7 @@ app.get("/", async (_req, res) => {
     mongoose
       .connect(process.env.MONGO_URI)
       .then(() => {
-        res.status(200).json({ message: "MongoDB Connected" });
-        res.status(200).json({ message: "API running" });
+        res.status(200).json({ db: "MongoDB Connected", api: "API running" });
       })
       .catch((error) => {
         console.log("NO Database with error: ", error);
@@ -37,7 +36,6 @@ app.get("/", async (_req, res) => {
 app.get("/health", (_req, res) => {
   const dbState = mongoose.connection.readyState;
   const dbConnected = dbState === 1;
-  console.log("dbConected", dbConnected);
 
   if (!dbConnected) {
     return res.status(500).json({ status: "error", dbConnected: false });
