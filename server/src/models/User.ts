@@ -97,6 +97,7 @@ export interface IUser extends Document {
     appointments: IAppointment[];
     documents: UserDocument[];
   };
+  userSettings:string[]
 }
 
 const userSchema = new Schema<IUser>(
@@ -104,7 +105,6 @@ const userSchema = new Schema<IUser>(
     name: { type: String, required: true },
     // legacy field kept only so old documents with `type` still load;
     // new code should rely on `role` instead.
-    type: { type: String },
     role: {
       type: String,
       enum: ["admin", "doctor", "patient"],
