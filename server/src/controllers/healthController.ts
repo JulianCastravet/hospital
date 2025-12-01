@@ -59,5 +59,6 @@ export const userHealthParams = async (req: Request, res: Response) => {
       },
     });
   }
+  console.log('CronJob triggered at', new Date().toDateString())
   res.status(200).json({ message: "Health parameters updated" });
 };

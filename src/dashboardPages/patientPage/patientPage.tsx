@@ -187,20 +187,23 @@ const PatientPage = () => {
             <div className="flex flex-row">
               <div className="basis-2xs text-center">
                 <Title level={4}>Average</Title>
-                {user.medicalInfo?.generalParams[new Date().getDay()]?.avgBpm ??
-                  DASH}{" "}
+                {user.medicalInfo?.generalParams
+                  ? user.medicalInfo?.generalParams[new Date().getDay()].avgBpm
+                  : DASH}{" "}
                 bpm
               </div>
               <div className="basis-2xs text-center">
                 <Title level={4}>Minimum</Title>
-                {user.medicalInfo?.generalParams[new Date().getDay()]?.minBpm ??
-                  DASH}{" "}
+                {user.medicalInfo?.generalParams
+                  ? user.medicalInfo?.generalParams[new Date().getDay()].minBpm
+                  : DASH}{" "}
                 bpm
               </div>
               <div className="basis-2xs text-center">
                 <Title level={4}>Maximum</Title>
-                {user.medicalInfo?.generalParams[new Date().getDay()]?.maxBpm ??
-                  DASH}{" "}
+                {user.medicalInfo?.generalParams
+                  ? user.medicalInfo?.generalParams[new Date().getDay()].maxBpm
+                  : DASH}{" "}
                 bpm
               </div>
             </div>
