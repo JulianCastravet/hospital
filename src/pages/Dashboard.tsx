@@ -10,7 +10,7 @@ import {
 } from "antd";
 import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   WindowsOutlined,
   CalendarOutlined,
@@ -53,17 +53,19 @@ export const Dashboard = () => {
     } as MenuItem;
   }
 
-  const dictionary: Record<string, string> = {
-    "1": "Overview",
-    "2": "Appointments",
-    "3": "Patients",
-    "4": "Schedule",
-    "5": "Reports",
-    "6": "Messages",
-    "7": "Medications",
-    "8": "Help",
-    "9": "Settings",
-  };
+  const dictionary: Record<string, string> = useMemo(() => {
+    return {
+      "1": "Overview",
+      "2": "Appointments",
+      "3": "Patients",
+      "4": "Schedule",
+      "5": "Reports",
+      "6": "Messages",
+      "7": "Medications",
+      "8": "Help",
+      "9": "Settings",
+    };
+  }, []);
 
   const role = user?.role;
   const isStaff = role === "admin" || role === "doctor";
@@ -78,14 +80,14 @@ export const Dashboard = () => {
     navigate("/");
   };
 
-  const getDefaultLink = (): string[] => {
+  const getDefaultLink = useCallback((): string[] => {
     for (let i in dictionary) {
       if (location.pathname.includes(dictionary[i].toLowerCase())) {
         return [i];
       }
     }
     return [""];
-  };
+  }, [dictionary, location.pathname]);
 
   const items = [
     getItem("Overview", "1", <WindowsOutlined />),

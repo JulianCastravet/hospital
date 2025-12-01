@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import userRoutes from "./routes/userRoutes";
 import appointmentsRoutes from "./routes/appointmentsRoutes";
 import reportRoutes from "./routes/reportsRoutes";
+import healthRoutes from "./routes/healthRoutes";
 import environment from "./environment";
 import errorHandler from "./middleware/errorHandler";
 
@@ -31,6 +32,7 @@ app.use(express.json());
 app.use("/users", userRoutes);
 app.use("/appointments", appointmentsRoutes);
 app.use("/reports", reportRoutes);
+app.use('/health', healthRoutes)
 
 // Base endpoint (NO DB logic here)
 app.get("/", (_req, res) => {

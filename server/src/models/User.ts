@@ -6,6 +6,8 @@ export interface GeneralParams {
   temperature: number;
   minBpm: number;
   maxBpm: number;
+  avgBpm: number;
+  day: string;
   bloodPressure: {
     min: number;
     max: number;
@@ -50,6 +52,8 @@ const GeneralParamsSchema = new Schema<GeneralParams>(
     temperature: Number,
     minBpm: Number,
     maxBpm: Number,
+    avgBpm: Number,
+    day: String,
     bloodPressure: {
       min: Number,
       max: Number,
@@ -92,12 +96,12 @@ export interface IUser extends Document {
   };
   formattedAddress: string;
   medicalInfo?: {
-    generalParams: GeneralParams;
+    generalParams: GeneralParams[];
     medicalHistory: Disease[];
     appointments: IAppointment[];
     documents: UserDocument[];
   };
-  userSettings:string[]
+  userSettings: string[];
 }
 
 const userSchema = new Schema<IUser>(
@@ -130,7 +134,7 @@ const userSchema = new Schema<IUser>(
     },
 
     medicalInfo: {
-      generalParams: GeneralParamsSchema,
+      generalParams: [GeneralParamsSchema],
       medicalHistory: [DiseaseSchema],
       appointments: { type: Array },
       documents: [UserDocumentSchema],
