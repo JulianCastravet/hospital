@@ -1,0 +1,6 @@
+{
+  "cron":[{
+    "path":"/api/health-data",
+    "schedule":"30 16 * * *"
+  }]
+}
