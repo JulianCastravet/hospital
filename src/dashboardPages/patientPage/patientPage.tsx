@@ -32,6 +32,7 @@ const PatientPage = () => {
   const { message } = App.useApp();
 
   const { user, getUser, deleteAvatar, loading } = useUserStore();
+  const data = user && user.medicalInfo?.generalParams;
 
   useEffect(() => {
     if (!params.id) return;
@@ -45,8 +46,6 @@ const PatientPage = () => {
   };
 
   const getUserHealthParams = useMemo(() => {
-    const data = user?.medicalInfo?.generalParams;
-
     if (!data) return [];
 
     return data.map((item, index) => ({
@@ -187,24 +186,15 @@ const PatientPage = () => {
             <div className="flex flex-row">
               <div className="basis-2xs text-center">
                 <Title level={4}>Average</Title>
-                {
-                  user.medicalInfo?.generalParams[new Date().getDay()].avgBpm
-                }{" "}
-                bpm
+                {data && data[new Date().getDay()].avgBpm} bpm
               </div>
               <div className="basis-2xs text-center">
                 <Title level={4}>Minimum</Title>
-                {
-                  user.medicalInfo?.generalParams[new Date().getDay()].minBpm
-                }{" "}
-                bpm
+                {data && data[new Date().getDay()].minBpm} bpm
               </div>
               <div className="basis-2xs text-center">
                 <Title level={4}>Maximum</Title>
-                {
-                  user.medicalInfo?.generalParams[new Date().getDay()].maxBpm
-                }{" "}
-                bpm
+                {data && data[new Date().getDay()].maxBpm} bpm
               </div>
             </div>
             <HeartRateChart data={getUserHealthParams} />
