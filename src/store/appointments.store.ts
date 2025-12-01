@@ -50,10 +50,12 @@ export const useAppointmentStore = create<AppointmentStore>()(
               { page, pageSize },
               message
             );
-            set({
+            set((state) => ({
+              ...state,
               appointments: data.appointments,
               totalAppointments: data.totalCount,
-            });
+            }));
+
             set({ appointmentsLoading: false });
           } catch (error) {
             set({ appointmentsLoading: false });

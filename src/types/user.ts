@@ -17,7 +17,7 @@ export type User = {
   avatarUrl?: string;
   formattedAddress: string;
   medicalInfo?: {
-    generalParams: GeneralParams;
+    generalParams: GeneralParams[];
     medicalHistory: Disease[];
     appointments: Appointment[];
     documents: Document[];

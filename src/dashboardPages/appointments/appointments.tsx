@@ -36,7 +36,13 @@ export const Appointments = () => {
   } = useAppointmentStore();
 
   useEffect(() => {
+    const controller = new AbortController();
+
     getAllAppointmentsByPage({ page: 1, pageSize: 10 }, message);
+
+    return () => {
+      controller.abort();
+    };
   }, [message, getAllAppointmentsByPage]);
 
   const [form] = useForm();

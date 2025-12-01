@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Row, Col, Card, Image, Typography, App } from "antd";
@@ -24,6 +24,8 @@ import { AppointmentsHistory } from "../../components/appointmentsHistory/appoin
 import { DocumentAgreements } from "../../components/documentsAgreement/documentsAgreement";
 import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from "recharts";
 
+const DAYS_TO_SHOW = ["SUN", "MON", "TUE", "WEN", "THU", "FRI", "SAT"];
+
 const PatientPage = () => {
   const params = useParams();
   useTitle("User Page");
@@ -42,46 +44,18 @@ const PatientPage = () => {
     }
   };
 
-  const data = [
-    {
-      name: "SUN",
-      min_bpm: 90,
-      max_bpm: 120,
-      get med_bpm() {
-        return (this.min_bpm + this.max_bpm) / 2;
-      },
-    },
-    {
-      name: "MON",
-      min_bpm: 70,
-      max_bpm: 85,
-    },
-    {
-      name: "TUE",
-      min_bpm: 68,
-      max_bpm: 92,
-    },
-    {
-      name: "WED",
-      min_bpm: 75,
-      max_bpm: 93,
-    },
-    {
-      name: "THU",
-      min_bpm: 86,
-      max_bpm: 115,
-    },
-    {
-      name: "FRI",
-      min_bpm: 92,
-      max_bpm: 130,
-    },
-    {
-      name: "SAT",
-      min_bpm: 120,
-      max_bpm: 170,
-    },
-  ];
+  const getUserHealthParams = useMemo(() => {
+    const data = user?.medicalInfo?.generalParams;
+
+    if (!data) return [];
+
+    return data.map((item, index) => ({
+      name: item?.day ?? DAYS_TO_SHOW[index],
+      min_bpm: item?.minBpm ?? 0,
+      max_bpm: item?.maxBpm ?? 0,
+      avg_bpm: item?.avgBpm ?? 0,
+    }));
+  }, [user?.medicalInfo?.generalParams]);
 
   return !user ? (
     <>User not found</>
@@ -212,16 +186,28 @@ const PatientPage = () => {
             </Typography.Paragraph>
             <div className="flex flex-row">
               <div className="basis-2xs text-center">
-                <Title level={4}>Average</Title> 78 bpm
+                <Title level={4}>Average</Title>
+                {user.medicalInfo?.generalParams
+                  ? user.medicalInfo?.generalParams[new Date().getDay()].avgBpm
+                  : DASH}{" "}
+                bpm
               </div>
               <div className="basis-2xs text-center">
-                <Title level={4}>Minimum</Title> 40 bpm
+                <Title level={4}>Minimum</Title>
+                {user.medicalInfo?.generalParams
+                  ? user.medicalInfo?.generalParams[new Date().getDay()].minBpm
+                  : DASH}{" "}
+                bpm
               </div>
               <div className="basis-2xs text-center">
-                <Title level={4}>Maximum</Title> 90 bpm
+                <Title level={4}>Maximum</Title>
+                {user.medicalInfo?.generalParams
+                  ? user.medicalInfo?.generalParams[new Date().getDay()].maxBpm
+                  : DASH}{" "}
+                bpm
               </div>
             </div>
-            <HeartRateChart data={data} />
+            <HeartRateChart data={getUserHealthParams} />
           </Card>
         </Col>
       </Row>

@@ -16,7 +16,6 @@ export const SignIn = () => {
 
   useEffect(() => {
     isAuthenticated && user && navigate("/dashboard/overview");
-    return () => {};
   }, [isAuthenticated, navigate, user]);
 
   const onSubmit = async (values: any) => {
