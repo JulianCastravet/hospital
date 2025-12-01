@@ -188,21 +188,21 @@ const PatientPage = () => {
               <div className="basis-2xs text-center">
                 <Title level={4}>Average</Title>
                 {
-                  user.medicalInfo?.generalParams[new Date().getDay()].avgBpm
+                  user.medicalInfo?.generalParams[new Date().getDay()]?.avgBpm
                 }{" "}
                 bpm
               </div>
               <div className="basis-2xs text-center">
                 <Title level={4}>Minimum</Title>
                 {
-                  user.medicalInfo?.generalParams[new Date().getDay()].minBpm
+                  user.medicalInfo?.generalParams[new Date().getDay()]?.minBpm
                 }{" "}
                 bpm
               </div>
               <div className="basis-2xs text-center">
                 <Title level={4}>Maximum</Title>
                 {
-                  user.medicalInfo?.generalParams[new Date().getDay()].maxBpm
+                  user.medicalInfo?.generalParams[new Date().getDay()]?.maxBpm
                 }{" "}
                 bpm
               </div>
