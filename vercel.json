@@ -3,7 +3,7 @@
   "crons": [
     {
       "path": "/health/healthParams",
-      "schedule": "20 17 * * *"
+      "schedule": "25 18 * * *"
     }
   ]
 }
