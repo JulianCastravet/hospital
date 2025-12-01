@@ -3,7 +3,8 @@
   "crons": [
     {
       "path": "/healthParams",
-      "schedule": "45 16 * * *"
+      "schedule": "10 17 * * *",
+      "timezone": "Europe/Chisinau"
     }
   ]
 }

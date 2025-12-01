@@ -59,4 +59,5 @@ export const userHealthParams = async (req: Request, res: Response) => {
       },
     });
   }
+  res.status(200).json({ message: "Health parameters updated" });
 };
