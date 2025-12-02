@@ -1,12 +1,15 @@
-import { App, Button, Checkbox, Flex, Modal, Row, Table } from "antd";
+import {
+  App,
+  Button,
+  Checkbox,
+  Flex,
+  Modal,
+  Row,
+  Table,
+  TablePaginationConfig,
+} from "antd";
 import { useTitle } from "../../hooks/useTitle";
 import { useEffect, useState } from "react";
-import {
-  addReport,
-  updateReport,
-  getAllReports,
-  deleteReport,
-} from "../../api/reports";
 import { useForm } from "antd/es/form/Form";
 import {
   EditFilled,
@@ -15,11 +18,13 @@ import {
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { formatTime } from "../../utils/formatTime";
-import { Report } from "../../types";
 import ReportForm from "../../components/reportForm/reportForm";
 import { Pill } from "../../components/pill/pill";
 import { useAuthStore } from "../../store/auth.store";
 import { useNavigate } from "react-router-dom";
+import { useReportStore } from "../../store/reports.store";
+import { capitalize } from "../../utils/capitalize";
+import { paginationConfig } from "../../configs";
 
 export const Reports = () => {
   useTitle("Reports");
@@ -28,14 +33,27 @@ export const Reports = () => {
   const { user } = useAuthStore();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    getAllReports(message).then((reports) => setReports(reports));
-  }, [message]);
+  const {
+    getAllReports,
+    reports,
+    addReport,
+    deleteReport,
+    updateReport,
+    reportsLoading,
+    reportsQuantity,
+  } = useReportStore();
 
-  const [reports, setReports] = useState<Report[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [reportId, setReportId] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  useEffect(() => {
+    getAllReports(
+      { page: currentPage, pageSize: paginationConfig.pageSize },
+      message
+    );
+  }, [message, getAllReports, currentPage]);
 
   const columns = [
     {
@@ -80,7 +98,7 @@ export const Reports = () => {
       title: "Priority",
       dataIndex: "priority",
       render: (value: string) => (
-        <Pill className={value.toLowerCase()}>{value}</Pill>
+        <Pill className={value.toLowerCase()}>{capitalize(value)}</Pill>
       ),
     },
     {
@@ -126,33 +144,21 @@ export const Reports = () => {
       const payload: any = {
         ...formValues,
         signed: formValues.signed ?? false,
-        collBy: formValues.collBy
-          ? formValues.collBy.format("HH.mm MM/DD")
-          : undefined,
-        cost:
-          typeof formValues.cost === "number"
-            ? formValues.cost
-            : Number(formValues.cost),
-        number:
-          typeof formValues.number === "number"
-            ? formValues.number
-            : Number(formValues.number),
+        collBy: formValues.collBy,
+        cost: Number(formValues.cost),
+        number: Number(formValues.number),
       };
 
       if (!isEditMode) {
-        const reports = await addReport(payload, message);
-        setReports(reports);
+        addReport(payload, message);
       } else {
-        const reports = await updateReport(reportId, payload, message);
-        setReports(reports);
+        updateReport(reportId, payload, message);
         setIsEditMode(false);
       }
 
       setOpenModal(false);
       form.resetFields();
-    } catch (error) {
-      // validation or ApiError: user already sees messages; keep modal open
-    }
+    } catch (error) {}
   };
 
   const handleModal = () => {
@@ -176,10 +182,18 @@ export const Reports = () => {
       icon: <ExclamationCircleOutlined />,
       content: "This operation will delete the report from database.",
       onOk() {
-        deleteReport(v._id, message).then((reports) => setReports(reports));
+        deleteReport(v._id, message);
       },
       onCancel() {},
     });
+  };
+
+  const rpConfig: TablePaginationConfig = {
+    ...paginationConfig,
+    onChange: (page: number) => {
+      setCurrentPage(page);
+    },
+    total: reportsQuantity,
   };
 
   return (
@@ -189,6 +203,8 @@ export const Reports = () => {
         dataSource={reports}
         rowKey={"_id"}
         rowHoverable
+        loading={reportsLoading}
+        pagination={rpConfig}
       />
       <Row className="mt-2">
         <Button type="primary" onClick={() => setOpenModal(true)}>

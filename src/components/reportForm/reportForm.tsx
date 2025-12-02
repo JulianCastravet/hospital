@@ -1,4 +1,4 @@
-import { Checkbox, DatePicker, Form, Input, InputNumber } from "antd";
+import { Checkbox, DatePicker, Form, Input, InputNumber, Select } from "antd";
 import { FormInstance } from "antd/es/form/Form";
 
 export interface ReportFormProps {
@@ -34,7 +34,7 @@ const ReportForm = ({ handleSubmit, form }: ReportFormProps) => {
         label="Collected At"
         rules={[{ required: true, message: "Please select collection date" }]}
       >
-        <DatePicker showTime />
+        <DatePicker showTime format={"DD/MM/YYYY HH:mm"} />
       </Form.Item>
 
       <Form.Item
@@ -63,7 +63,12 @@ const ReportForm = ({ handleSubmit, form }: ReportFormProps) => {
         label="Priority"
         rules={[{ required: true, message: "Please enter the priority" }]}
       >
-        <Input placeholder="Low/High" />
+        <Select
+          options={[
+            { label: "High", value: "high" },
+            { label: "Low", value: "low" },
+          ]}
+        />
       </Form.Item>
 
       <Form.Item
