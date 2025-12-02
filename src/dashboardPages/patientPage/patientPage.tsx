@@ -23,6 +23,7 @@ import { MedicalHistory } from "../../components/medicalHistory/medicalHistory";
 import { AppointmentsHistory } from "../../components/appointmentsHistory/appointmentsHistory";
 import { DocumentAgreements } from "../../components/documentsAgreement/documentsAgreement";
 import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from "recharts";
+import { HEALTH_MESSAGES } from "../../utils/texts";
 
 const DAYS_TO_SHOW = ["SUN", "MON", "TUE", "WEN", "THU", "FRI", "SAT"];
 
@@ -43,6 +44,29 @@ const PatientPage = () => {
     if (user) {
       deleteAvatar(id, message);
     }
+  };
+
+  const minBPM =
+    data &&
+    Math.min(
+      ...data.filter((item) => item !== null).map((item) => item?.minBpm)
+    );
+  const maxBpm =
+    data &&
+    Math.max(
+      ...data.filter((item) => item !== null).map((item) => item?.maxBpm)
+    );
+  const averageBPM = (): number => {
+    if (data) {
+      const days = data.filter((item) => item !== null).length;
+      const sum = data
+        .filter((item) => item !== null)
+        .reduce((a, b) => a + b.avgBpm, 0);
+
+      return sum / days;
+    }
+
+    return 0;
   };
 
   const getUserHealthParams = useMemo(() => {
@@ -180,21 +204,22 @@ const PatientPage = () => {
               Heart Rate
             </Typography.Title>
             <Typography.Paragraph className="text-center">
-              Heart Rate is in stable and healty state this week. This should be
-              based on some parameters. need to fix
+              {averageBPM() < 110 && HEALTH_MESSAGES.LOW}
+              {averageBPM() > 110 && averageBPM() < 130 && HEALTH_MESSAGES.AVG}
+              {averageBPM() > 130 && HEALTH_MESSAGES.HIGH}
             </Typography.Paragraph>
             <div className="flex flex-row">
               <div className="basis-2xs text-center">
-                <Title level={4}>Average</Title>
-                {data && data[new Date().getDay()].avgBpm} bpm
+                <Title level={4}>Minimum</Title>
+                {minBPM} bpm
               </div>
               <div className="basis-2xs text-center">
-                <Title level={4}>Minimum</Title>
-                {data && data[new Date().getDay()].minBpm} bpm
+                <Title level={4}>Average</Title>
+                {averageBPM()} bpm
               </div>
               <div className="basis-2xs text-center">
                 <Title level={4}>Maximum</Title>
-                {data && data[new Date().getDay()].maxBpm} bpm
+                {maxBpm} bpm
               </div>
             </div>
             <HeartRateChart data={getUserHealthParams} />
