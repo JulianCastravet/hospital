@@ -11,8 +11,11 @@ type Props = {
 };
 
 export const AddressMap = (props: Props) => {
-  console.log(env.RADAR_API_KEY);
-  Radar.initialize(env.RADAR_API_KEY ?? "");
+  Radar.initialize(env.RADAR_API_KEY, {
+    publishableKey: env.RADAR_API_KEY,
+    debug: false,
+    live: process.env.NODE_ENV === "production" ? true : false,
+  });
 
   const { value, onChange } = props;
 
