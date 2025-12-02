@@ -1,6 +1,6 @@
-import { TablePaginationConfig } from "antd";
+// import { TablePaginationConfig } from "antd";
 
-const paginationConfig: TablePaginationConfig = {
+const paginationConfig = {
   pageSize: 10,
 };
 export default paginationConfig;

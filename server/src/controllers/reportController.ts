@@ -4,14 +4,23 @@ import { reportSchema } from "../validation/schemas";
 import { AppError } from "../errors/AppError";
 
 export const getAllReports = async (
-  _req: Request,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const reports = await Report.find();
+    const { page, pageSize } = req.query;
 
-    res.status(200).json(reports);
+    const pageN = Number(page);
+    const pageSizeN = Number(pageSize);
+
+    const skip = (pageN - 1) * pageSizeN;
+
+    const reportsQty = (await Report.find()).length;
+
+    const reports = await Report.find().skip(skip).limit(pageSizeN);
+
+    res.status(200).json({ reports, reportsQty });
   } catch (error) {
     next(error);
   }

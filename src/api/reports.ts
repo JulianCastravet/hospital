@@ -3,9 +3,12 @@ import { Report } from "../types";
 import env from "../environment";
 import { http } from "./httpLayer";
 
-export const getAllReports = (message: MessageInstance): Promise<Report[]> =>
+export const getAllReports = (
+  { page, pageSize }: { page: number; pageSize: number },
+  message: MessageInstance
+): Promise<any> =>
   http<Report[]>(
-    `${env.API_BASE}/reports`,
+    `${env.API_BASE}/reports?page=${page}&pageSize=${pageSize}`,
     {},
     message,
     "Failed fetching all reports."

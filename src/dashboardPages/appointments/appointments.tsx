@@ -23,6 +23,7 @@ export const Appointments = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const { message, modal } = App.useApp();
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   const {
     appointment,
@@ -38,12 +39,15 @@ export const Appointments = () => {
   useEffect(() => {
     const controller = new AbortController();
 
-    getAllAppointmentsByPage({ page: 1, pageSize: 10 }, message);
+    getAllAppointmentsByPage(
+      { page: currentPage, pageSize: paginationConfig.pageSize },
+      message
+    );
 
     return () => {
       controller.abort();
     };
-  }, [message, getAllAppointmentsByPage]);
+  }, [message, getAllAppointmentsByPage, currentPage]);
 
   const [form] = useForm();
 
@@ -126,8 +130,8 @@ export const Appointments = () => {
 
   const apConfig: TablePaginationConfig = {
     ...paginationConfig,
-    onChange: (page: number, pageSize: number) => {
-      getAllAppointmentsByPage({ page, pageSize }, message);
+    onChange: (page: number) => {
+      setCurrentPage(page);
     },
     total: totalAppointments,
   };

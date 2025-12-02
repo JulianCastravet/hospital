@@ -23,7 +23,7 @@ import {
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useUserStore } from "../../store/user.store";
-import { NewUser } from "../../types/user";
+import { NewUser, User } from "../../types/user";
 import { AddressMap } from "../../components/addressMap/addressMap";
 import { usePatientStore } from "../../store/patient.store";
 import { paginationConfig } from "../../configs";
@@ -39,11 +39,17 @@ export const Patients = () => {
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const PAGE_SIZE_COUNT = 10; //how many rows to fetch
 
   useEffect(() => {
-    getPatientsByPage({ page: 1, pageSize: 10 }, message);
+    getPatientsByPage(
+      { page: currentPage, pageSize: PAGE_SIZE_COUNT },
+      message
+    );
     return () => {};
-  }, [message, getPatientsByPage]);
+  }, [message, getPatientsByPage, currentPage]);
 
   const columns = [
     {
@@ -117,7 +123,7 @@ export const Patients = () => {
         } else {
           const id = form.getFieldValue("_id");
 
-          const user: Partial<NewUser> = {
+          const user: Partial<User> = {
             name,
             dateOfBirth,
             gender,
@@ -129,6 +135,11 @@ export const Patients = () => {
 
           updateUser({ id, data: { _id: id, ...user } }, message);
 
+          getPatientsByPage(
+            { page: currentPage, pageSize: PAGE_SIZE_COUNT },
+            message
+          );
+
           setModalOpen(!modalOpen);
           setIsEditMode(false);
         }
@@ -139,13 +150,11 @@ export const Patients = () => {
   function handleEditRow(v: any): void {
     setModalOpen(true);
     setIsEditMode(true);
-    setTimeout(() => {
-      form.setFieldsValue({
-        ...v,
-        dateOfBirth: dayjs(v.dateOfBirth),
-        address: v.formattedAddress,
-      });
-    }, 0);
+    form.setFieldsValue({
+      ...v,
+      dateOfBirth: dayjs(v.dateOfBirth),
+      address: v.formattedAddress,
+    });
   }
 
   function handleDeleteRow(data: any) {
@@ -171,8 +180,8 @@ export const Patients = () => {
 
   const ppCongfig: TablePaginationConfig = {
     ...paginationConfig,
-    onChange: (page: number, pageSize: number) => {
-      getPatientsByPage({ page, pageSize }, message);
+    onChange: (page: number) => {
+      setCurrentPage(page);
     },
     total: totalPatients,
   };
@@ -192,61 +201,66 @@ export const Patients = () => {
         </Button>
       </Row>
 
-      <Modal
-        open={modalOpen}
-        onCancel={handleModalClose}
-        onOk={() => submitAddPatient(isEditMode, form.getFieldsValue())}
-        destroyOnHidden
-      >
-        <Form
-          onFinish={() => submitAddPatient(isEditMode, form.getFieldsValue())}
-          form={form}
-          style={{ padding: "20px" }}
+      {modalOpen && (
+        <Modal
+          open={modalOpen}
+          onCancel={handleModalClose}
+          onOk={() => submitAddPatient(isEditMode, form.getFieldsValue())}
+          destroyOnHidden
         >
-          <Form.Item
-            name="name"
-            label="Name"
-            rules={[{ required: true, message: "Please input your Name!" }]}
+          <Form
+            onFinish={() => submitAddPatient(isEditMode, form.getFieldsValue())}
+            form={form}
+            style={{ padding: "20px" }}
           >
-            <Input
-              prefix={<UserOutlined />}
-              type="text"
-              placeholder="John Doe"
-            />
-          </Form.Item>
-          <Form.Item name="gender" label="Gender">
-            <Select placeholder="Select Gender">
-              <Select.Option key={"male"}>Male</Select.Option>
-              <Select.Option key={"female"}>Female</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item name="dateOfBirth" label="Date of Birth">
-            <DatePicker format={"DD/MM/YYYY"} />
-          </Form.Item>
+            <Form.Item
+              name="name"
+              label="Name"
+              rules={[{ required: true, message: "Please input your Name!" }]}
+            >
+              <Input
+                prefix={<UserOutlined />}
+                type="text"
+                placeholder="John Doe"
+              />
+            </Form.Item>
+            <Form.Item name="gender" label="Gender">
+              <Select placeholder="Select Gender">
+                <Select.Option key={"male"}>Male</Select.Option>
+                <Select.Option key={"female"}>Female</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item name="dateOfBirth" label="Date of Birth">
+              <DatePicker format={"DD/MM/YYYY"} />
+            </Form.Item>
 
-          <Form.Item label="Phone" required name="phone">
-            <Input type="phone" placeholder="+37300000000" />
-          </Form.Item>
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[{ required: true, message: "Please input your Email!" }]}
-          >
-            <Input
-              prefix={<MailOutlined />}
-              type="mail"
-              placeholder="johndoe@mail.com"
-            />
-          </Form.Item>
-          <Form.Item
-            name="address"
-            label="Address"
-            rules={[{ required: true }]}
-          >
-            <AddressMap onChange={handleMapValue} />
-          </Form.Item>
-        </Form>
-      </Modal>
+            <Form.Item label="Phone" required name="phone">
+              <Input type="phone" placeholder="+37300000000" />
+            </Form.Item>
+            <Form.Item
+              name="email"
+              label="Email"
+              rules={[
+                { required: true, message: "Please input your Email!" },
+                { type: "email" },
+              ]}
+            >
+              <Input
+                prefix={<MailOutlined />}
+                type="mail"
+                placeholder="johndoe@mail.com"
+              />
+            </Form.Item>
+            <Form.Item
+              name="address"
+              label="Address"
+              rules={[{ required: true }]}
+            >
+              <AddressMap onChange={handleMapValue} />
+            </Form.Item>
+          </Form>
+        </Modal>
+      )}
     </>
   );
 };

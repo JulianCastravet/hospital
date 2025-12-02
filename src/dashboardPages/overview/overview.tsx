@@ -15,7 +15,8 @@ export const Overview = () => {
 
   useEffect(() => {
     getUsers(message);
-    getAllReports(message);
+    //get all the reports in order to get the length
+    getAllReports({ page: 1, pageSize: 1000000000 }, message);
   }, [getUsers, getAllReports, message]);
 
   const userData = [
