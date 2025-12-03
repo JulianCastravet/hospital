@@ -13,6 +13,8 @@ export const Overview = () => {
   const { users, getUsers } = useUserStore();
   const { reports, getAllReports } = useReportStore();
 
+  console.log(reports)
+
   useEffect(() => {
     getUsers(message);
     getAllReports({ page: 1, pageSize: 1000000000 }, message);
