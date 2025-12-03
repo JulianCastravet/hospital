@@ -26,12 +26,17 @@ export const Overview = () => {
       Doctors: users.filter((user) => user.role === "doctor").length,
     },
   ];
+
   const reportData = [
     {
       name: "",
       Total: reports.length,
-      LowPr: reports.filter((report) => report.priority === "Low").length,
-      HighPr: reports.filter((report) => report.priority === "High").length,
+      LowPr: reports.filter(
+        (report) => report.priority === "Low" || report.priority === "low"
+      ).length,
+      HighPr: reports.filter(
+        (report) => report.priority === "High" || report.priority === "high"
+      ).length,
     },
   ];
   return (
