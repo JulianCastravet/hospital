@@ -17,6 +17,7 @@ import {
 import { upload } from "../multerConfig";
 import { authMiddleware } from "../middleware/authMiddleware";
 import { requireRole } from "../middleware/roleMiddleware";
+import { getUserMessages } from "./messagesRoutes";
 
 const router = express.Router();
 router.post("/login", authenticateUser);
@@ -30,6 +31,7 @@ router.get("/getPatients", requireRole(["admin", "doctor"]), getPatients);
 router.get("/:id", getSingleUser);
 router.delete("/:id", requireRole("admin"), deleteUser);
 router.put("/:id", updateUser);
+router.get("/:id/messages", getUserMessages);
 router.post("/:id/avatar", upload.single("userAvatar"), updateUserAvatar);
 router.delete("/:id/avatar", deleteUserAvatar);
 router.post("/:id/diagnose", requireRole("doctor"), addUserDiagnose);
@@ -47,4 +49,3 @@ router.delete(
 );
 
 export default router;
- 

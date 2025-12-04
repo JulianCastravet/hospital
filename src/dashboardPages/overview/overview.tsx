@@ -8,10 +8,10 @@ import { useReportStore } from "../../store/reports.store";
 
 export const Overview = () => {
   useTitle("Overview");
-  const { message } = App.useApp();
 
   const { users, getUsers } = useUserStore();
   const { reports, getAllReports } = useReportStore();
+  const { message } = App.useApp();
 
   useEffect(() => {
     getUsers(message);

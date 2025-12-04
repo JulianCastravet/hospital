@@ -5,7 +5,7 @@ import { Route, Routes } from "react-router-dom";
 import { Appointments } from "./dashboardPages/appointments/appointments";
 import { Help } from "./dashboardPages/help/help";
 import { Medications } from "./dashboardPages/medications/medications";
-import { Messages } from "./components/messages/messages";
+import { Messages } from "./dashboardPages/messages/messages";
 import { Overview } from "./dashboardPages/overview/overview";
 import PatientPage from "./dashboardPages/patientPage/patientPage";
 import { Patients } from "./dashboardPages/patients/patients";

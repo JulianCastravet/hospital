@@ -9,7 +9,15 @@ import healthRoutes from "./routes/healthRoutes";
 import environment from "./environment";
 import errorHandler from "./middleware/errorHandler";
 
+import { createServer } from "http";
+import { setupWebSocket } from "./websocket/websocket";
+
 const app = express();
+
+const server = createServer(app);
+
+// WEBSOCKET INIT
+setupWebSocket(server);
 
 // ---------- MONGOOSE CONNECTION ----------
 const connectDB = async () => {
@@ -32,7 +40,7 @@ app.use(express.json());
 app.use("/users", userRoutes);
 app.use("/appointments", appointmentsRoutes);
 app.use("/reports", reportRoutes);
-app.use('/health', healthRoutes)
+app.use("/health", healthRoutes);
 
 // Base endpoint (NO DB logic here)
 app.get("/", (_req, res) => {
@@ -55,7 +63,7 @@ app.use(errorHandler);
 
 // Start server only in local mode
 if (process.env.NODE_ENV === "local") {
-  app.listen(environment.PORT, () => {
+  server.listen(environment.PORT, () => {
     console.log(`🚀 Server running on port: ${environment.PORT}`);
   });
 }

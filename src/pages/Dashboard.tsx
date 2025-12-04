@@ -25,6 +25,7 @@ import {
 } from "@ant-design/icons";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/auth.store";
+import { useWebSocketStore } from "../websocket/websocket";
 
 export const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -32,6 +33,7 @@ export const Dashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout, user } = useAuthStore();
+  const { disconnect } = useWebSocketStore();
 
   type MenuItem = Required<MenuProps>["items"][number];
 
@@ -77,6 +79,7 @@ export const Dashboard = () => {
 
   const userLogout = () => {
     logout();
+    disconnect();
     navigate("/");
   };
 
