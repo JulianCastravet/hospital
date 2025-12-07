@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { persist, devtools } from "zustand/middleware";
+import { useMessageStore } from "../store/message.store";
+import { useAuthStore } from "../store/auth.store";
 
 interface WebSocketStoreInterface {
   socket: WebSocket | null;
@@ -24,7 +26,14 @@ export const useWebSocketStore = create<WebSocketStoreInterface>()(
         };
 
         ws.onmessage = (event) => {
-          console.log("WS Message:", event.data);
+          const parsed = JSON.parse(event.data);
+          const msg = parsed.payload;
+
+          const currentUser = useAuthStore.getState().user!;
+
+          if (msg.senderId === currentUser._id) return;
+
+          useMessageStore.getState().addMessage(msg);
         };
 
         ws.onerror = (error) => {

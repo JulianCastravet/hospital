@@ -1,24 +1,24 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 interface ChatMessage {
   text: string;
   senderId: string;
   receiverId: string;
-  doctorId: string;
-  patientId: string;
-  createdAt: string;
+  // doctorId: string;
+  // patientId: string;
+  createdAt: Date;
 }
 
-export const ChatMessageSchema = new mongoose.Schema({
+export const ChatMessageSchema = new Schema<ChatMessage>({
   text: String,
 
   senderId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: "User",
     required: true,
   },
   receiverId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: "User",
     required: true,
   },

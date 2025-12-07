@@ -9,21 +9,34 @@ import { useMessageStore } from "../../store/message.store";
 import { useAuthStore } from "../../store/auth.store";
 import { useWebSocketStore } from "../../websocket/websocket";
 import { ChatContent } from "../../components/chatContent/chatContent";
+import { getAllUsers } from "../../api/user";
 
 export const Messages = () => {
   useTitle("Messages");
-
-  useEffect(() => {}, []);
 
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [chatOpen, setChatOpen] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>("");
   const [patient, setPatient] = useState<User | null>(null);
   const { patients } = usePatientStore();
-  const { messages, setPatientId, addMessage } = useMessageStore();
+  const {
+    messages,
+    setPatientId,
+    addMessage,
+    message: lastMessage,
+  } = useMessageStore();
   const { user } = useAuthStore();
   const { WSMessage } = useWebSocketStore();
   const { message } = App.useApp();
+  const [docs, setDocs] = useState<User[]>();
+
+  useEffect(() => {
+    if (user?.role === "patient") {
+      getAllUsers(message).then((data) =>
+        setDocs(data.filter((user) => user.role === "admin"))
+      );
+    }
+  }, [user?.role, message]);
 
   const sendMessage = () => {
     if (!inputValue.trim().length) {
@@ -35,7 +48,7 @@ export const Messages = () => {
         text: inputValue.trim(),
         senderId: user._id,
         receiverId: patient._id,
-        createdAt: Date.now().toString(),
+        createdAt: new Date().toLocaleString(),
       };
 
       const payload = {
@@ -86,7 +99,7 @@ export const Messages = () => {
       >
         <List
           itemLayout="horizontal"
-          dataSource={patients}
+          dataSource={user?.role === "doctor" ? patients : docs}
           renderItem={(patient) => (
             <List.Item
               onClick={() => handleUserChat(patient)}
@@ -104,7 +117,7 @@ export const Messages = () => {
                   />
                 }
                 title={patient.name}
-                description={"last message from array"}
+                description={lastMessage?.text}
               />
             </List.Item>
           )}
@@ -120,7 +133,7 @@ export const Messages = () => {
         {user && (
           <ChatContent
             messages={messages}
-            currentUserId={user._id}
+            currentUser={user}
             inputValue={inputValue}
             setInputValue={(e) => setInputValue(e)}
             sendMessage={sendMessage}

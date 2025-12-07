@@ -28,6 +28,10 @@ const devConfig: Environment = {
   PORT: Number(process.env.PORT) || 4001,
   MONGO_URI: mustGetEnv("MONGO_URI_QA"),
   JWT_SECRET: mustGetEnv("JWT_SECRET"),
+  CLOUDINARY_API_KEY: mustGetEnv("CLOUDINARY_API_KEY"),
+  CLOUDINARY_API_SECRET: mustGetEnv("CLOUDINARY_API_SECRET"),
+  CLOUDINARY_URL: mustGetEnv("CLOUDINARY_URL"),
+  CLOUDINARY_CLOUD_NAME: mustGetEnv("CLOUDINARY_CLOUD_NAME"),
 };
 
 const prodConfig: Environment = {

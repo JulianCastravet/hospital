@@ -27,7 +27,11 @@ export const setupWebSocket = (server: Server) => {
           break;
       }
 
-      ws.send(data.toString());
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(data.toString());
+        }
+      });
     });
 
     ws.on("close", () => {
@@ -41,7 +45,9 @@ export const setupWebSocket = (server: Server) => {
 };
 const manageMessageData = async (payload: any) => {
   try {
-    await ChatMessage.validate(payload);
+    const payloadDoc = await ChatMessage.create(payload);
+
+    payloadDoc.save();
   } catch (error) {
     throw error;
   }
@@ -51,4 +57,3 @@ const manageMessageData = async (payload: any) => {
 // finish post to dabase
 // send event to another user
 // implement settings page to change my personal data as admin
-

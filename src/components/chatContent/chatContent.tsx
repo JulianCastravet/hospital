@@ -1,6 +1,7 @@
 import { Input, Avatar, message } from "antd";
 import { useEffect, useRef } from "react";
 import { getAvatarByUserId } from "../../utils/getAvatarByUserId";
+import { User } from "../../types";
 
 interface Message {
   createdAt: string;
@@ -11,7 +12,7 @@ interface Message {
 
 interface Props {
   messages: Message[];
-  currentUserId: string;
+  currentUser: User;
   inputValue: string;
   setInputValue: (v: string) => void;
   sendMessage: () => void;
@@ -19,12 +20,13 @@ interface Props {
 
 export const ChatContent: React.FC<Props> = ({
   messages,
-  currentUserId,
+  currentUser,
   inputValue,
   setInputValue,
   sendMessage,
 }) => {
   const chatEndRef = useRef<HTMLDivElement | null>(null);
+  let customKey = 0;
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -45,10 +47,10 @@ export const ChatContent: React.FC<Props> = ({
           </span>
         )}
         {messages.map((mess) => {
-          const isMine = mess.senderId === currentUserId;
+          const isMine = mess.senderId === currentUser._id;
           return (
             <div
-              key={mess.createdAt}
+              key={new Date(mess.createdAt).getMilliseconds() + customKey++}
               className={`flex items-end gap-2 ${
                 isMine ? "justify-end" : "justify-start"
               }`}
@@ -56,7 +58,7 @@ export const ChatContent: React.FC<Props> = ({
               {!isMine && (
                 <Avatar
                   size={32}
-                  src={getAvatarByUserId(mess.receiverId)}
+                  src={getAvatarByUserId(mess.senderId)}
                   className="flex-shrink-0"
                 />
               )}
@@ -68,21 +70,18 @@ export const ChatContent: React.FC<Props> = ({
               >
                 <div>{mess.text}</div>
                 <div className="text-[10px] text-gray-500 mt-1">
-                  {new Date(Number(mess.createdAt)).toLocaleTimeString(
-                    "en-GB",
-                    {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: false,
-                    }
-                  )}
+                  {new Date(mess.createdAt).toLocaleTimeString("en-GB", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                  })}
                 </div>
               </div>
 
               {isMine && (
                 <Avatar
                   size={32}
-                  src={getAvatarByUserId(mess.senderId)}
+                  src={currentUser.avatarUrl}
                   className="flex-shrink-0"
                 />
               )}

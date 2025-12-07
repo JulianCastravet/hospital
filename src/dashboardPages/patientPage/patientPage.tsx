@@ -46,18 +46,20 @@ const PatientPage = () => {
     }
   };
 
-  const minBPM =
-    data &&
-    Math.min(
-      ...data.filter((item) => item !== null).map((item) => item?.minBpm)
-    );
+  const minBpm =
+    (data?.length &&
+      Math.min(
+        ...data.filter((item) => item !== null).map((item) => item?.minBpm)
+      )) ||
+    DASH;
   const maxBpm =
-    data &&
-    Math.max(
-      ...data.filter((item) => item !== null).map((item) => item?.maxBpm)
-    );
+    (data?.length &&
+      Math.max(
+        ...data.filter((item) => item !== null).map((item) => item?.maxBpm)
+      )) ||
+    DASH;
   const averageBPM = (): number => {
-    if (data) {
+    if (data?.length) {
       const days = data.filter((item) => item !== null).length;
       const sum = data
         .filter((item) => item !== null)
@@ -204,18 +206,20 @@ const PatientPage = () => {
               Heart Rate
             </Typography.Title>
             <Typography.Paragraph className="text-center">
-              {averageBPM() < 110 && HEALTH_MESSAGES.LOW}
+              {!data?.length
+                ? HEALTH_MESSAGES.NO_DATA
+                : averageBPM() < 110 && HEALTH_MESSAGES.LOW}
               {averageBPM() > 110 && averageBPM() < 130 && HEALTH_MESSAGES.AVG}
               {averageBPM() > 130 && HEALTH_MESSAGES.HIGH}
             </Typography.Paragraph>
             <div className="flex flex-row">
               <div className="basis-2xs text-center">
                 <Title level={4}>Minimum</Title>
-                {minBPM} bpm
+                {minBpm} bpm
               </div>
               <div className="basis-2xs text-center">
                 <Title level={4}>Average</Title>
-                {averageBPM()} bpm
+                {averageBPM().toFixed(2)} bpm
               </div>
               <div className="basis-2xs text-center">
                 <Title level={4}>Maximum</Title>

@@ -23,7 +23,9 @@ export const ImageWithUpload = ({
   const inputElement = inputRef.current as unknown as HTMLInputElement;
 
   const handleImageClick = () => {
-    inputElement.click();
+    if (inputElement) {
+      inputElement.click();
+    }
   };
 
   const handleInputClick = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -37,7 +37,14 @@ export const useMessageStore = create<MessageStoreInterface>()(
               { patientId: id, doctorId: docId },
               message
             );
-            set({ messages, messagesLoading: false });
+            set((store) => ({
+              ...store,
+              messages,
+              messagesLoading: false,
+              message: store.messages.length
+                ? store.messages[store.messages.length - 1]
+                : null,
+            }));
           },
           addMessage: (message) =>
             set((store) => ({

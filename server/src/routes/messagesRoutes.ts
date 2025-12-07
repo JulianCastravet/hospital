@@ -6,9 +6,12 @@ export const getUserMessages = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { secondUserID } = req.query;
 
-    const messages = await ChatMessage.find({ id, secondUserID }).sort({
-      createdAt: 1,
-    });
+    const messages = await ChatMessage.find({
+      $or: [
+        { senderId: id, receiverId: secondUserID },
+        { senderId: secondUserID, receiverId: id },
+      ],
+    }).sort({ createdAt: 1 });
 
     res.status(200).json(messages);
   } catch (error) {
