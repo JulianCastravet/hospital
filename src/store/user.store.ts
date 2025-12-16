@@ -20,7 +20,7 @@ type UserStoreState = {
   loading: boolean;
   error: string | null;
 
-  setUser: (u: User) => void;
+  setUser: (u: User| null) => void;
 
   getUser: (id: string, message: MessageInstance) => Promise<void>;
   getUsers: (message: MessageInstance) => Promise<void>;

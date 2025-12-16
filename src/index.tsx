@@ -6,19 +6,22 @@ import { App as Antapp, ConfigProvider } from "antd";
 
 import "./index.css";
 import { themeToken } from "./utils/themeToken";
+import { StrictMode } from "react";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
 root.render(
+  <StrictMode>
   <ConfigProvider theme={themeToken}>
     <Antapp>
       <BrowserRouter>
         <App />
       </BrowserRouter>
     </Antapp>
-  </ConfigProvider>
+    </ConfigProvider>
+    </StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

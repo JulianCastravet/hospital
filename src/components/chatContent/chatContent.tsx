@@ -1,10 +1,10 @@
-import { Input, Avatar, message } from "antd";
+import { Input, Avatar } from "antd";
 import { useEffect, useRef } from "react";
 import { getAvatarByUserId } from "../../utils/getAvatarByUserId";
 import { User } from "../../types";
 
 interface Message {
-  createdAt: string;
+  createdAt: Date;
   text: string;
   senderId: string;
   receiverId: string;
@@ -81,7 +81,7 @@ export const ChatContent: React.FC<Props> = ({
               {isMine && (
                 <Avatar
                   size={32}
-                  src={currentUser.avatarUrl}
+                  src={getAvatarByUserId(currentUser.avatarUrl)}
                   className="flex-shrink-0"
                 />
               )}

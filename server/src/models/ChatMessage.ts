@@ -1,15 +1,13 @@
 import mongoose, { Schema } from "mongoose";
 
-interface ChatMessage {
+interface IChatMessage {
   text: string;
   senderId: string;
   receiverId: string;
-  // doctorId: string;
-  // patientId: string;
   createdAt: Date;
 }
 
-export const ChatMessageSchema = new Schema<ChatMessage>({
+export const ChatMessageSchema = new Schema<IChatMessage>({
   text: String,
 
   senderId: {
@@ -23,21 +21,10 @@ export const ChatMessageSchema = new Schema<ChatMessage>({
     required: true,
   },
 
-  // doctorId: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "User",
-  //   required: true,
-  // },
-  // patientId: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "User",
-  //   required: true,
-  // },
-
-  createdAt: { type: Date, default: Date.now },
+  createdAt: { type: Date, default: Date.now, validate: (value: Date) => !isNaN(value.getTime()) },
 });
 
-export const ChatMessage = mongoose.model<ChatMessage>(
+export const ChatMessage = mongoose.model<IChatMessage>(
   "ChatMessage",
   ChatMessageSchema
 );

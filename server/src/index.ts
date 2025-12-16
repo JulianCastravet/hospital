@@ -16,8 +16,6 @@ const app = express();
 
 const server = createServer(app);
 
-// WEBSOCKET INIT
-setupWebSocket(server);
 
 // ---------- MONGOOSE CONNECTION ----------
 const connectDB = async () => {
@@ -32,6 +30,8 @@ const connectDB = async () => {
 
 connectDB(); // <--- connect ONCE here
 // -----------------------------------------
+// WEBSOCKET INIT
+setupWebSocket(server);
 
 app.use(cors());
 app.use(express.json());
@@ -62,7 +62,7 @@ app.get("/health", (_req, res) => {
 app.use(errorHandler);
 
 // Start server only in local mode
-if (process.env.NODE_ENV === "local") {
+if (environment.NODE_ENV === "local") {
   server.listen(environment.PORT, () => {
     console.log(`🚀 Server running on port: ${environment.PORT}`);
   });

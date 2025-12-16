@@ -32,13 +32,15 @@ const PatientPage = () => {
   useTitle("User Page");
   const { message } = App.useApp();
 
-  const { user, getUser, deleteAvatar, loading } = useUserStore();
+  const { user, getUser, deleteAvatar, loading, setUser } = useUserStore();
   const data = user && user.medicalInfo?.generalParams;
 
   useEffect(() => {
     if (!params.id) return;
     getUser(params.id, message);
-  }, [params.id, message, getUser]);
+
+    return () => setUser(null)
+  }, [params.id, message, getUser,setUser]);
 
   const removeUserImage = (id: string) => {
     if (user) {
@@ -81,6 +83,10 @@ const PatientPage = () => {
       avg_bpm: item?.avgBpm ?? 0,
     }));
   }, [data]);
+
+  if (loading) {
+    return(<>User Data is Loading...</>)
+   }
 
   return !user ? (
     <>User not found</>

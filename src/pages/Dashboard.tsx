@@ -27,6 +27,7 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/auth.store";
 import { useWebSocketStore } from "../websocket/websocket";
 import { capitalize } from "../utils/capitalize";
+import env from "../environment";
 
 export const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -34,7 +35,8 @@ export const Dashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout, user } = useAuthStore();
-  const { disconnect } = useWebSocketStore();
+  const { disconnect, connect } = useWebSocketStore();
+  
 
   type MenuItem = Required<MenuProps>["items"][number];
 
@@ -99,7 +101,8 @@ export const Dashboard = () => {
 
   useEffect(() => {
     if (user) getDefaultLink();
-  }, [user, getDefaultLink]);
+    connect(env.WEB_SOCKET_URL);
+  }, [user, getDefaultLink, connect]);
 
   const items = [
     getItem("Overview", "1", <WindowsOutlined />),

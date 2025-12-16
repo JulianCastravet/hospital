@@ -1,5 +1,5 @@
 import { Server } from "http";
-import { WebSocketServer } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 import { ChatMessage } from "../models/ChatMessage";
 
 let wss: WebSocketServer | null = null;
@@ -26,7 +26,6 @@ export const setupWebSocket = (server: Server) => {
         default:
           break;
       }
-
       wss.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
           client.send(data.toString());
@@ -35,7 +34,7 @@ export const setupWebSocket = (server: Server) => {
     });
 
     ws.on("close", () => {
-      console.log("Websocket disconected");
+      console.log("Websocket disconnected");
     });
 
     ws.on("error", () => {
@@ -46,7 +45,6 @@ export const setupWebSocket = (server: Server) => {
 const manageMessageData = async (payload: any) => {
   try {
     const payloadDoc = await ChatMessage.create(payload);
-
     payloadDoc.save();
   } catch (error) {
     throw error;
@@ -54,6 +52,4 @@ const manageMessageData = async (payload: any) => {
 };
 
 //to do:
-// finish post to dabase
-// send event to another user
 // implement settings page to change my personal data as admin

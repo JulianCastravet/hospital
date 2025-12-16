@@ -48,7 +48,7 @@ export const Messages = () => {
         text: inputValue.trim(),
         senderId: user._id,
         receiverId: patient._id,
-        createdAt: new Date().toLocaleString(),
+        createdAt: new Date(),
       };
 
       const payload = {
@@ -99,7 +99,7 @@ export const Messages = () => {
       >
         <List
           itemLayout="horizontal"
-          dataSource={user?.role === "doctor" ? patients : docs}
+          dataSource={user?.role === "doctor" || user?.role === "admin" ? patients : docs}
           renderItem={(patient) => (
             <List.Item
               onClick={() => handleUserChat(patient)}
@@ -124,11 +124,11 @@ export const Messages = () => {
         />
       </Drawer>
 
-      <Modal
+{   patient && user &&   <Modal
         open={chatOpen}
         footer={false}
         onCancel={() => setChatOpen(false)}
-        title={"Chat with " + patient?.name}
+        title={"Chat with " + patient.name}
       >
         {user && (
           <ChatContent
@@ -139,7 +139,7 @@ export const Messages = () => {
             sendMessage={sendMessage}
           />
         )}
-      </Modal>
+      </Modal>}
     </>
   );
 };

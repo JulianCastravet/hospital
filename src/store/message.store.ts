@@ -4,7 +4,7 @@ import { getMessagesByPatientID } from "../api/messages";
 import { MessageInstance } from "antd/es/message/interface";
 
 type CustomMessage = {
-  createdAt: string;
+  createdAt: Date;
   text: string;
   senderId: string;
   receiverId: string;
