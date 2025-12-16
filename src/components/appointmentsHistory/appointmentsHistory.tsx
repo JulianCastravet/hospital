@@ -78,7 +78,7 @@ export const AppointmentsHistory = (props: AppointmentsHistoryProps) => {
           {appointments.length ? (
             <Timeline items={customTimeLineItems} />
           ) : (
-            <>No appoiments for this user.</>
+            <>No appointments for this user.</>
           )}
 
           <Row className="mt-5">

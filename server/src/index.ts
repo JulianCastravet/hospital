@@ -54,7 +54,7 @@ app.get("/health", (_req, res) => {
 app.use(errorHandler);
 
 // Start server only in local mode
-if (process.env.NODE_ENV === "local") {
+if (environment.NODE_ENV === "local") {
   app.listen(environment.PORT, () => {
     console.log(`🚀 Server running on port: ${environment.PORT}`);
   });

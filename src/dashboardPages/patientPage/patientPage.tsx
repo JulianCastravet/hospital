@@ -78,7 +78,7 @@ const PatientPage = () => {
       max_bpm: item?.maxBpm ?? 0,
       avg_bpm: item?.avgBpm ?? 0,
     }));
-  }, [user?.medicalInfo?.generalParams]);
+  }, [data]);
 
   return !user ? (
     <>User not found</>

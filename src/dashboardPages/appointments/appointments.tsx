@@ -17,6 +17,7 @@ import { DeleteFilled, EditFilled } from "@ant-design/icons";
 import { Appointment } from "../../types";
 import { useAppointmentStore } from "../../store/appointments.store";
 import { paginationConfig } from "../../configs";
+import { Pill } from "../../components/pill/pill";
 
 export const Appointments = () => {
   useTitle("Appointments");
@@ -29,6 +30,7 @@ export const Appointments = () => {
     appointment,
     appointments,
     totalAppointments,
+    appointmentsLoading,
     getAllAppointmentsByPage,
     getAppointmentById,
     addAppointment,
@@ -76,6 +78,7 @@ export const Appointments = () => {
       title: "Diagnosis",
       dataIndex: "diagnosis",
       key: "diagnosis",
+      render: (v: string[]) => (v.map((item, index) => (<Pill key={index} className={index % 2 ===0 ?'bg-red-500 ml-1':'bg-orange-300 ml-1'  }>{ item}</Pill>)))
     },
     {
       title: "Actions",
@@ -121,7 +124,17 @@ export const Appointments = () => {
         setIsEditMode(false);
       } else {
         const newForm = form.getFieldsValue() as Appointment;
-        addAppointment(newForm, message);
+
+        const newAppointmentData = {
+          name: newForm.name,
+          email: newForm.email,
+          phone: newForm.phone,
+          diagnosis: Array.isArray(newForm.diagnosis)
+            ? newForm.diagnosis
+            : [...String(newForm.diagnosis).trim().split(',')],
+        };
+
+        addAppointment(newAppointmentData as Appointment, message);
       }
       form.resetFields();
       setOpen(false);
@@ -143,6 +156,7 @@ export const Appointments = () => {
         dataSource={appointments}
         rowKey={"_id"}
         pagination={apConfig}
+        loading={appointmentsLoading}
       ></Table>
       <Row className="mt-2">
         <Button

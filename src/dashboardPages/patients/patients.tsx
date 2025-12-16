@@ -32,7 +32,7 @@ export const Patients = () => {
   useTitle("Patients");
 
   const { updateUser, addUser } = useUserStore();
-  const { getPatientsByPage, patients, totalPatients, deletePatient } =
+  const { getPatientsByPage, patients, totalPatients, deletePatient, loading } =
     usePatientStore();
   const [form] = useForm();
   const { message, modal } = App.useApp();
@@ -161,7 +161,7 @@ export const Patients = () => {
     modal.confirm({
       title: "Are you sure?",
       icon: <ExclamationCircleOutlined />,
-      content: " This action is irreversible.",
+      content: "This action is irreversible.",
       onOk() {
         deletePatient(data._id, message);
       },
@@ -178,7 +178,7 @@ export const Patients = () => {
     form.setFieldsValue({ address: v });
   };
 
-  const ppCongfig: TablePaginationConfig = {
+  const ppConfig: TablePaginationConfig = {
     ...paginationConfig,
     onChange: (page: number) => {
       setCurrentPage(page);
@@ -193,7 +193,8 @@ export const Patients = () => {
         columns={columns}
         sortDirections={["ascend", "descend"]}
         rowKey={"_id"}
-        pagination={ppCongfig}
+        pagination={ppConfig}
+        loading={loading}
       />
       <Row className="mt-2">
         <Button type="primary" onClick={() => setModalOpen(!modalOpen)}>
