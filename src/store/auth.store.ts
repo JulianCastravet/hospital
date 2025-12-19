@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { MessageInstance } from "antd/es/message/interface";
-import { userLoginRequest } from "../api/user";
+import { deleteUserAvatar, updateUser, userLoginRequest } from "../api/user";
 import { User } from "../types/user";
 import { ApiError } from "../api/httpLayer";
 
@@ -12,6 +12,13 @@ type AuthState = {
   token: string;
   error: string | null;
   setOption: (p: string[]) => void;
+  updateAuthUser: (
+    id: string,
+    params: Partial<User>,
+    message: MessageInstance
+  ) => void;
+
+  deleteAvatar: (id: string, message: MessageInstance) => void;
 
   login: (
     params: { mail: string; password: string },
@@ -64,6 +71,18 @@ export const useAuthStore = create<AuthState>()(
               set({ loading: false, error: "Network error" });
             }
           }
+        },
+
+        updateAuthUser: async (id, params, message) => {
+          set({ loading: true });
+          const updatedUser = await updateUser(id, params, message);
+          set({ user: updatedUser, loading: false });
+        },
+
+        deleteAvatar: async (id, message) => {
+          set({ loading: true });
+          const updatedUser = await deleteUserAvatar(id, message);
+          set({ user: updatedUser, loading: false });
         },
 
         logout: () => {

@@ -112,6 +112,7 @@ export const Patients = () => {
       dateOfBirth,
       gender,
       role: "patient",
+      avatarUrl: "",
       phone,
       formattedAddress: address,
       email,

@@ -68,6 +68,7 @@ export const useWebSocketStore = create<WebSocketStoreInterface>()(
 
           set({ socket: null });
         }
+        console.log('WebSocket disconnected by user.');
       };
 
       const WSMessage = (text: string) => {

@@ -7,14 +7,14 @@ export type User = {
   _id: string;
   role: "admin" | "doctor" | "patient";
   name: string;
-  specialization?: string | null;
+  specialization?: string;
   dateOfBirth: string;
   gender: string;
   phone: string;
   email: string;
   password: string;
   age?: number;
-  avatarUrl?: string;
+  avatarUrl: string;
   formattedAddress: string;
   medicalInfo?: {
     generalParams: GeneralParams[];

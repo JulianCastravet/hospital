@@ -44,6 +44,7 @@ export const SignUp = () => {
     role: "patient",
     specialization: "",
     dateOfBirth: "",
+    avatarUrl: "",
     gender: "",
     formattedAddress: "",
     userSettings: [],

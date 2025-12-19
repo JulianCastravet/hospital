@@ -36,7 +36,6 @@ export const Dashboard = () => {
   const location = useLocation();
   const { logout, user } = useAuthStore();
   const { disconnect, connect } = useWebSocketStore();
-  
 
   type MenuItem = Required<MenuProps>["items"][number];
 
@@ -100,9 +99,15 @@ export const Dashboard = () => {
   }, [dictionary, location.pathname]);
 
   useEffect(() => {
-    if (user) getDefaultLink();
-    connect(env.WEB_SOCKET_URL);
-  }, [user, getDefaultLink, connect]);
+    if (user) {
+      getDefaultLink();
+      if (user.userSettings.includes("Enable WebSocket")) {
+        connect(env.WEB_SOCKET_URL);
+      } else {
+        disconnect();
+      }
+    }
+  }, [user, getDefaultLink, connect, disconnect]);
 
   const items = [
     getItem("Overview", "1", <WindowsOutlined />),

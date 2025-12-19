@@ -20,11 +20,10 @@ export const ImageWithUpload = ({
 }: ImageWithUploadInterface) => {
   const inputRef = useRef(null);
   const { updateAvatar } = useUserStore();
-  const inputElement = inputRef.current as unknown as HTMLInputElement;
 
   const handleImageClick = () => {
-    if (inputElement) {
-      inputElement.click();
+    if (inputRef.current) {
+      (inputRef.current as HTMLInputElement).click();
     }
   };
 
