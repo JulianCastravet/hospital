@@ -4,12 +4,13 @@ import { useAuthStore } from "../../store/auth.store";
 import { SaveFilled } from "@ant-design/icons";
 import { useState } from "react";
 import { useUserStore } from "../../store/user.store";
+import { ImageWithUpload } from "../../components/imageWithUpload/imageWithUpload";
 
 export const Settings = () => {
   useTitle("Settings");
 
-  const { user, setOption } = useAuthStore();
-  const { updateUser } = useUserStore();
+  const { user, setOption, loading } = useAuthStore();
+  const { updateUser, deleteAvatar } = useUserStore();
   const { message } = App.useApp();
 
   const [options, setOptions] = useState<string[]>([]);
@@ -35,6 +36,12 @@ export const Settings = () => {
       );
   };
 
+  const removeUserImage = (id: string) => {
+    if (user) {
+      deleteAvatar(id, message);
+    }
+  };
+
   return (
     <>
       <Checkbox.Group
@@ -48,6 +55,12 @@ export const Settings = () => {
           Save
         </Button>
       </Row>
+      <ImageWithUpload
+        avatarUrl={user?.avatarUrl ? user.avatarUrl : ""}
+        userId={user ? user._id : ""}
+        removeImage={() => removeUserImage(user ? user._id : "")}
+        loading={loading}
+      />
     </>
   );
 };

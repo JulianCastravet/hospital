@@ -7,5 +7,6 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   if (!isAuthenticated) {
     return <Navigate to={"/"} />;
   }
+ 
   return <>{children}</>;
 };
