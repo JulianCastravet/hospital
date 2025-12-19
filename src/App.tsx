@@ -5,7 +5,7 @@ import { Route, Routes } from "react-router-dom";
 import { Appointments } from "./dashboardPages/appointments/appointments";
 import { Help } from "./dashboardPages/help/help";
 import { Medications } from "./dashboardPages/medications/medications";
-import { Messages } from "./components/messages/messages";
+import { Messages } from "./dashboardPages/messages/messages";
 import { Overview } from "./dashboardPages/overview/overview";
 import PatientPage from "./dashboardPages/patientPage/patientPage";
 import { Patients } from "./dashboardPages/patients/patients";
@@ -17,8 +17,11 @@ import { Dashboard } from "./pages/Dashboard";
 import { Homepage } from "./pages/Homepage";
 import { SignIn } from "./pages/Signin";
 import { SignUp } from "./pages/Signup";
+import { useAuthStore } from "./store/auth.store";
 
 function App() {
+  const { user } = useAuthStore();
+
   return (
     <Routes>
       <Route path="/sign-up" Component={SignUp} />
@@ -41,7 +44,7 @@ function App() {
         <Route path="messages" Component={Messages} />
         <Route path="medications" Component={Medications} />
         <Route path="help" Component={Help} />
-        <Route path="settings" Component={Settings} />
+        {user && <Route path={`${user._id}/settings`} Component={Settings} />}
       </Route>
     </Routes>
   );

@@ -27,11 +27,14 @@ import { NewUser, User } from "../../types/user";
 import { AddressMap } from "../../components/addressMap/addressMap";
 import { usePatientStore } from "../../store/patient.store";
 import { paginationConfig } from "../../configs";
+import { getAllUsers } from "../../api/user";
+import { useAuthStore } from "../../store/auth.store";
 
 export const Patients = () => {
   useTitle("Patients");
 
   const { updateUser, addUser } = useUserStore();
+  const { user } = useAuthStore();
   const { getPatientsByPage, patients, totalPatients, deletePatient, loading } =
     usePatientStore();
   const [form] = useForm();
@@ -40,6 +43,8 @@ export const Patients = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const [doctors, setDoctors] = useState<User[]>();
 
   const PAGE_SIZE_COUNT = 10; //how many rows to fetch
 
@@ -50,6 +55,14 @@ export const Patients = () => {
     );
     return () => {};
   }, [message, getPatientsByPage, currentPage]);
+
+  useEffect(() => {
+    if (user?.role === "patient") {
+      getAllUsers(message).then((data) =>
+        setDoctors(data.filter((user) => user.role === "doctor"))
+      );
+    }
+  }, [user?.role, message]);
 
   const columns = [
     {
@@ -189,7 +202,7 @@ export const Patients = () => {
   return (
     <>
       <Table
-        dataSource={patients}
+        dataSource={user?.role === "admin" ? patients : doctors}
         columns={columns}
         sortDirections={["ascend", "descend"]}
         rowKey={"_id"}

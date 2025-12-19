@@ -10,7 +10,7 @@ import {
 } from "antd";
 import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import {
   WindowsOutlined,
   CalendarOutlined,
@@ -25,6 +25,9 @@ import {
 } from "@ant-design/icons";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/auth.store";
+import { useWebSocketStore } from "../websocket/websocket";
+import { capitalize } from "../utils/capitalize";
+import env from "../environment";
 
 export const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -32,6 +35,8 @@ export const Dashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout, user } = useAuthStore();
+  const { disconnect, connect } = useWebSocketStore();
+  
 
   type MenuItem = Required<MenuProps>["items"][number];
 
@@ -55,39 +60,49 @@ export const Dashboard = () => {
 
   const dictionary: Record<string, string> = useMemo(() => {
     return {
-      "1": "Overview",
-      "2": "Appointments",
-      "3": "Patients",
-      "4": "Schedule",
-      "5": "Reports",
-      "6": "Messages",
-      "7": "Medications",
-      "8": "Help",
-      "9": "Settings",
+      "1": "overview",
+      "2": "appointments",
+      "3": "patients",
+      "4": "schedule",
+      "5": "reports",
+      "6": "messages",
+      "7": "medications",
+      "8": "help",
+      "9": "settings",
     };
   }, []);
 
   const role = user?.role;
-  const isStaff = role === "admin" || role === "doctor";
+  const isStaff = role === "admin" || role === "doctor" || role === "patient";
 
   const handleMenuItemClick = (i: { key: string; value?: string }) => {
-    setSubtitle(dictionary[i.key]);
-    navigate(`/dashboard/${dictionary[i.key].toLowerCase()}`);
+    setSubtitle(capitalize(dictionary[i.key]));
+    if (user && dictionary[i.key] === "settings") {
+      navigate(`/dashboard/${user._id}/${dictionary[i.key]}`);
+    } else {
+      navigate(`/dashboard/${dictionary[i.key]}`);
+    }
   };
 
   const userLogout = () => {
     logout();
+    disconnect();
     navigate("/");
   };
 
   const getDefaultLink = useCallback((): string[] => {
     for (let i in dictionary) {
-      if (location.pathname.includes(dictionary[i].toLowerCase())) {
+      if (location.pathname.includes(dictionary[i])) {
         return [i];
       }
     }
     return [""];
   }, [dictionary, location.pathname]);
+
+  useEffect(() => {
+    if (user) getDefaultLink();
+    connect(env.WEB_SOCKET_URL);
+  }, [user, getDefaultLink, connect]);
 
   const items = [
     getItem("Overview", "1", <WindowsOutlined />),
