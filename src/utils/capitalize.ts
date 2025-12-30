@@ -1,4 +1,7 @@
 export const capitalize = (str: string | undefined): string => {
   if (!str) return "";
-  return str[0].toUpperCase() + str.slice(1);
+
+  const trimmed = str.trim();
+
+  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
 };

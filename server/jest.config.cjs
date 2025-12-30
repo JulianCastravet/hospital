@@ -1,9 +1,8 @@
 /** @type {import('jest').Config} */
 module.exports = {
-  preset: "ts-jest",
+  preset: "ts-jest/presets/default", // for Node + TS
   testEnvironment: "node",
-  roots: ["<rootDir>/src"],
-  testMatch: ["**/__tests__/**/*.test.ts"],
+  testMatch: ["<rootDir>/src/**/*.test.ts"],
   moduleFileExtensions: ["ts", "js", "json"],
+  extensionsToTreatAsEsm: [], // keep empty for Node backend
 };
-
