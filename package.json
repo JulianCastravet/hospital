@@ -32,7 +32,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test-fe": "jest --projects jest.frontend.config.js",
-    "test-be": "jest --projects server/jest.config.cjs",
+    "test-be": "cd server && npm i && jest --projects jest.config.cjs",
     "test-all": "npm run test-fe && npm run test-be",
     "test": "npm run test-fe",
     "eject": "react-scripts eject",
