@@ -29,3 +29,5 @@ yarn-error.log*
 .vercel
 
 .prettierrc
+.gitignore
+.jest-cache

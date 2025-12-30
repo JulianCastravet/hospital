@@ -1,7 +1,7 @@
 import { ZodError, z } from "zod";
 import { AppError } from "../errors/AppError";
 import errorHandler from "../middleware/errorHandler";
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 
 const createMockRes = () => {
   const res: Partial<Response> = {};

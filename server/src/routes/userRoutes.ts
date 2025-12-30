@@ -26,8 +26,8 @@ router.post("/register", addUser);
 router.use(authMiddleware);
 
 router.post("/", requireRole(["admin", "doctor"]), addUser);
-router.get("/getAllUsers", requireRole(["admin", "patient"]), getAllUsers);
-router.get("/getPatients", requireRole(["admin", "doctor",'patient']), getPatients);
+router.get("/getAllUsers", requireRole(["admin", "doctor"]), getAllUsers);
+router.get("/getPatients", requireRole(["admin", "doctor"]), getPatients);
 router.get("/:id", getSingleUser);
 router.delete("/:id", requireRole("admin"), deleteUser);
 router.put("/:id", updateUser);

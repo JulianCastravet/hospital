@@ -80,6 +80,7 @@ export const AddressMap = (props: Props) => {
 
         // Update marker position
         markerRef.current.setLngLat([longitude, latitude]);
+        marker.setText(formattedAddress)
 
         // Center the map on the selected address
         mapRef.current.flyTo({ center: [longitude, latitude], zoom: 16 });
@@ -109,6 +110,7 @@ export const AddressMap = (props: Props) => {
         className="autocomplete-search-field-component mb-2"
         onChange={handleInputChange}
         value={internAddress}
+        ref={autocompleteRef}
       />
       <div
         id="map-container"

@@ -3,9 +3,11 @@ import { Disease } from "./disease";
 import { GeneralParams } from "./generalParams";
 import { Document } from "./document";
 
+export type UserRole = "admin" | "doctor" | "patient";
+
 export type User = {
   _id: string;
-  role: "admin" | "doctor" | "patient";
+  role: UserRole;
   name: string;
   specialization?: string;
   dateOfBirth: string;

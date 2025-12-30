@@ -1,9 +1,10 @@
-import { App, Button, Checkbox, Col, Flex, Row } from "antd";
+import { App, Button, Checkbox, Col, Flex, Row, Select } from "antd";
 import { useTitle } from "../../hooks/useTitle";
 import { useAuthStore } from "../../store/auth.store";
 import { SaveFilled } from "@ant-design/icons";
 import { useState } from "react";
 import { ImageWithUpload } from "../../components/imageWithUpload/imageWithUpload";
+import { UserRole } from "../../types/user";
 
 export const Settings = () => {
   useTitle("Settings");
@@ -12,6 +13,7 @@ export const Settings = () => {
   const { message } = App.useApp();
 
   const [options, setOptions] = useState<string[]>();
+  const [role, setRole] = useState<UserRole>(user?.role!);
 
   const plainOptions = [
     "Dark Mode",
@@ -28,7 +30,11 @@ export const Settings = () => {
 
   const saveData = () => {
     user &&
-      updateAuthUser(user._id, { ...user, userSettings: options }, message);
+      updateAuthUser(
+        user._id,
+        { ...user, userSettings: options, role },
+        message
+      );
   };
 
   const removeUserImage = (id: string) => {
@@ -36,6 +42,12 @@ export const Settings = () => {
       deleteAvatar(id, message);
     }
   };
+
+  const roleOptions = [
+    { value: "patient", label: "Patient" },
+    { value: "doctor", label: "Doctor" },
+    { value: "admin", label: "Admin" },
+  ];
 
   return (
     <>
@@ -46,6 +58,12 @@ export const Settings = () => {
             defaultValue={user?.userSettings}
             onChange={onChange}
           />
+
+          <Select
+            options={roleOptions}
+            value={role}
+            onChange={(v) => setRole(v)}
+          ></Select>
 
           <Row className="mt-2">
             <Button type="primary" icon={<SaveFilled />} onClick={saveData}>

@@ -41,13 +41,9 @@ export const Overview = () => {
   return (
     <>
       <Flex gap={12}>
-        <Card
-          hoverable
-          style={{ width: 620 }}
-          styles={{ body: { padding: 20, overflow: "hidden" } }}
-        >
+        <Card styles={{ body: { padding: 20, overflow: "hidden" } }}>
           <Title>Total users</Title>
-          <BarChart width={500} height={250} data={userData}>
+          <BarChart width={250} height={250} data={userData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
@@ -58,13 +54,9 @@ export const Overview = () => {
           </BarChart>
         </Card>
 
-        <Card
-          hoverable
-          style={{ width: 620 }}
-          styles={{ body: { padding: 20, overflow: "hidden" } }}
-        >
+        <Card styles={{ body: { padding: 20, overflow: "hidden" } }}>
           <Title>Total Reports</Title>
-          <BarChart width={500} height={250} data={reportData}>
+          <BarChart width={250} height={250} data={reportData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
